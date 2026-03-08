@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import ToolSearch from "@/components/ToolSearch";
 import { absoluteUrl, SITE_NAME } from "@/lib/seo";
 import "./globals.css";
@@ -68,6 +69,7 @@ export default function RootLayout({
           </nav>
         </header>
         {children}
+        <Analytics />
       </body>
     </html>
   );
