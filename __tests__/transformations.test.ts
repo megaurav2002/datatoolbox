@@ -3,6 +3,8 @@ import { transformations } from "@/lib/transformations";
 describe("transformations", () => {
   it("covers all expected phase 2 transformation slugs", () => {
     expect(Object.keys(transformations).sort()).toEqual([
+      "base64-decoder",
+      "base64-encoder",
       "csv-cleaner",
       "csv-to-excel",
       "csv-to-json",
@@ -16,6 +18,9 @@ describe("transformations", () => {
       "json-validator",
       "remove-duplicate-lines",
       "sort-lines-alphabetically",
+      "url-decoder",
+      "url-encoder",
+      "uuid-generator",
     ]);
   });
 
@@ -190,9 +195,73 @@ describe("transformations", () => {
     });
   });
 
+  describe("developer tools", () => {
+    it("encodes text to base64", () => {
+      const result = transformations["base64-encoder"]("hello world");
+      expect(result.output).toBe("aGVsbG8gd29ybGQ=");
+    });
+
+    it("decodes valid base64 text", () => {
+      const result = transformations["base64-decoder"]("aGVsbG8gd29ybGQ=");
+      expect(result.output).toBe("hello world");
+    });
+
+    it("throws for invalid base64 text", () => {
+      expect(() => transformations["base64-decoder"]("not_base64")).toThrow(
+        "Base64 Decoder requires valid Base64 input.",
+      );
+    });
+
+    it("encodes URL components", () => {
+      const result = transformations["url-encoder"]("name=John Doe&city=NY");
+      expect(result.output).toBe("name%3DJohn%20Doe%26city%3DNY");
+    });
+
+    it("decodes URL components", () => {
+      const result = transformations["url-decoder"]("name%3DJohn%20Doe%26city%3DNY");
+      expect(result.output).toBe("name=John Doe&city=NY");
+    });
+
+    it("throws for malformed url-encoded input", () => {
+      expect(() => transformations["url-decoder"]("%E0%A4%A")).toThrow(
+        "URL Decoder requires valid URL-encoded input.",
+      );
+    });
+
+    it("generates one uuid by default", () => {
+      const result = transformations["uuid-generator"]("");
+      expect(result.output).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      );
+    });
+
+    it("generates multiple uuids when count is provided", () => {
+      const result = transformations["uuid-generator"]("3");
+      const lines = result.output.split("\n");
+      expect(lines).toHaveLength(3);
+      lines.forEach((line) => {
+        expect(line).toMatch(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+      });
+    });
+
+    it("throws for invalid uuid count", () => {
+      expect(() => transformations["uuid-generator"]("0")).toThrow(
+        "UUID Generator expects a whole number between 1 and 100.",
+      );
+      expect(() => transformations["uuid-generator"]("1.5")).toThrow(
+        "UUID Generator expects a whole number between 1 and 100.",
+      );
+    });
+  });
+
   describe("shared invalid input handling", () => {
     it("throws for empty input across all transformation functions", () => {
       Object.entries(transformations).forEach(([slug, transform]) => {
+        if (slug === "uuid-generator") {
+          return;
+        }
         expect(() => transform("  \n  ")).toThrow("Please provide input.");
         expect(typeof slug).toBe("string");
       });

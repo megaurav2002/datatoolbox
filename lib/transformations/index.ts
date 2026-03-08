@@ -17,6 +17,7 @@ import {
 
 const emailRegex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
 const numberRegex = /[-+]?\d*\.?\d+/g;
+const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
 
 function csvToJson(input: string): TransformResult {
   const rows = parseCsv(ensureInput(input));
@@ -180,6 +181,95 @@ function extractNumbers(input: string): TransformResult {
   return toTransformResult(matches.join("\n") || "No numbers found.");
 }
 
+function encodeBase64Utf8(value: string): string {
+  if (typeof btoa === "function" && typeof TextEncoder !== "undefined") {
+    const bytes = new TextEncoder().encode(value);
+    let binary = "";
+    bytes.forEach((byte) => {
+      binary += String.fromCharCode(byte);
+    });
+    return btoa(binary);
+  }
+
+  return Buffer.from(value, "utf8").toString("base64");
+}
+
+function decodeBase64Utf8(value: string): string {
+  if (typeof atob === "function" && typeof TextDecoder !== "undefined") {
+    const binary = atob(value);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
+
+  return Buffer.from(value, "base64").toString("utf8");
+}
+
+function validateBase64Input(value: string): string {
+  const cleaned = value.trim().replace(/\s+/g, "");
+  if (!cleaned) {
+    throw new Error("Please provide input.");
+  }
+
+  if (!base64Regex.test(cleaned) || cleaned.length % 4 !== 0) {
+    throw new Error("Base64 Decoder requires valid Base64 input.");
+  }
+
+  return cleaned;
+}
+
+function base64Encoder(input: string): TransformResult {
+  return toTransformResult(encodeBase64Utf8(ensureInput(input)));
+}
+
+function base64Decoder(input: string): TransformResult {
+  const cleaned = validateBase64Input(input);
+
+  try {
+    return toTransformResult(decodeBase64Utf8(cleaned));
+  } catch {
+    throw new Error("Base64 Decoder requires valid Base64 input.");
+  }
+}
+
+function uuidGenerator(input: string): TransformResult {
+  const trimmed = input.trim();
+  const count = trimmed ? Number(trimmed) : 1;
+
+  if (!Number.isInteger(count) || count < 1 || count > 100) {
+    throw new Error("UUID Generator expects a whole number between 1 and 100.");
+  }
+
+  const uuids = Array.from({ length: count }, () => {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+
+    // Fallback v4 format for environments without crypto.randomUUID.
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
+      const random = Math.floor(Math.random() * 16);
+      const value = char === "x" ? random : (random & 0x3) | 0x8;
+      return value.toString(16);
+    });
+  });
+
+  return toTransformResult(uuids.join("\n"));
+}
+
+function urlEncoder(input: string): TransformResult {
+  return toTransformResult(encodeURIComponent(ensureInput(input)));
+}
+
+function urlDecoder(input: string): TransformResult {
+  try {
+    return toTransformResult(decodeURIComponent(ensureInput(input)));
+  } catch (error) {
+    if (error instanceof Error && error.message === "Please provide input.") {
+      throw error;
+    }
+    throw new Error("URL Decoder requires valid URL-encoded input.");
+  }
+}
+
 export const transformations: Record<string, (input: string) => TransformResult> = {
   "csv-to-json": withTransformErrorBoundary(csvToJson),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
@@ -194,4 +284,9 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "sort-lines-alphabetically": withTransformErrorBoundary(sortLinesAlphabetically),
   "extract-emails": withTransformErrorBoundary(extractEmails),
   "extract-numbers": withTransformErrorBoundary(extractNumbers),
+  "base64-encoder": withTransformErrorBoundary(base64Encoder),
+  "base64-decoder": withTransformErrorBoundary(base64Decoder),
+  "uuid-generator": withTransformErrorBoundary(uuidGenerator),
+  "url-encoder": withTransformErrorBoundary(urlEncoder),
+  "url-decoder": withTransformErrorBoundary(urlDecoder),
 };

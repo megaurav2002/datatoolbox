@@ -132,5 +132,65 @@
       "parser"
     ],
     "url": "/tools/extract-numbers"
+  },
+  {
+    "slug": "base64-encoder",
+    "title": "Base64 Encoder",
+    "description": "Encode plain text into Base64 format.",
+    "tags": [
+      "base64",
+      "encoder",
+      "developer",
+      "text"
+    ],
+    "url": "/tools/base64-encoder"
+  },
+  {
+    "slug": "base64-decoder",
+    "title": "Base64 Decoder",
+    "description": "Decode Base64 content back into readable text.",
+    "tags": [
+      "base64",
+      "decoder",
+      "developer",
+      "text"
+    ],
+    "url": "/tools/base64-decoder"
+  },
+  {
+    "slug": "uuid-generator",
+    "title": "UUID Generator",
+    "description": "Generate random UUID v4 identifiers instantly.",
+    "tags": [
+      "uuid",
+      "generator",
+      "developer",
+      "ids"
+    ],
+    "url": "/tools/uuid-generator"
+  },
+  {
+    "slug": "url-encoder",
+    "title": "URL Encoder",
+    "description": "Encode text for safe use in URL query strings.",
+    "tags": [
+      "url",
+      "encoder",
+      "developer",
+      "query string"
+    ],
+    "url": "/tools/url-encoder"
+  },
+  {
+    "slug": "url-decoder",
+    "title": "URL Decoder",
+    "description": "Decode URL-encoded strings into readable text.",
+    "tags": [
+      "url",
+      "decoder",
+      "developer",
+      "query string"
+    ],
+    "url": "/tools/url-decoder"
   }
 ]
