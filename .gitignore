@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+projecthandover.md
 
 # debug
 npm-debug.log*

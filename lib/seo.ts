@@ -1,6 +1,6 @@
 export const SITE_NAME = "DataToolbox";
 
-const FALLBACK_SITE_URL = "https://datatoolbox.example.com";
+const FALLBACK_SITE_URL = "https://datatoolbox.tools";
 
 export function getSiteUrl(): string {
   const value = process.env.NEXT_PUBLIC_SITE_URL?.trim();

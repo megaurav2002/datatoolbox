@@ -46,6 +46,7 @@ url encoder
 url decoder  
 uuid generator  
 timestamp converter  
+timezone converter  
 
 ## AI Tools
 
