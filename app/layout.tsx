@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     description:
       "DataToolbox offers fast, free tools for CSV conversion, JSON utilities, text cleaning, and developer workflows.",
   },
+  verification: {
+    google: "uJpWgW2wyHfH1rY96Jij1TCfL3ShXIhpyfv4_wG62HQ",
+  },
 };
 
 export default function RootLayout({
