@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { generateToolFAQs } from "@/lib/generateToolFAQs";
 import type { ToolDefinition } from "@/lib/types";
 import { toolsBySlug } from "@/lib/tools";
 
@@ -8,6 +9,8 @@ type ToolLayoutProps = {
 };
 
 export default function ToolLayout({ tool, children }: ToolLayoutProps) {
+  const faqs = generateToolFAQs(tool);
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <article className="space-y-8">
@@ -52,13 +55,13 @@ export default function ToolLayout({ tool, children }: ToolLayoutProps) {
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900">FAQ</h2>
+          <h2 className="text-xl font-semibold text-slate-900">Frequently Asked Questions</h2>
           <div className="mt-3 space-y-3">
-            {tool.faq.map((item) => (
-              <details key={item.question} className="rounded-lg border border-slate-200 p-3">
-                <summary className="cursor-pointer font-medium text-slate-800">{item.question}</summary>
+            {faqs.map((item) => (
+              <div key={item.question} className="rounded-lg border border-slate-200 p-4">
+                <h3 className="text-base font-semibold text-slate-900">{item.question}</h3>
                 <p className="mt-2 text-sm text-slate-700">{item.answer}</p>
-              </details>
+              </div>
             ))}
           </div>
         </section>
