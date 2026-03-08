@@ -1,0 +1,136 @@
+[
+  {
+    "slug": "csv-to-json",
+    "title": "CSV to JSON Converter",
+    "description": "Convert CSV rows into JSON objects instantly.",
+    "tags": [
+      "csv",
+      "json",
+      "converter",
+      "spreadsheet",
+      "data transformation"
+    ],
+    "url": "/tools/csv-to-json"
+  },
+  {
+    "slug": "json-to-csv",
+    "title": "JSON to CSV Converter",
+    "description": "Turn JSON arrays into CSV for spreadsheets.",
+    "tags": [
+      "json",
+      "csv",
+      "converter",
+      "spreadsheet",
+      "export"
+    ],
+    "url": "/tools/json-to-csv"
+  },
+  {
+    "slug": "csv-cleaner",
+    "title": "CSV Cleaner",
+    "description": "Trim spaces and remove empty rows from CSV.",
+    "tags": [
+      "csv",
+      "cleaner",
+      "data cleanup",
+      "spreadsheet"
+    ],
+    "url": "/tools/csv-cleaner"
+  },
+  {
+    "slug": "csv-validator",
+    "title": "CSV Validator",
+    "description": "Check CSV structure for inconsistent rows.",
+    "tags": [
+      "csv",
+      "validator",
+      "data quality",
+      "spreadsheet"
+    ],
+    "url": "/tools/csv-validator"
+  },
+  {
+    "slug": "json-formatter",
+    "title": "JSON Formatter",
+    "description": "Beautify JSON with indentation.",
+    "tags": [
+      "json",
+      "formatter",
+      "beautify",
+      "developer"
+    ],
+    "url": "/tools/json-formatter"
+  },
+  {
+    "slug": "json-validator",
+    "title": "JSON Validator",
+    "description": "Validate JSON syntax instantly.",
+    "tags": [
+      "json",
+      "validator",
+      "syntax",
+      "developer"
+    ],
+    "url": "/tools/json-validator"
+  },
+  {
+    "slug": "json-minifier",
+    "title": "JSON Minifier",
+    "description": "Compress JSON by removing whitespace.",
+    "tags": [
+      "json",
+      "minifier",
+      "compress",
+      "developer"
+    ],
+    "url": "/tools/json-minifier"
+  },
+  {
+    "slug": "remove-duplicate-lines",
+    "title": "Remove Duplicate Lines",
+    "description": "Keep unique lines while preserving order.",
+    "tags": [
+      "text",
+      "duplicate",
+      "cleanup",
+      "lines"
+    ],
+    "url": "/tools/remove-duplicate-lines"
+  },
+  {
+    "slug": "sort-lines-alphabetically",
+    "title": "Sort Lines Alphabetically",
+    "description": "Sort multiline text in alphabetical order.",
+    "tags": [
+      "text",
+      "sort",
+      "alphabetical",
+      "lines"
+    ],
+    "url": "/tools/sort-lines-alphabetically"
+  },
+  {
+    "slug": "extract-emails",
+    "title": "Extract Emails from Text",
+    "description": "Find and list emails from any text block.",
+    "tags": [
+      "text",
+      "email",
+      "extract",
+      "parser"
+    ],
+    "url": "/tools/extract-emails"
+  },
+  {
+    "slug": "extract-numbers",
+    "title": "Extract Numbers from Text",
+    "description": "Pull numeric values from mixed text.",
+    "tags": [
+      "text",
+      "numbers",
+      "extract",
+      "parser"
+    ],
+    "url": "/tools/extract-numbers"
+  }
+]
