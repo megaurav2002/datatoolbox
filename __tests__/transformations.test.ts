@@ -8,10 +8,12 @@ describe("transformations", () => {
       "csv-cleaner",
       "csv-to-excel",
       "csv-to-json",
+      "csv-to-sql",
       "csv-validator",
       "excel-to-csv",
       "extract-emails",
       "extract-numbers",
+      "json-flatten-to-csv",
       "json-formatter",
       "json-minifier",
       "json-to-csv",
@@ -54,6 +56,25 @@ describe("transformations", () => {
     it("throws for missing data rows", () => {
       expect(() => transformations["csv-to-json"]("name,email")).toThrow(
         "CSV to JSON requires a header row and at least one data row.",
+      );
+    });
+  });
+
+  describe("csv-to-sql", () => {
+    it("generates create table and insert statements", () => {
+      const result = transformations["csv-to-sql"](
+        "id,name,active\n1,Ana,true\n2,Bob,false",
+      );
+
+      expect(result.output).toContain("CREATE TABLE");
+      expect(result.output).toContain("INSERT INTO");
+      expect(result.downloadFileName).toBe("generated.sql");
+      expect(result.downloadMimeType).toBe("text/sql");
+    });
+
+    it("throws when csv has no data rows", () => {
+      expect(() => transformations["csv-to-sql"]("id,name")).toThrow(
+        "CSV to SQL requires a header row and at least one data row.",
       );
     });
   });
@@ -205,6 +226,23 @@ describe("transformations", () => {
     it("throws on invalid JSON for minifier", () => {
       expect(() => transformations["json-minifier"]("{bad json}")).toThrow(
         "JSON Minifier: invalid JSON syntax.",
+      );
+    });
+
+    it("flattens nested json to csv", () => {
+      const result = transformations["json-flatten-to-csv"](
+        '{"user":{"name":"Ana","address":{"city":"Melbourne"}}}',
+      );
+
+      expect(result.output).toContain("user.name");
+      expect(result.output).toContain("user.address.city");
+      expect(result.downloadFileName).toBe("flattened.csv");
+      expect(result.downloadMimeType).toBe("text/csv");
+    });
+
+    it("throws for invalid input in flatten tool", () => {
+      expect(() => transformations["json-flatten-to-csv"]("[]")).toThrow(
+        "JSON Flatten requires a non-empty object or array of objects.",
       );
     });
   });

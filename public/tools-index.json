@@ -26,13 +26,42 @@
     "url": "/tools/json-to-csv"
   },
   {
+    "slug": "csv-to-sql",
+    "title": "CSV to SQL Generator",
+    "description": "Generate CREATE TABLE and INSERT statements from CSV data.",
+    "tags": [
+      "csv to sql",
+      "csv to insert statements",
+      "csv to mysql insert",
+      "csv to postgres insert",
+      "sql generator",
+      "database"
+    ],
+    "url": "/tools/csv-to-sql"
+  },
+  {
+    "slug": "json-flatten-to-csv",
+    "title": "JSON Flatten / JSON to CSV",
+    "description": "Flatten nested JSON into dot-notation fields and convert to CSV.",
+    "tags": [
+      "flatten json",
+      "nested json to csv",
+      "json to table",
+      "json flatten online",
+      "json to csv",
+      "data conversion"
+    ],
+    "url": "/tools/json-flatten-to-csv"
+  },
+  {
     "slug": "csv-cleaner",
     "title": "CSV Cleaner",
-    "description": "Trim spaces and remove empty rows from CSV.",
+    "description": "Clean and normalize messy CSV with deterministic data-cleaning options.",
     "tags": [
-      "csv",
-      "cleaner",
-      "data cleanup",
+      "csv cleaner",
+      "clean csv online",
+      "deduplicate csv",
+      "normalize csv data",
       "spreadsheet"
     ],
     "url": "/tools/csv-cleaner"

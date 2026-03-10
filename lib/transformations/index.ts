@@ -14,6 +14,9 @@ import {
   rowsToHtmlTable,
   toCsv,
 } from "@/lib/transformations/csv";
+import { cleanCsv } from "@/lib/transformations/csv-cleaner";
+import { analyzeCsvForSql, generateSqlFromCsvRows } from "@/lib/transformations/csv-to-sql";
+import { flattenJson } from "@/lib/transformations/json-flatten";
 
 const emailRegex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
 const numberRegex = /[-+]?\d*\.?\d+/g;
@@ -75,14 +78,18 @@ function jsonToCsv(input: string): TransformResult {
 }
 
 function csvCleaner(input: string): TransformResult {
-  const rows = parseCsv(ensureInput(input)).map((row) => row.map((cell) => cell.trim()));
-  const nonEmptyRows = rows.filter((row) => row.some((cell) => cell.length > 0));
+  const cleaned = cleanCsv(input, {
+    trimWhitespace: true,
+    removeEmptyRows: true,
+    removeEmptyColumns: true,
+    deduplicateRows: true,
+    normalizeHeaders: true,
+    lowercaseEmails: true,
+    normalizePhoneNumbers: false,
+    standardizeLineEndings: true,
+  });
 
-  if (nonEmptyRows.length === 0) {
-    throw new Error("CSV Cleaner found no usable rows after cleaning.");
-  }
-
-  return toTransformResult(toCsv(nonEmptyRows), "cleaned.csv", "text/csv");
+  return toTransformResult(cleaned.cleanedCsv, "cleaned.csv", "text/csv");
 }
 
 function csvValidator(input: string): TransformResult {
@@ -353,9 +360,28 @@ function timestampConverter(input: string): TransformResult {
   );
 }
 
+function csvToSql(input: string): TransformResult {
+  const analysis = analyzeCsvForSql(input);
+  const sql = generateSqlFromCsvRows(analysis.rows, {
+    tableName: analysis.suggestedTableName,
+    dialect: "generic",
+    mode: "create-and-insert",
+    columns: analysis.columns,
+  });
+
+  return toTransformResult(sql, "generated.sql", "text/sql");
+}
+
+function jsonFlattenToCsv(input: string): TransformResult {
+  const result = flattenJson(input);
+  return toTransformResult(result.csv, "flattened.csv", "text/csv");
+}
+
 export const transformations: Record<string, (input: string) => TransformResult> = {
   "csv-to-json": withTransformErrorBoundary(csvToJson),
+  "csv-to-sql": withTransformErrorBoundary(csvToSql),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
+  "json-flatten-to-csv": withTransformErrorBoundary(jsonFlattenToCsv),
   "csv-cleaner": withTransformErrorBoundary(csvCleaner),
   "csv-validator": withTransformErrorBoundary(csvValidator),
   "csv-to-excel": withTransformErrorBoundary(csvToExcel),

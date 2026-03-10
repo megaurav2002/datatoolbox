@@ -3,6 +3,9 @@
 import { useMemo, useState } from "react";
 import ToolInput from "@/components/ToolInput";
 import ToolOutput from "@/components/ToolOutput";
+import CsvCleanerTool from "@/components/tools/CsvCleanerTool";
+import CsvToSqlTool from "@/components/tools/CsvToSqlTool";
+import JsonFlattenToCsvTool from "@/components/tools/JsonFlattenToCsvTool";
 import { transformations } from "@/lib/transformations";
 import type { ToolDefinition } from "@/lib/types";
 
@@ -23,7 +26,7 @@ async function parseApiResponse(response: Response): Promise<ApiResponse> {
   }
 }
 
-export default function ToolClient({ tool }: ToolClientProps) {
+function DefaultToolClient({ tool }: ToolClientProps) {
   const [input, setInput] = useState(tool.exampleInput);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -97,4 +100,20 @@ export default function ToolClient({ tool }: ToolClientProps) {
       />
     </section>
   );
+}
+
+export default function ToolClient({ tool }: ToolClientProps) {
+  if (tool.slug === "csv-to-sql") {
+    return <CsvToSqlTool tool={tool} />;
+  }
+
+  if (tool.slug === "json-flatten-to-csv") {
+    return <JsonFlattenToCsvTool tool={tool} />;
+  }
+
+  if (tool.slug === "csv-cleaner") {
+    return <CsvCleanerTool tool={tool} />;
+  }
+
+  return <DefaultToolClient tool={tool} />;
 }

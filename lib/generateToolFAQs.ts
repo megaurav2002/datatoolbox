@@ -203,6 +203,57 @@ const toolFAQTemplates: Record<string, FAQItem[]> = {
         "Conversion differences are often caused by timezone interpretation, invalid date strings, or mixing seconds and milliseconds.",
     },
   ],
+  "csv-to-sql": [
+    {
+      question: "How do I convert CSV to SQL INSERT statements?",
+      answer:
+        "Paste or upload your CSV, choose INSERT-only mode, and generate SQL. The tool maps each CSV row into an INSERT value tuple.",
+    },
+    {
+      question: "Can this CSV to SQL tool generate CREATE TABLE statements?",
+      answer:
+        "Yes. Use CREATE TABLE + INSERT mode to generate schema and data insert statements in one output.",
+    },
+    {
+      question: "Does CSV to SQL support MySQL and PostgreSQL?",
+      answer:
+        "Yes. You can choose Generic SQL, PostgreSQL, MySQL, or SQLite dialect output before generating SQL.",
+    },
+  ],
+  "json-flatten-to-csv": [
+    {
+      question: "How do I flatten nested JSON online?",
+      answer:
+        "Paste nested JSON into the tool and run flattening. Nested keys are converted to dot notation such as user.address.city.",
+    },
+    {
+      question: "How are arrays handled when flattening JSON?",
+      answer:
+        "Arrays are kept as JSON strings by default so data is preserved in a single column without losing structure.",
+    },
+    {
+      question: "Can I convert nested JSON directly to CSV?",
+      answer:
+        "Yes. After flattening, switch output to CSV to copy or download a spreadsheet-ready file.",
+    },
+  ],
+  "csv-cleaner": [
+    {
+      question: "How do I clean CSV data online?",
+      answer:
+        "Upload or paste CSV data, enable the cleaning options you need, and run the tool to get a normalized CSV output.",
+    },
+    {
+      question: "Can CSV Cleaner remove duplicate rows?",
+      answer:
+        "Yes. Enable row deduplication to keep only unique rows and reduce duplicate records before import.",
+    },
+    {
+      question: "What does CSV normalization include?",
+      answer:
+        "Normalization options include trimming whitespace, normalizing header names, lowercasing email addresses, and basic phone cleanup.",
+    },
+  ],
 };
 
 export function generateToolFAQs(tool: ToolDefinition): FAQItem[] {

@@ -26,13 +26,14 @@ export const metadata: Metadata = {
 
 const popularSlugs = [
   "csv-to-json",
+  "csv-to-sql",
   "json-formatter",
   "csv-cleaner",
+  "json-flatten-to-csv",
   "json-validator",
   "remove-duplicate-lines",
   "extract-emails",
   "extract-numbers",
-  "csv-validator",
 ] as const;
 
 const websiteJsonLd = {

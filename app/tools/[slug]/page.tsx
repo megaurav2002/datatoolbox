@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ToolLayout from "@/components/ToolLayout";
+import { generateToolFAQs } from "@/lib/generateToolFAQs";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
 import { tools, toolsBySlug } from "@/lib/tools";
 import ToolClient from "./ToolClient";
@@ -70,6 +71,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
   }
 
   const toolUrl = absoluteUrl(`/tools/${tool.slug}`);
+  const faqs = generateToolFAQs(tool);
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -89,7 +91,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: tool.faq.map((item) => ({
+      mainEntity: faqs.map((item) => ({
         "@type": "Question",
         name: item.question,
         acceptedAnswer: {
