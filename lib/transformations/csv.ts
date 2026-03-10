@@ -50,9 +50,7 @@ export function parseCsv(input: string): string[][] {
 
   if (value.length > 0 || row.length > 0) {
     row.push(value);
-    if (isSignificantRow(row)) {
-      rows.push(row);
-    }
+    rows.push(row);
   }
 
   return rows;

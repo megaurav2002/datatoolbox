@@ -38,7 +38,7 @@ export function toJsonSyntaxErrorMessage(
   const prefix = input.slice(0, rawPosition);
   const line = prefix.split("\n").length;
   const column = rawPosition - prefix.lastIndexOf("\n");
-  const sourceLine = input.split("\n")[line - 1] ?? "";
+  const sourceLine = input.split("\n")[line - 1];
   const caretLine = `${" ".repeat(Math.max(column - 1, 0))}^`;
 
   return `${context}: invalid JSON syntax at line ${line}, column ${column}.\n${sourceLine}\n${caretLine}`;
