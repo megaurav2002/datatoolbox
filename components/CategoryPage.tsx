@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { CategoryDefinition } from "@/lib/categories";
+import { hubPath, hubsBySlug, type HubSlug } from "@/lib/hubs";
 import type { ToolDefinition } from "@/lib/types";
 
 type CategoryPageProps = {
@@ -8,11 +9,28 @@ type CategoryPageProps = {
 };
 
 export default function CategoryPage({ category, tools }: CategoryPageProps) {
+  const mappedHubSlug = (
+    {
+      "csv-tools": "csv-tools",
+      "json-tools": "json-tools",
+      "text-tools": "data-cleaning-tools",
+      "developer-tools": "developer-data-tools",
+      "spreadsheet-tools": "data-cleaning-tools",
+    } as const
+  )[category.slug] as HubSlug;
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <header className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">{category.title}</h1>
         <p className="mt-3 max-w-3xl text-slate-700">{category.description}</p>
+        <p className="mt-3 text-sm text-slate-700">
+          Looking for the SEO hub page?{" "}
+          <Link className="underline" href={hubPath(mappedHubSlug)}>
+            View {hubsBySlug[mappedHubSlug].title}
+          </Link>
+          .
+        </p>
       </header>
 
       <section className="mt-8">
@@ -43,28 +61,28 @@ export default function CategoryPage({ category, tools }: CategoryPageProps) {
         <h2 className="text-xl font-semibold text-slate-900">Explore more categories</h2>
         <ul className="mt-3 flex flex-wrap gap-3 text-sm text-slate-700">
           <li>
-            <Link className="underline" href="/tools/csv-tools">
+            <Link className="underline" href="/csv-tools">
               CSV Tools
             </Link>
           </li>
           <li>
-            <Link className="underline" href="/tools/json-tools">
+            <Link className="underline" href="/json-tools">
               JSON Tools
             </Link>
           </li>
           <li>
-            <Link className="underline" href="/tools/text-tools">
-              Text Tools
+            <Link className="underline" href="/data-cleaning-tools">
+              Data Cleaning Tools
             </Link>
           </li>
           <li>
-            <Link className="underline" href="/tools/developer-tools">
-              Developer Tools
+            <Link className="underline" href="/developer-data-tools">
+              Developer Data Tools
             </Link>
           </li>
           <li>
-            <Link className="underline" href="/tools/spreadsheet-tools">
-              Spreadsheet Tools
+            <Link className="underline" href="/guides">
+              Problem-based Guides
             </Link>
           </li>
         </ul>

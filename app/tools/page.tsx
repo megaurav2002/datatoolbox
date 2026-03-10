@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { categories } from "@/lib/categories";
+import { guides } from "@/lib/guides";
+import { hubs, hubPath } from "@/lib/hubs";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
 import { recentTools, tools } from "@/lib/tools";
 
@@ -46,13 +48,13 @@ export default function ToolsIndexPage() {
           Explore high-traffic data tools with examples, instructions, and related links.
         </p>
 
-        <section className="mt-8">
-          <h2 className="text-xl font-semibold text-slate-900">Browse by category</h2>
+        <section id="category-hubs" className="mt-8">
+          <h2 className="text-xl font-semibold text-slate-900">Browse category hubs</h2>
           <ul className="mt-3 flex flex-wrap gap-3 text-sm text-slate-700">
-            {categories.map((category) => (
-              <li key={category.slug}>
-                <Link href={`/tools/${category.slug}`} className="underline">
-                  {category.title}
+            {hubs.map((hub) => (
+              <li key={hub.slug}>
+                <Link href={hubPath(hub.slug)} className="underline">
+                  {hub.title}
                 </Link>
               </li>
             ))}
@@ -77,6 +79,32 @@ export default function ToolsIndexPage() {
               <li key={tool.slug}>
                 <Link href={`/tools/${tool.slug}`} className="text-sm text-slate-700 underline">
                   {tool.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="text-xl font-semibold text-slate-900">Problem-based guides</h2>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+            {guides.map((guide) => (
+              <li key={guide.slug}>
+                <Link href={`/guides/${guide.slug}`} className="text-sm text-slate-700 underline">
+                  {guide.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="text-xl font-semibold text-slate-900">Legacy category routes</h2>
+          <ul className="mt-3 flex flex-wrap gap-3 text-sm text-slate-700">
+            {categories.map((category) => (
+              <li key={category.slug}>
+                <Link href={`/tools/${category.slug}`} className="underline">
+                  {category.title}
                 </Link>
               </li>
             ))}

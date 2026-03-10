@@ -13,6 +13,14 @@ CSV to Excel
 Excel to CSV  
 CSV to TSV  
 TSV to CSV  
+CSV to SQL  
+CSV column mapper  
+CSV merge tool  
+CSV splitter  
+CSV deduplicator by column  
+SQL to CSV  
+NDJSON to CSV  
+CSV diff checker  
 
 ## JSON Tools
 
@@ -22,6 +30,13 @@ JSON beautifier
 JSON minifier  
 JSON to YAML  
 YAML to JSON  
+JSON flatten  
+JSON unflatten  
+JSON to SQL  
+JSON schema generator  
+JSON path extractor  
+JSON key sorter  
+JSON array to table  
 
 ## Text Tools
 
@@ -34,6 +49,12 @@ remove whitespace
 uppercase converter  
 lowercase converter  
 title case converter  
+line count tool  
+word count tool  
+remove empty lines  
+find and replace text  
+slug generator  
+text diff checker  
 
 ## Developer Tools
 
@@ -47,6 +68,14 @@ url decoder
 uuid generator  
 timestamp converter  
 timezone converter  
+hash generator (MD5/SHA)  
+JWT decoder  
+cron expression parser  
+ISO date converter  
+SQL formatter  
+SQL minifier  
+SQL prettifier and validator  
+URL parser  
 
 ## AI Tools
 

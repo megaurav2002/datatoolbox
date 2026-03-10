@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import HomeToolExplorer from "@/components/HomeToolExplorer";
 import { categories } from "@/lib/categories";
+import { guides } from "@/lib/guides";
+import { hubs } from "@/lib/hubs";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
 import { toolsBySlug } from "@/lib/tools";
 
@@ -58,6 +60,8 @@ export default function HomePage() {
       />
       <HomeToolExplorer
         categories={categories}
+        hubs={hubs}
+        guides={guides}
         popularTools={popularTools}
       />
     </>

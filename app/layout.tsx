@@ -58,6 +58,12 @@ export default function RootLayout({
                 <Link href="/tools" className="hover:text-slate-900">
                   Tools
                 </Link>
+                <Link href="/guides" className="hover:text-slate-900">
+                  Guides
+                </Link>
+                <Link href="/tools#category-hubs" className="hover:text-slate-900">
+                  Categories
+                </Link>
               </div>
             </div>
             <div className="w-full">
@@ -69,6 +75,35 @@ export default function RootLayout({
           </nav>
         </header>
         {children}
+        <footer className="mt-12 border-t border-slate-200 bg-white">
+          <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 text-sm text-slate-700 sm:px-6 lg:grid-cols-3 lg:px-8">
+            <div>
+              <h2 className="font-semibold text-slate-900">Category Hubs</h2>
+              <ul className="mt-2 space-y-1">
+                <li><Link className="underline" href="/csv-tools">CSV Tools</Link></li>
+                <li><Link className="underline" href="/json-tools">JSON Tools</Link></li>
+                <li><Link className="underline" href="/data-cleaning-tools">Data Cleaning Tools</Link></li>
+                <li><Link className="underline" href="/developer-data-tools">Developer Data Tools</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="font-semibold text-slate-900">Guides</h2>
+              <ul className="mt-2 space-y-1">
+                <li><Link className="underline" href="/guides/how-to-convert-json-to-csv">How to Convert JSON to CSV</Link></li>
+                <li><Link className="underline" href="/guides/how-to-clean-csv-data">How to Clean CSV Data</Link></li>
+                <li><Link className="underline" href="/guides/how-to-import-csv-into-sql">How to Import CSV into SQL</Link></li>
+                <li><Link className="underline" href="/guides/how-to-flatten-json">How to Flatten JSON</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="font-semibold text-slate-900">Directory</h2>
+              <ul className="mt-2 space-y-1">
+                <li><Link className="underline" href="/tools">All Tools</Link></li>
+                <li><Link className="underline" href="/guides">All Guides</Link></li>
+              </ul>
+            </div>
+          </div>
+        </footer>
         <Analytics />
       </body>
     </html>

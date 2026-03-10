@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ToolLayout from "@/components/ToolLayout";
 import { generateToolFAQs } from "@/lib/generateToolFAQs";
+import { hubPath, relatedHubsForTool } from "@/lib/hubs";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
 import { tools, toolsBySlug } from "@/lib/tools";
 import ToolClient from "./ToolClient";
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
   }
 
   const toolUrl = absoluteUrl(`/tools/${tool.slug}`);
+  const categoryKeywords = tool.categories.map((category) => category.replace(/-/g, " "));
 
   return {
     title: buildMetaTitle(`${tool.title} - Free Online Tool`),
@@ -40,6 +42,8 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       "data transformation",
       "csv tools",
       "json tools",
+      ...tool.tags,
+      ...categoryKeywords,
     ],
     robots: {
       index: true,
@@ -72,6 +76,8 @@ export default async function ToolPage({ params }: ToolPageProps) {
 
   const toolUrl = absoluteUrl(`/tools/${tool.slug}`);
   const faqs = generateToolFAQs(tool);
+  const relatedHubs = relatedHubsForTool(tool.slug);
+  const primaryHub = relatedHubs[0];
   const structuredData = [
     {
       "@context": "https://schema.org",
@@ -110,9 +116,19 @@ export default async function ToolPage({ params }: ToolPageProps) {
           name: "Tools",
           item: absoluteUrl("/tools"),
         },
+        ...(primaryHub
+          ? [
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: primaryHub.title,
+                item: absoluteUrl(hubPath(primaryHub.slug)),
+              },
+            ]
+          : []),
         {
           "@type": "ListItem",
-          position: 2,
+          position: primaryHub ? 3 : 2,
           name: tool.title,
           item: toolUrl,
         },
