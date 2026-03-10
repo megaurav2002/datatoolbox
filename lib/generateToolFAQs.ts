@@ -169,6 +169,40 @@ const toolFAQTemplates: Record<string, FAQItem[]> = {
         "Yes. You can decode full query strings or individual encoded parameter values to inspect request data more easily.",
     },
   ],
+  "regex-tester": [
+    {
+      question: "How do I test a regex pattern online?",
+      answer:
+        "Enter your regex on the first line, add test text below it, and run the tool to see how many matches were found and what they are.",
+    },
+    {
+      question: "Why is my regular expression not matching?",
+      answer:
+        "Common issues include missing flags, incorrect escaping, misplaced anchors, and patterns that do not fit the text format you are testing.",
+    },
+    {
+      question: "Can I use regex flags like g, i, and m?",
+      answer:
+        "Yes. The Regex Tester supports standard JavaScript flags such as global, case-insensitive, and multiline.",
+    },
+  ],
+  "timestamp-converter": [
+    {
+      question: "How do I convert Unix timestamp to date?",
+      answer:
+        "Paste your Unix timestamp into the tool and run it to get UTC time, local time, Unix seconds, and Unix milliseconds.",
+    },
+    {
+      question: "Does the Timestamp Converter support seconds and milliseconds?",
+      answer:
+        "Yes. The converter detects both formats and normalizes them into consistent output fields.",
+    },
+    {
+      question: "Why is my timestamp conversion incorrect?",
+      answer:
+        "Conversion differences are often caused by timezone interpretation, invalid date strings, or mixing seconds and milliseconds.",
+    },
+  ],
 };
 
 export function generateToolFAQs(tool: ToolDefinition): FAQItem[] {

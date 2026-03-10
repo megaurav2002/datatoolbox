@@ -322,6 +322,58 @@ export const tools: ToolDefinition[] = [
     categories: ["developer-tools"],
     createdAt: "2026-03-16",
   },
+  {
+    slug: "regex-tester",
+    title: "Regex Tester",
+    shortDescription: "Test regular expressions against sample text instantly.",
+    tags: ["regex", "tester", "developer", "pattern matching"],
+    intro:
+      "Validate regular expression patterns and quickly inspect matching results using your own input text.",
+    howToUse: [
+      "Enter the regex on the first line using /pattern/flags format, or plain pattern text.",
+      "Add the test text on the following lines.",
+      "Click Transform to view match count and matched values.",
+    ],
+    exampleInput: "/\\b\\w{4}\\b/g\nThis line has many word tokens in text.",
+    exampleOutput:
+      "Pattern: /\\b\\w{4}\\b/g\nTotal matches: 5\nMatches:\n1. This\n2. line\n3. many\n4. word\n5. text",
+    whyUseful:
+      "Helps developers debug and validate regex patterns before using them in code, filters, or search logic.",
+    faq: [
+      { question: "Can I use regex flags?", answer: "Yes. Use /pattern/flags syntax such as /test/gi." },
+      { question: "Does it show all matches?", answer: "Yes, it reports total matches and each matched value." },
+    ],
+    related: ["extract-emails", "extract-numbers", "json-validator"],
+    kind: "standard",
+    categories: ["developer-tools", "text-tools"],
+    createdAt: "2026-03-17",
+  },
+  {
+    slug: "timestamp-converter",
+    title: "Timestamp Converter",
+    shortDescription: "Convert Unix timestamps and date strings into readable time formats.",
+    tags: ["timestamp", "converter", "unix", "date", "developer"],
+    intro:
+      "Convert Unix seconds, Unix milliseconds, or date strings into UTC, local time, and normalized timestamp output.",
+    howToUse: [
+      "Paste a Unix timestamp (seconds or milliseconds) or a date string.",
+      "Click Transform to convert it.",
+      "Review UTC, local time, and Unix equivalents.",
+    ],
+    exampleInput: "1710000000",
+    exampleOutput:
+      '{\n  "input": "1710000000",\n  "unixSeconds": 1710000000,\n  "unixMilliseconds": 1710000000000,\n  "utc": "2024-03-09T16:00:00.000Z"\n}',
+    whyUseful:
+      "Useful for debugging API payloads, logs, analytics events, and systems that store Unix timestamps.",
+    faq: [
+      { question: "Does it support seconds and milliseconds?", answer: "Yes, both Unix seconds and milliseconds are supported." },
+      { question: "Can I convert date strings too?", answer: "Yes, standard date strings can be parsed and converted." },
+    ],
+    related: ["json-formatter", "uuid-generator", "url-decoder"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-03-18",
+  },
 ];
 
 export const toolsBySlug = Object.fromEntries(tools.map((tool) => [tool.slug, tool]));

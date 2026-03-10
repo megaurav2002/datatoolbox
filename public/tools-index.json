@@ -192,5 +192,30 @@
       "query string"
     ],
     "url": "/tools/url-decoder"
+  },
+  {
+    "slug": "regex-tester",
+    "title": "Regex Tester",
+    "description": "Test regular expressions against sample text instantly.",
+    "tags": [
+      "regex",
+      "tester",
+      "developer",
+      "pattern matching"
+    ],
+    "url": "/tools/regex-tester"
+  },
+  {
+    "slug": "timestamp-converter",
+    "title": "Timestamp Converter",
+    "description": "Convert Unix timestamps and date strings into readable time formats.",
+    "tags": [
+      "timestamp",
+      "converter",
+      "unix",
+      "date",
+      "developer"
+    ],
+    "url": "/tools/timestamp-converter"
   }
 ]

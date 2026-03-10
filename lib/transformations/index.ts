@@ -270,6 +270,89 @@ function urlDecoder(input: string): TransformResult {
   }
 }
 
+function parseRegexDescriptor(descriptor: string): { pattern: string; flags: string } {
+  const slashFormat = descriptor.match(/^\/([\s\S]*)\/([dgimsuvy]*)$/);
+  if (slashFormat) {
+    return { pattern: slashFormat[1], flags: slashFormat[2] };
+  }
+
+  return { pattern: descriptor, flags: "" };
+}
+
+function regexTester(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const [descriptor, ...textLines] = normalized.split("\n");
+  const text = textLines.join("\n");
+
+  if (!descriptor.trim()) {
+    throw new Error("Regex Tester requires a pattern on the first line.");
+  }
+
+  if (!text.trim()) {
+    throw new Error("Regex Tester requires test text below the pattern.");
+  }
+
+  const { pattern, flags } = parseRegexDescriptor(descriptor.trim());
+
+  let regex: RegExp;
+  try {
+    regex = new RegExp(pattern, flags);
+  } catch {
+    throw new Error("Regex Tester requires a valid regular expression pattern.");
+  }
+
+  const globalFlags = flags.includes("g") ? flags : `${flags}g`;
+  const matcher = new RegExp(regex.source, globalFlags);
+  const matches = Array.from(text.matchAll(matcher), (match) => match[0]);
+
+  if (matches.length === 0) {
+    return toTransformResult(`Pattern: /${pattern}/${flags}\nTotal matches: 0\nNo matches found.`);
+  }
+
+  const lines = matches.map((value, index) => `${index + 1}. ${value}`).join("\n");
+  return toTransformResult(
+    `Pattern: /${pattern}/${flags}\nTotal matches: ${matches.length}\nMatches:\n${lines}`,
+  );
+}
+
+function timestampConverter(input: string): TransformResult {
+  const raw = ensureInput(input).trim();
+  let date: Date;
+  let milliseconds: number;
+
+  if (/^-?\d+$/.test(raw)) {
+    const numeric = Number(raw);
+    if (!Number.isFinite(numeric)) {
+      throw new Error("Timestamp Converter requires a valid timestamp or date string.");
+    }
+
+    // Infer seconds vs milliseconds using magnitude to handle negatives correctly.
+    milliseconds = Math.abs(numeric) < 1e12 ? numeric * 1000 : numeric;
+    date = new Date(milliseconds);
+  } else {
+    date = new Date(raw);
+    milliseconds = date.getTime();
+  }
+
+  if (Number.isNaN(date.getTime())) {
+    throw new Error("Timestamp Converter requires a valid timestamp or date string.");
+  }
+
+  return toTransformResult(
+    JSON.stringify(
+      {
+        input: raw,
+        unixSeconds: Math.floor(milliseconds / 1000),
+        unixMilliseconds: milliseconds,
+        utc: date.toISOString(),
+        local: date.toString(),
+      },
+      null,
+      2,
+    ),
+  );
+}
+
 export const transformations: Record<string, (input: string) => TransformResult> = {
   "csv-to-json": withTransformErrorBoundary(csvToJson),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
@@ -289,4 +372,6 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "uuid-generator": withTransformErrorBoundary(uuidGenerator),
   "url-encoder": withTransformErrorBoundary(urlEncoder),
   "url-decoder": withTransformErrorBoundary(urlDecoder),
+  "regex-tester": withTransformErrorBoundary(regexTester),
+  "timestamp-converter": withTransformErrorBoundary(timestampConverter),
 };

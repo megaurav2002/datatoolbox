@@ -16,8 +16,10 @@ describe("transformations", () => {
       "json-minifier",
       "json-to-csv",
       "json-validator",
+      "regex-tester",
       "remove-duplicate-lines",
       "sort-lines-alphabetically",
+      "timestamp-converter",
       "url-decoder",
       "url-encoder",
       "uuid-generator",
@@ -252,6 +254,86 @@ describe("transformations", () => {
       );
       expect(() => transformations["uuid-generator"]("1.5")).toThrow(
         "UUID Generator expects a whole number between 1 and 100.",
+      );
+    });
+
+    it("tests regex with /pattern/flags format", () => {
+      const result = transformations["regex-tester"]("/\\b\\w{4}\\b/g\nThis line has many word tokens.");
+      expect(result.output).toContain("Total matches:");
+      expect(result.output).toContain("1. This");
+    });
+
+    it("tests regex with plain pattern text", () => {
+      const result = transformations["regex-tester"]("\\d+\nOrder 42 has 3 items.");
+      expect(result.output).toContain("Total matches: 2");
+      expect(result.output).toContain("1. 42");
+      expect(result.output).toContain("2. 3");
+    });
+
+    it("returns no match output for regex tester", () => {
+      const result = transformations["regex-tester"]("/xyz/g\nalpha beta gamma");
+      expect(result.output).toContain("Total matches: 0");
+    });
+
+    it("throws for invalid regex pattern", () => {
+      expect(() => transformations["regex-tester"]("/([a-z]/g\ntext")).toThrow(
+        "Regex Tester requires a valid regular expression pattern.",
+      );
+    });
+
+    it("throws when regex test text is missing", () => {
+      expect(() => transformations["regex-tester"]("/test/g")).toThrow(
+        "Regex Tester requires test text below the pattern.",
+      );
+    });
+
+    it("converts unix seconds timestamp to normalized output", () => {
+      const result = transformations["timestamp-converter"]("1710000000");
+      const parsed = JSON.parse(result.output) as {
+        unixSeconds: number;
+        unixMilliseconds: number;
+        utc: string;
+      };
+      expect(parsed.unixSeconds).toBe(1710000000);
+      expect(parsed.unixMilliseconds).toBe(1710000000000);
+      expect(parsed.utc).toBe("2024-03-09T16:00:00.000Z");
+    });
+
+    it("handles negative unix seconds correctly", () => {
+      const result = transformations["timestamp-converter"]("-1");
+      const parsed = JSON.parse(result.output) as {
+        unixSeconds: number;
+        unixMilliseconds: number;
+        utc: string;
+      };
+      expect(parsed.unixSeconds).toBe(-1);
+      expect(parsed.unixMilliseconds).toBe(-1000);
+      expect(parsed.utc).toBe("1969-12-31T23:59:59.000Z");
+    });
+
+    it("keeps unix milliseconds without scaling", () => {
+      const result = transformations["timestamp-converter"]("1710000000000");
+      const parsed = JSON.parse(result.output) as {
+        unixSeconds: number;
+        unixMilliseconds: number;
+      };
+      expect(parsed.unixMilliseconds).toBe(1710000000000);
+      expect(parsed.unixSeconds).toBe(1710000000);
+    });
+
+    it("converts ISO date string timestamp", () => {
+      const result = transformations["timestamp-converter"]("2024-01-01T00:00:00Z");
+      const parsed = JSON.parse(result.output) as {
+        unixSeconds: number;
+        utc: string;
+      };
+      expect(parsed.utc).toBe("2024-01-01T00:00:00.000Z");
+      expect(parsed.unixSeconds).toBe(1704067200);
+    });
+
+    it("throws for invalid timestamp input", () => {
+      expect(() => transformations["timestamp-converter"]("not-a-date")).toThrow(
+        "Timestamp Converter requires a valid timestamp or date string.",
       );
     });
   });
