@@ -372,15 +372,238 @@ function csvToSql(input: string): TransformResult {
   return toTransformResult(sql, "generated.sql", "text/sql");
 }
 
+function csvColumnMapper(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const [mappingBlock, csvBlock] = normalized.split(/\n\s*\n/, 2);
+
+  if (!mappingBlock || !csvBlock) {
+    throw new Error(
+      "CSV Column Mapper requires mapping rules first, then a blank line, then CSV data.",
+    );
+  }
+
+  const mappingEntries = mappingBlock
+    .split(/[\n,]/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (mappingEntries.length === 0) {
+    throw new Error("CSV Column Mapper requires at least one mapping rule.");
+  }
+
+  const mapping = new Map<string, string>();
+  mappingEntries.forEach((entry) => {
+    const [source, target, ...rest] = entry.split(":").map((value) => value.trim());
+    if (!source || !target || rest.length > 0) {
+      throw new Error(
+        "CSV Column Mapper mapping rules must use source:target format, e.g. name:full_name.",
+      );
+    }
+    mapping.set(source, target);
+  });
+
+  const rows = parseCsv(csvBlock);
+  if (rows.length === 0) {
+    throw new Error("CSV Column Mapper requires CSV data with a header row.");
+  }
+
+  const nextHeaders = rows[0].map((header) => mapping.get(header) ?? header);
+  const uniqueHeaders = new Set(nextHeaders);
+  if (uniqueHeaders.size !== nextHeaders.length) {
+    throw new Error("CSV Column Mapper produced duplicate target headers. Adjust mapping rules.");
+  }
+
+  const outputRows = [nextHeaders, ...rows.slice(1)];
+  return toTransformResult(toCsv(outputRows), "mapped.csv", "text/csv");
+}
+
+function inferJsonSchema(value: unknown): Record<string, unknown> {
+  if (value === null) {
+    return { type: "null" };
+  }
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return { type: "array", items: {} };
+    }
+
+    const itemSchema = value
+      .map((item) => inferJsonSchema(item))
+      .reduce((acc, schema) => mergeJsonSchemas(acc, schema));
+
+    return { type: "array", items: itemSchema };
+  }
+
+  switch (typeof value) {
+    case "string":
+      return { type: "string" };
+    case "number":
+      return { type: Number.isInteger(value) ? "integer" : "number" };
+    case "boolean":
+      return { type: "boolean" };
+    case "object": {
+      const objectValue = value as Record<string, unknown>;
+      const properties = Object.fromEntries(
+        Object.entries(objectValue).map(([key, nested]) => [key, inferJsonSchema(nested)]),
+      );
+      return {
+        type: "object",
+        properties,
+        required: Object.keys(objectValue),
+      };
+    }
+    default:
+      return {};
+  }
+}
+
+function asArray<T>(value: T | T[] | undefined): T[] {
+  if (value === undefined) {
+    return [];
+  }
+  return Array.isArray(value) ? value : [value];
+}
+
+function schemaSignature(schema: unknown): string {
+  if (!schema || typeof schema !== "object") {
+    return JSON.stringify(schema);
+  }
+
+  if (Array.isArray(schema)) {
+    return `[${schema.map((item) => schemaSignature(item)).sort().join(",")}]`;
+  }
+
+  const entries = Object.entries(schema as Record<string, unknown>)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `"${key}":${schemaSignature(value)}`);
+  return `{${entries.join(",")}}`;
+}
+
+function mergeJsonSchemas(
+  left: Record<string, unknown>,
+  right: Record<string, unknown>,
+): Record<string, unknown> {
+  if (schemaSignature(left) === schemaSignature(right)) {
+    return left;
+  }
+
+  if (left.type === "object" && right.type === "object") {
+    const leftProperties = (left.properties as Record<string, Record<string, unknown>>) ?? {};
+    const rightProperties = (right.properties as Record<string, Record<string, unknown>>) ?? {};
+    const allKeys = Array.from(
+      new Set([...Object.keys(leftProperties), ...Object.keys(rightProperties)]),
+    );
+
+    const mergedProperties = Object.fromEntries(
+      allKeys.map((key) => {
+        const leftSchema = leftProperties[key];
+        const rightSchema = rightProperties[key];
+        if (leftSchema && rightSchema) {
+          return [key, mergeJsonSchemas(leftSchema, rightSchema)];
+        }
+        return [key, leftSchema ?? rightSchema];
+      }),
+    );
+
+    const leftRequired = asArray(left.required as string[] | string | undefined);
+    const rightRequired = asArray(right.required as string[] | string | undefined);
+    const required = leftRequired.filter((key) => rightRequired.includes(key));
+
+    return {
+      type: "object",
+      properties: mergedProperties,
+      ...(required.length > 0 ? { required } : {}),
+    };
+  }
+
+  if (left.type === "array" && right.type === "array") {
+    const leftItems = (left.items as Record<string, unknown>) ?? {};
+    const rightItems = (right.items as Record<string, unknown>) ?? {};
+    return {
+      type: "array",
+      items: mergeJsonSchemas(leftItems, rightItems),
+    };
+  }
+
+  const variants = [...asArray(left.anyOf as Record<string, unknown>[] | undefined), ...asArray(right.anyOf as Record<string, unknown>[] | undefined)];
+  const seeds = variants.length > 0 ? variants : [left, right];
+  const unique = Array.from(new Map(seeds.map((schema) => [schemaSignature(schema), schema])).values());
+  return { anyOf: unique };
+}
+
+function jsonSchemaGenerator(input: string): TransformResult {
+  const parsed = parseJsonInput(input, "JSON Schema Generator");
+  const schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    ...inferJsonSchema(parsed),
+  };
+  return toTransformResult(JSON.stringify(schema, null, 2), "schema.json", "application/json");
+}
+
+function ndjsonToCsv(input: string): TransformResult {
+  const lines = ensureInput(input)
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length === 0) {
+    throw new Error("NDJSON to CSV requires at least one JSON object line.");
+  }
+
+  const records = lines.map((line, index) => {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(line);
+    } catch {
+      throw new Error(`NDJSON to CSV found invalid JSON at line ${index + 1}.`);
+    }
+
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      throw new Error(`NDJSON to CSV expects objects on each line. Invalid record at line ${index + 1}.`);
+    }
+
+    return parsed as Record<string, unknown>;
+  });
+
+  const headers = Array.from(
+    records.reduce((set, record) => {
+      Object.keys(record).forEach((key) => set.add(key));
+      return set;
+    }, new Set<string>()),
+  );
+
+  const rows = [
+    headers,
+    ...records.map((record) =>
+      headers.map((header) => {
+        const value = record[header];
+        if (value === null || value === undefined) {
+          return "";
+        }
+        if (typeof value === "object") {
+          return JSON.stringify(value);
+        }
+        return String(value);
+      }),
+    ),
+  ];
+
+  return toTransformResult(toCsv(rows), "converted.csv", "text/csv");
+}
+
 function jsonFlattenToCsv(input: string): TransformResult {
   const result = flattenJson(input);
   return toTransformResult(result.csv, "flattened.csv", "text/csv");
 }
 
 export const transformations: Record<string, (input: string) => TransformResult> = {
+  "csv-column-mapper": withTransformErrorBoundary(csvColumnMapper),
   "csv-to-json": withTransformErrorBoundary(csvToJson),
   "csv-to-sql": withTransformErrorBoundary(csvToSql),
+  "json-schema-generator": withTransformErrorBoundary(jsonSchemaGenerator),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
+  "ndjson-to-csv": withTransformErrorBoundary(ndjsonToCsv),
   "json-flatten-to-csv": withTransformErrorBoundary(jsonFlattenToCsv),
   "csv-cleaner": withTransformErrorBoundary(csvCleaner),
   "csv-validator": withTransformErrorBoundary(csvValidator),

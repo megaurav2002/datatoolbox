@@ -29,7 +29,15 @@ export const hubs: HubDefinition[] = [
       "Generate SQL INSERT scripts from CSV before importing into a database.",
       "Clean inconsistent rows and remove duplicate records before analysis.",
     ],
-    toolSlugs: ["csv-to-json", "csv-to-sql", "csv-cleaner", "csv-validator", "json-to-csv"],
+    toolSlugs: [
+      "csv-to-json",
+      "csv-to-sql",
+      "csv-cleaner",
+      "csv-validator",
+      "csv-column-mapper",
+      "json-to-csv",
+      "ndjson-to-csv",
+    ],
     relatedHubs: ["json-tools", "data-cleaning-tools", "developer-data-tools"],
   },
   {
@@ -43,7 +51,15 @@ export const hubs: HubDefinition[] = [
       "Validate JSON syntax before using payloads in production.",
       "Flatten nested JSON and convert it into CSV for spreadsheet workflows.",
     ],
-    toolSlugs: ["json-formatter", "json-validator", "json-minifier", "json-to-csv", "json-flatten-to-csv"],
+    toolSlugs: [
+      "json-formatter",
+      "json-validator",
+      "json-minifier",
+      "json-to-csv",
+      "json-flatten-to-csv",
+      "json-schema-generator",
+      "ndjson-to-csv",
+    ],
     relatedHubs: ["csv-tools", "developer-data-tools", "data-cleaning-tools"],
   },
   {
@@ -80,6 +96,8 @@ export const hubs: HubDefinition[] = [
     ],
     toolSlugs: [
       "csv-to-sql",
+      "json-schema-generator",
+      "ndjson-to-csv",
       "json-flatten-to-csv",
       "json-formatter",
       "base64-encoder",

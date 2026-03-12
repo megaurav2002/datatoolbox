@@ -146,6 +146,35 @@ export const tools: ToolDefinition[] = [
     outputMimeType: "text/csv",
   },
   {
+    slug: "csv-column-mapper",
+    title: "CSV Column Mapper",
+    shortDescription: "Rename CSV headers using simple source:target mapping rules.",
+    tags: ["csv column mapper", "rename csv headers", "csv mapping", "csv import prep"],
+    intro:
+      "Map old CSV column names to new headers before importing into another system.",
+    howToUse: [
+      "Add mapping rules at the top using source:target format, separated by commas or new lines.",
+      "Leave one blank line after mapping rules, then paste CSV data.",
+      "Click Transform to generate CSV with renamed headers.",
+    ],
+    exampleInput:
+      "name:full_name,email:email_address\n\nname,email,city\nAna,ana@example.com,Melbourne",
+    exampleOutput:
+      "full_name,email_address,city\nAna,ana@example.com,Melbourne",
+    whyUseful:
+      "Helps match target-system schema requirements when importing CSV files from different sources.",
+    faq: [
+      { question: "What format should mapping rules use?", answer: "Use source:target, for example name:full_name." },
+      { question: "Do unmapped headers stay the same?", answer: "Yes. Only mapped headers are renamed." },
+    ],
+    related: ["csv-cleaner", "csv-validator", "csv-to-sql", "json-to-csv"],
+    kind: "standard",
+    categories: ["csv-tools", "spreadsheet-tools"],
+    createdAt: "2026-03-22",
+    outputFileName: "mapped.csv",
+    outputMimeType: "text/csv",
+  },
+  {
     slug: "csv-validator",
     title: "CSV Validator",
     shortDescription: "Check CSV structure for inconsistent rows.",
@@ -222,6 +251,64 @@ export const tools: ToolDefinition[] = [
     createdAt: "2026-03-07",
     outputFileName: "minified.json",
     outputMimeType: "application/json",
+  },
+  {
+    slug: "json-schema-generator",
+    title: "JSON Schema Generator",
+    shortDescription: "Generate a JSON Schema draft from sample JSON input.",
+    tags: ["json schema generator", "json schema from json", "schema inference", "developer"],
+    intro:
+      "Create a draft JSON Schema from sample JSON to document and validate API payload structures.",
+    howToUse: [
+      "Paste a JSON object or array as sample input.",
+      "Click Transform to infer a schema.",
+      "Copy or download the generated schema JSON.",
+    ],
+    exampleInput:
+      '{"id":1,"name":"Ana","active":true,"tags":["admin"],"profile":{"city":"Melbourne"}}',
+    exampleOutput:
+      '{\n  "$schema": "http://json-schema.org/draft-07/schema#",\n  "type": "object",\n  "properties": {\n    "id": {\n      "type": "integer"\n    },\n    "name": {\n      "type": "string"\n    }\n  },\n  "required": [\n    "id",\n    "name"\n  ]\n}',
+    whyUseful:
+      "Speeds up schema documentation, payload validation setup, and API contract communication.",
+    faq: [
+      { question: "Can this infer nested objects and arrays?", answer: "Yes. Nested values are represented in the generated schema." },
+      { question: "Which JSON Schema draft is used?", answer: "The output includes Draft-07 schema metadata." },
+    ],
+    related: ["json-formatter", "json-validator", "json-minifier", "ndjson-to-csv"],
+    kind: "standard",
+    categories: ["json-tools", "developer-tools"],
+    createdAt: "2026-03-23",
+    outputFileName: "schema.json",
+    outputMimeType: "application/json",
+  },
+  {
+    slug: "ndjson-to-csv",
+    title: "NDJSON to CSV Converter",
+    shortDescription: "Convert newline-delimited JSON records into CSV columns.",
+    tags: ["ndjson to csv", "json lines", "logs to csv", "event export"],
+    intro:
+      "Convert JSON Lines (NDJSON) data into CSV for spreadsheet analysis and exports.",
+    howToUse: [
+      "Paste one JSON object per line.",
+      "Click Transform to parse lines and build CSV headers.",
+      "Copy or download the generated CSV output.",
+    ],
+    exampleInput:
+      '{"id":1,"event":"signup","meta":{"plan":"pro"}}\n{"id":2,"event":"login"}',
+    exampleOutput:
+      'id,event,meta\n1,signup,"{\\"plan\\":\\"pro\\"}"\n2,login,',
+    whyUseful:
+      "Useful for converting log streams and analytics events into tabular files for quick reporting.",
+    faq: [
+      { question: "What NDJSON format is expected?", answer: "Each non-empty line must be a valid JSON object." },
+      { question: "How are nested objects handled?", answer: "Nested values are serialized as JSON strings in CSV cells." },
+    ],
+    related: ["json-to-csv", "json-flatten-to-csv", "csv-cleaner", "json-schema-generator"],
+    kind: "standard",
+    categories: ["json-tools", "csv-tools", "developer-tools"],
+    createdAt: "2026-03-24",
+    outputFileName: "converted.csv",
+    outputMimeType: "text/csv",
   },
   {
     slug: "remove-duplicate-lines",

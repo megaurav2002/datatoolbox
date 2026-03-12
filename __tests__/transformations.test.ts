@@ -6,6 +6,7 @@ describe("transformations", () => {
       "base64-decoder",
       "base64-encoder",
       "csv-cleaner",
+      "csv-column-mapper",
       "csv-to-excel",
       "csv-to-json",
       "csv-to-sql",
@@ -16,8 +17,10 @@ describe("transformations", () => {
       "json-flatten-to-csv",
       "json-formatter",
       "json-minifier",
+      "json-schema-generator",
       "json-to-csv",
       "json-validator",
+      "ndjson-to-csv",
       "regex-tester",
       "remove-duplicate-lines",
       "sort-lines-alphabetically",
@@ -137,6 +140,29 @@ describe("transformations", () => {
     });
   });
 
+  describe("csv-column-mapper", () => {
+    it("renames mapped headers and keeps others unchanged", () => {
+      const result = transformations["csv-column-mapper"](
+        "name:full_name,email:email_address\n\nname,email,city\nAna,ana@example.com,Melbourne",
+      );
+      expect(result.output).toBe("full_name,email_address,city\nAna,ana@example.com,Melbourne");
+      expect(result.downloadFileName).toBe("mapped.csv");
+      expect(result.downloadMimeType).toBe("text/csv");
+    });
+
+    it("throws when mapping and csv sections are missing", () => {
+      expect(() => transformations["csv-column-mapper"]("name:full_name,name,email")).toThrow(
+        "CSV Column Mapper requires mapping rules first, then a blank line, then CSV data.",
+      );
+    });
+
+    it("throws on invalid mapping format", () => {
+      expect(() => transformations["csv-column-mapper"]("name=full_name\n\nname,email\nAna,ana@example.com")).toThrow(
+        "CSV Column Mapper mapping rules must use source:target format, e.g. name:full_name.",
+      );
+    });
+  });
+
   describe("csv-validator", () => {
     it("returns valid result for consistent rows", () => {
       const result = transformations["csv-validator"]("name,email\nAna,ana@example.com");
@@ -243,6 +269,45 @@ describe("transformations", () => {
     it("throws for invalid input in flatten tool", () => {
       expect(() => transformations["json-flatten-to-csv"]("[]")).toThrow(
         "JSON Flatten requires a non-empty object or array of objects.",
+      );
+    });
+
+    it("generates schema from JSON sample", () => {
+      const result = transformations["json-schema-generator"](
+        '{"id":1,"name":"Ana","active":true}',
+      );
+      expect(result.output).toContain('"$schema": "http://json-schema.org/draft-07/schema#"');
+      expect(result.output).toContain('"id"');
+      expect(result.output).toContain('"type": "integer"');
+      expect(result.downloadFileName).toBe("schema.json");
+      expect(result.downloadMimeType).toBe("application/json");
+    });
+
+    it("throws on invalid json for schema generator", () => {
+      expect(() => transformations["json-schema-generator"]("{bad json}")).toThrow(
+        "JSON Schema Generator: invalid JSON syntax.",
+      );
+    });
+  });
+
+  describe("ndjson-to-csv", () => {
+    it("converts ndjson lines into csv", () => {
+      const result = transformations["ndjson-to-csv"](
+        '{"id":1,"event":"signup"}\n{"id":2,"event":"login"}',
+      );
+      expect(result.output).toBe("id,event\n1,signup\n2,login");
+      expect(result.downloadFileName).toBe("converted.csv");
+      expect(result.downloadMimeType).toBe("text/csv");
+    });
+
+    it("serializes object values in csv cells", () => {
+      const result = transformations["ndjson-to-csv"]('{"id":1,"meta":{"plan":"pro"}}');
+      expect(result.output).toContain('"{""plan"":""pro""}"');
+    });
+
+    it("throws with line number for invalid ndjson", () => {
+      expect(() => transformations["ndjson-to-csv"]('{"id":1}\n{bad}')).toThrow(
+        "NDJSON to CSV found invalid JSON at line 2.",
       );
     });
   });

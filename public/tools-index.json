@@ -67,6 +67,18 @@
     "url": "/tools/csv-cleaner"
   },
   {
+    "slug": "csv-column-mapper",
+    "title": "CSV Column Mapper",
+    "description": "Rename CSV headers using simple source:target mapping rules.",
+    "tags": [
+      "csv column mapper",
+      "rename csv headers",
+      "csv mapping",
+      "csv import prep"
+    ],
+    "url": "/tools/csv-column-mapper"
+  },
+  {
     "slug": "csv-validator",
     "title": "CSV Validator",
     "description": "Check CSV structure for inconsistent rows.",
@@ -113,6 +125,30 @@
       "developer"
     ],
     "url": "/tools/json-minifier"
+  },
+  {
+    "slug": "json-schema-generator",
+    "title": "JSON Schema Generator",
+    "description": "Generate a JSON Schema draft from sample JSON input.",
+    "tags": [
+      "json schema generator",
+      "json schema from json",
+      "schema inference",
+      "developer"
+    ],
+    "url": "/tools/json-schema-generator"
+  },
+  {
+    "slug": "ndjson-to-csv",
+    "title": "NDJSON to CSV Converter",
+    "description": "Convert newline-delimited JSON records into CSV columns.",
+    "tags": [
+      "ndjson to csv",
+      "json lines",
+      "logs to csv",
+      "event export"
+    ],
+    "url": "/tools/ndjson-to-csv"
   },
   {
     "slug": "remove-duplicate-lines",
