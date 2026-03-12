@@ -100,6 +100,8 @@ export default function RootLayout({
               <ul className="mt-2 space-y-1">
                 <li><Link className="underline" href="/tools">All Tools</Link></li>
                 <li><Link className="underline" href="/guides">All Guides</Link></li>
+                <li><Link className="underline" href="/privacy">Privacy Policy</Link></li>
+                <li><Link className="underline" href="/terms">Terms and Conditions</Link></li>
               </ul>
             </div>
           </div>
