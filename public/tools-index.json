@@ -271,6 +271,18 @@
     "url": "/tools/regex-tester"
   },
   {
+    "slug": "mermaid-editor",
+    "title": "Mermaid Editor",
+    "description": "Write Mermaid syntax, preview diagrams, and export SVG or PNG instantly.",
+    "tags": [
+      "mermaid editor",
+      "mermaid live preview",
+      "diagram generator",
+      "developer tools"
+    ],
+    "url": "/tools/mermaid-editor"
+  },
+  {
     "slug": "timestamp-converter",
     "title": "Timestamp Converter",
     "description": "Convert Unix timestamps and date strings into readable time formats.",

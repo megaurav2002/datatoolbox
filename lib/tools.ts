@@ -513,6 +513,35 @@ export const tools: ToolDefinition[] = [
     createdAt: "2026-03-17",
   },
   {
+    slug: "mermaid-editor",
+    title: "Mermaid Editor",
+    shortDescription: "Write Mermaid syntax, preview diagrams, and export SVG or PNG instantly.",
+    tags: ["mermaid editor", "mermaid live preview", "diagram generator", "developer tools"],
+    intro:
+      "Create flowcharts, sequence diagrams, and architecture diagrams from Mermaid text with live browser rendering.",
+    howToUse: [
+      "Paste Mermaid syntax or start from the example template.",
+      "Click Render Diagram to generate the preview.",
+      "Copy the SVG markup or download the diagram as SVG or PNG.",
+    ],
+    exampleInput:
+      "flowchart TD\n  A[Client] --> B[API Gateway]\n  B --> C[Auth Service]\n  B --> D[Data Service]\n  D --> E[(Database)]",
+    exampleOutput:
+      "<svg><!-- Rendered Mermaid diagram markup --></svg>",
+    whyUseful:
+      "Useful for documentation, architecture reviews, and sharing system flows without opening design software.",
+    faq: [
+      { question: "Is Mermaid data uploaded to a server?", answer: "No. Rendering happens in your browser and your diagram source stays local." },
+      { question: "Can I download diagrams as images?", answer: "Yes. You can export SVG directly and also download PNG." },
+    ],
+    related: ["json-schema-generator", "regex-tester", "json-formatter", "timestamp-converter"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-03-25",
+    outputFileName: "diagram.svg",
+    outputMimeType: "image/svg+xml",
+  },
+  {
     slug: "timestamp-converter",
     title: "Timestamp Converter",
     shortDescription: "Convert Unix timestamps and date strings into readable time formats.",

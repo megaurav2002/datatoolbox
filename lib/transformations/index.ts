@@ -592,6 +592,10 @@ function ndjsonToCsv(input: string): TransformResult {
   return toTransformResult(toCsv(rows), "converted.csv", "text/csv");
 }
 
+function mermaidEditor(input: string): TransformResult {
+  return toTransformResult(ensureInput(input), "diagram.mmd", "text/plain");
+}
+
 function jsonFlattenToCsv(input: string): TransformResult {
   const result = flattenJson(input);
   return toTransformResult(result.csv, "flattened.csv", "text/csv");
@@ -603,6 +607,7 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "csv-to-sql": withTransformErrorBoundary(csvToSql),
   "json-schema-generator": withTransformErrorBoundary(jsonSchemaGenerator),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
+  "mermaid-editor": withTransformErrorBoundary(mermaidEditor),
   "ndjson-to-csv": withTransformErrorBoundary(ndjsonToCsv),
   "json-flatten-to-csv": withTransformErrorBoundary(jsonFlattenToCsv),
   "csv-cleaner": withTransformErrorBoundary(csvCleaner),

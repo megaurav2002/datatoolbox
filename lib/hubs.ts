@@ -100,6 +100,7 @@ export const hubs: HubDefinition[] = [
       "ndjson-to-csv",
       "json-flatten-to-csv",
       "json-formatter",
+      "mermaid-editor",
       "base64-encoder",
       "base64-decoder",
       "uuid-generator",

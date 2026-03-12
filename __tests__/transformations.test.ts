@@ -20,6 +20,7 @@ describe("transformations", () => {
       "json-schema-generator",
       "json-to-csv",
       "json-validator",
+      "mermaid-editor",
       "ndjson-to-csv",
       "regex-tester",
       "remove-duplicate-lines",
@@ -347,6 +348,18 @@ describe("transformations", () => {
   });
 
   describe("developer tools", () => {
+    it("returns mermaid source for editor transformation", () => {
+      const source = "flowchart TD\nA-->B";
+      const result = transformations["mermaid-editor"](source);
+      expect(result.output).toBe(source);
+      expect(result.downloadFileName).toBe("diagram.mmd");
+      expect(result.downloadMimeType).toBe("text/plain");
+    });
+
+    it("throws when mermaid editor input is empty", () => {
+      expect(() => transformations["mermaid-editor"]("   ")).toThrow("Please provide input.");
+    });
+
     it("encodes text to base64", () => {
       const result = transformations["base64-encoder"]("hello world");
       expect(result.output).toBe("aGVsbG8gd29ybGQ=");

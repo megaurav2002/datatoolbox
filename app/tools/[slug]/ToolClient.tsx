@@ -6,6 +6,7 @@ import ToolOutput from "@/components/ToolOutput";
 import CsvCleanerTool from "@/components/tools/CsvCleanerTool";
 import CsvToSqlTool from "@/components/tools/CsvToSqlTool";
 import JsonFlattenToCsvTool from "@/components/tools/JsonFlattenToCsvTool";
+import MermaidEditorTool from "@/components/tools/MermaidEditorTool";
 import { transformations } from "@/lib/transformations";
 import type { ToolDefinition } from "@/lib/types";
 
@@ -113,6 +114,10 @@ export default function ToolClient({ tool }: ToolClientProps) {
 
   if (tool.slug === "csv-cleaner") {
     return <CsvCleanerTool tool={tool} />;
+  }
+
+  if (tool.slug === "mermaid-editor") {
+    return <MermaidEditorTool tool={tool} />;
   }
 
   return <DefaultToolClient tool={tool} />;
