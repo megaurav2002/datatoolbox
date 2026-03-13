@@ -283,6 +283,30 @@
     "url": "/tools/mermaid-editor"
   },
   {
+    "slug": "jwt-decoder",
+    "title": "JWT Decoder",
+    "description": "Decode JWT header and payload claims instantly in your browser.",
+    "tags": [
+      "jwt decoder",
+      "decode jwt token",
+      "jwt payload",
+      "developer tools"
+    ],
+    "url": "/tools/jwt-decoder"
+  },
+  {
+    "slug": "hash-generator",
+    "title": "Hash Generator",
+    "description": "Generate MD5 and SHA hashes from text input.",
+    "tags": [
+      "hash generator",
+      "md5 generator",
+      "sha256 hash",
+      "checksum tool"
+    ],
+    "url": "/tools/hash-generator"
+  },
+  {
     "slug": "timestamp-converter",
     "title": "Timestamp Converter",
     "description": "Convert Unix timestamps and date strings into readable time formats.",

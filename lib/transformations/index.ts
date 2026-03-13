@@ -1,4 +1,5 @@
 import type { TransformResult } from "@/lib/types";
+import md5 from "blueimp-md5";
 import {
   ensureInput,
   normalizeLines,
@@ -592,6 +593,47 @@ function ndjsonToCsv(input: string): TransformResult {
   return toTransformResult(toCsv(rows), "converted.csv", "text/csv");
 }
 
+function decodeBase64UrlSegment(segment: string): string {
+  const normalized = segment.replace(/-/g, "+").replace(/_/g, "/");
+  const padding = normalized.length % 4 === 0 ? "" : "=".repeat(4 - (normalized.length % 4));
+  const base64 = normalized + padding;
+
+  if (typeof atob === "function" && typeof TextDecoder !== "undefined") {
+    const binary = atob(base64);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
+
+  return Buffer.from(base64, "base64").toString("utf8");
+}
+
+function jwtDecoder(input: string): TransformResult {
+  const raw = ensureInput(input).trim().replace(/^Bearer\s+/i, "");
+  const parts = raw.split(".");
+
+  if (parts.length !== 3) {
+    throw new Error("JWT Decoder requires a token with header.payload.signature format.");
+  }
+
+  try {
+    const header = JSON.parse(decodeBase64UrlSegment(parts[0]));
+    const payload = JSON.parse(decodeBase64UrlSegment(parts[1]));
+    const result = {
+      header,
+      payload,
+      signature: parts[2],
+      signaturePresent: parts[2].length > 0,
+    };
+    return toTransformResult(JSON.stringify(result, null, 2), "decoded-jwt.json", "application/json");
+  } catch {
+    throw new Error("JWT Decoder could not decode token. Ensure it is a valid JWT.");
+  }
+}
+
+function hashGenerator(input: string): TransformResult {
+  return toTransformResult(md5(ensureInput(input)), "hash.txt", "text/plain");
+}
+
 function mermaidEditor(input: string): TransformResult {
   return toTransformResult(ensureInput(input), "diagram.mmd", "text/plain");
 }
@@ -607,6 +649,8 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "csv-to-sql": withTransformErrorBoundary(csvToSql),
   "json-schema-generator": withTransformErrorBoundary(jsonSchemaGenerator),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
+  "jwt-decoder": withTransformErrorBoundary(jwtDecoder),
+  "hash-generator": withTransformErrorBoundary(hashGenerator),
   "mermaid-editor": withTransformErrorBoundary(mermaidEditor),
   "ndjson-to-csv": withTransformErrorBoundary(ndjsonToCsv),
   "json-flatten-to-csv": withTransformErrorBoundary(jsonFlattenToCsv),

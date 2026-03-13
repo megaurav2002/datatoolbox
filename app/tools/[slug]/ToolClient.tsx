@@ -5,6 +5,7 @@ import ToolInput from "@/components/ToolInput";
 import ToolOutput from "@/components/ToolOutput";
 import CsvCleanerTool from "@/components/tools/CsvCleanerTool";
 import CsvToSqlTool from "@/components/tools/CsvToSqlTool";
+import HashGeneratorTool from "@/components/tools/HashGeneratorTool";
 import JsonFlattenToCsvTool from "@/components/tools/JsonFlattenToCsvTool";
 import MermaidEditorTool from "@/components/tools/MermaidEditorTool";
 import { transformations } from "@/lib/transformations";
@@ -118,6 +119,10 @@ export default function ToolClient({ tool }: ToolClientProps) {
 
   if (tool.slug === "mermaid-editor") {
     return <MermaidEditorTool tool={tool} />;
+  }
+
+  if (tool.slug === "hash-generator") {
+    return <HashGeneratorTool tool={tool} />;
   }
 
   return <DefaultToolClient tool={tool} />;

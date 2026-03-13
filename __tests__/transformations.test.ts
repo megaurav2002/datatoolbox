@@ -14,12 +14,14 @@ describe("transformations", () => {
       "excel-to-csv",
       "extract-emails",
       "extract-numbers",
+      "hash-generator",
       "json-flatten-to-csv",
       "json-formatter",
       "json-minifier",
       "json-schema-generator",
       "json-to-csv",
       "json-validator",
+      "jwt-decoder",
       "mermaid-editor",
       "ndjson-to-csv",
       "regex-tester",
@@ -313,6 +315,37 @@ describe("transformations", () => {
     });
   });
 
+  describe("jwt-decoder", () => {
+    it("decodes jwt header and payload", () => {
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
+        "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ." +
+        "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+      const result = transformations["jwt-decoder"](token);
+      expect(result.output).toContain('"alg": "HS256"');
+      expect(result.output).toContain('"sub": "1234567890"');
+      expect(result.output).toContain('"signaturePresent": true');
+      expect(result.downloadFileName).toBe("decoded-jwt.json");
+      expect(result.downloadMimeType).toBe("application/json");
+    });
+
+    it("throws for invalid token format", () => {
+      expect(() => transformations["jwt-decoder"]("not-a-jwt")).toThrow(
+        "JWT Decoder requires a token with header.payload.signature format.",
+      );
+    });
+
+    it("accepts bearer token input", () => {
+      const token =
+        "Bearer " +
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
+        "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFuYSJ9." +
+        "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+      const result = transformations["jwt-decoder"](token);
+      expect(result.output).toContain('"name": "Ana"');
+    });
+  });
+
   describe("text tools", () => {
     it("removes duplicate lines while preserving first seen order", () => {
       const result = transformations["remove-duplicate-lines"]("apple\nbanana\napple\nbanana\npear");
@@ -348,6 +381,13 @@ describe("transformations", () => {
   });
 
   describe("developer tools", () => {
+    it("generates md5 hash in fallback transformation", () => {
+      const result = transformations["hash-generator"]("hello");
+      expect(result.output).toBe("5d41402abc4b2a76b9719d911017c592");
+      expect(result.downloadFileName).toBe("hash.txt");
+      expect(result.downloadMimeType).toBe("text/plain");
+    });
+
     it("returns mermaid source for editor transformation", () => {
       const source = "flowchart TD\nA-->B";
       const result = transformations["mermaid-editor"](source);

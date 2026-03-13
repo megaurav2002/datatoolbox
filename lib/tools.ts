@@ -542,6 +542,62 @@ export const tools: ToolDefinition[] = [
     outputMimeType: "image/svg+xml",
   },
   {
+    slug: "jwt-decoder",
+    title: "JWT Decoder",
+    shortDescription: "Decode JWT header and payload claims instantly in your browser.",
+    tags: ["jwt decoder", "decode jwt token", "jwt payload", "developer tools"],
+    intro:
+      "Decode JSON Web Tokens (JWT) to inspect header and payload claims for debugging and integration checks.",
+    howToUse: [
+      "Paste your full JWT in header.payload.signature format.",
+      "Click Transform to decode token sections.",
+      "Review header and payload claims, then copy or download the decoded JSON.",
+    ],
+    exampleInput:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFuYSIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    exampleOutput:
+      '{\n  "header": {\n    "alg": "HS256",\n    "typ": "JWT"\n  },\n  "payload": {\n    "sub": "1234567890",\n    "name": "Ana"\n  }\n}',
+    whyUseful:
+      "Helps developers troubleshoot auth flows by quickly inspecting JWT contents without external tooling.",
+    faq: [
+      { question: "Does this verify JWT signatures?", answer: "No. This tool decodes token content only and does not verify signatures." },
+      { question: "Is my token uploaded?", answer: "No. Decoding happens in your browser." },
+    ],
+    related: ["base64-decoder", "json-formatter", "json-validator", "url-decoder"],
+    kind: "standard",
+    categories: ["developer-tools", "json-tools"],
+    createdAt: "2026-03-26",
+    outputFileName: "decoded-jwt.json",
+    outputMimeType: "application/json",
+  },
+  {
+    slug: "hash-generator",
+    title: "Hash Generator",
+    shortDescription: "Generate MD5 and SHA hashes from text input.",
+    tags: ["hash generator", "md5 generator", "sha256 hash", "checksum tool"],
+    intro:
+      "Create deterministic hash digests from text using MD5, SHA-1, SHA-256, SHA-384, or SHA-512.",
+    howToUse: [
+      "Paste text into the input field.",
+      "Choose a hash algorithm from the dropdown.",
+      "Generate and copy/download the hash output.",
+    ],
+    exampleInput: "hello world",
+    exampleOutput: "5eb63bbbe01eeed093cb22bb8f5acdc3",
+    whyUseful:
+      "Useful for checksums, deterministic IDs, and validating content integrity across systems.",
+    faq: [
+      { question: "Which algorithms are supported?", answer: "MD5, SHA-1, SHA-256, SHA-384, and SHA-512 are supported." },
+      { question: "Should I use MD5 for security?", answer: "No. MD5 is weak for security purposes and should only be used for compatibility checks." },
+    ],
+    related: ["base64-encoder", "base64-decoder", "jwt-decoder", "url-encoder"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-03-27",
+    outputFileName: "hash.txt",
+    outputMimeType: "text/plain",
+  },
+  {
     slug: "timestamp-converter",
     title: "Timestamp Converter",
     shortDescription: "Convert Unix timestamps and date strings into readable time formats.",
