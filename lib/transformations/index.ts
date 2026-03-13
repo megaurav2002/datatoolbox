@@ -18,6 +18,18 @@ import {
 import { cleanCsv } from "@/lib/transformations/csv-cleaner";
 import { analyzeCsvForSql, generateSqlFromCsvRows } from "@/lib/transformations/csv-to-sql";
 import { flattenJson } from "@/lib/transformations/json-flatten";
+import {
+  cronExpressionParser,
+  csvMergeTool,
+  csvSplitter,
+  dateFormatConverter,
+  jsonPathExtractor,
+  ndjsonFormatter,
+  sqlFormatter,
+  sqlMinifier,
+  sqlToCsv,
+  urlParser,
+} from "@/lib/transformations/additional-tools";
 
 const emailRegex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
 const numberRegex = /[-+]?\d*\.?\d+/g;
@@ -645,15 +657,24 @@ function jsonFlattenToCsv(input: string): TransformResult {
 
 export const transformations: Record<string, (input: string) => TransformResult> = {
   "csv-column-mapper": withTransformErrorBoundary(csvColumnMapper),
+  "csv-merge-tool": withTransformErrorBoundary(csvMergeTool),
+  "csv-splitter": withTransformErrorBoundary(csvSplitter),
   "csv-to-json": withTransformErrorBoundary(csvToJson),
   "csv-to-sql": withTransformErrorBoundary(csvToSql),
+  "cron-expression-parser": withTransformErrorBoundary(cronExpressionParser),
+  "date-format-converter": withTransformErrorBoundary(dateFormatConverter),
+  "json-path-extractor": withTransformErrorBoundary(jsonPathExtractor),
   "json-schema-generator": withTransformErrorBoundary(jsonSchemaGenerator),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
   "jwt-decoder": withTransformErrorBoundary(jwtDecoder),
   "hash-generator": withTransformErrorBoundary(hashGenerator),
   "mermaid-editor": withTransformErrorBoundary(mermaidEditor),
+  "ndjson-formatter": withTransformErrorBoundary(ndjsonFormatter),
   "ndjson-to-csv": withTransformErrorBoundary(ndjsonToCsv),
   "json-flatten-to-csv": withTransformErrorBoundary(jsonFlattenToCsv),
+  "sql-formatter": withTransformErrorBoundary(sqlFormatter),
+  "sql-minifier": withTransformErrorBoundary(sqlMinifier),
+  "sql-to-csv": withTransformErrorBoundary(sqlToCsv),
   "csv-cleaner": withTransformErrorBoundary(csvCleaner),
   "csv-validator": withTransformErrorBoundary(csvValidator),
   "csv-to-excel": withTransformErrorBoundary(csvToExcel),
@@ -670,6 +691,7 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "uuid-generator": withTransformErrorBoundary(uuidGenerator),
   "url-encoder": withTransformErrorBoundary(urlEncoder),
   "url-decoder": withTransformErrorBoundary(urlDecoder),
+  "url-parser": withTransformErrorBoundary(urlParser),
   "regex-tester": withTransformErrorBoundary(regexTester),
   "timestamp-converter": withTransformErrorBoundary(timestampConverter),
 };

@@ -598,6 +598,283 @@ export const tools: ToolDefinition[] = [
     outputMimeType: "text/plain",
   },
   {
+    slug: "json-path-extractor",
+    title: "JSON Path Extractor",
+    shortDescription: "Extract nested values from JSON using dot and bracket path syntax.",
+    tags: ["json path extractor", "json path query", "extract json value", "developer tools"],
+    intro:
+      "Use a JSON path-like expression to retrieve nested values from JSON payloads for debugging and validation.",
+    howToUse: [
+      "Enter a path on the first line, such as user.profile.email or items[0].id.",
+      "Paste JSON data on the following lines.",
+      "Click Transform to extract the matching value.",
+    ],
+    exampleInput:
+      'user.profile.email\n{"user":{"profile":{"email":"ana@example.com"}}}',
+    exampleOutput: "ana@example.com",
+    whyUseful:
+      "Speeds up API debugging by quickly pulling specific fields from large JSON payloads.",
+    faq: [
+      { question: "What path syntax is supported?", answer: "Dot notation with array indices like items[0].id is supported." },
+      { question: "What if the path does not exist?", answer: "The tool returns a clear path-not-found error." },
+    ],
+    related: ["json-formatter", "json-validator", "json-schema-generator", "jwt-decoder"],
+    kind: "standard",
+    categories: ["json-tools", "developer-tools"],
+    createdAt: "2026-03-28",
+  },
+  {
+    slug: "cron-expression-parser",
+    title: "Cron Expression Parser",
+    shortDescription: "Explain 5-field cron expressions in readable language.",
+    tags: ["cron parser", "cron expression parser", "crontab helper", "developer tools"],
+    intro:
+      "Parse cron schedules and convert them into plain-language descriptions for easier review.",
+    howToUse: [
+      "Paste a 5-field cron expression (minute hour day-of-month month day-of-week).",
+      "Click Transform.",
+      "Read the field-by-field schedule explanation.",
+    ],
+    exampleInput: "*/15 9-17 * * 1-5",
+    exampleOutput:
+      "Expression: */15 9-17 * * 1-5\nEvery 15 minutes\nhour from 9 to 17\nEvery day-of-month\nEvery month\nDay-of-week from Monday (1) to Friday (5)",
+    whyUseful:
+      "Prevents scheduling mistakes by making cron intent easy to validate before deployment.",
+    faq: [
+      { question: "Does this support 6-field cron with seconds?", answer: "No. This tool currently supports standard 5-field cron format." },
+      { question: "Are value ranges validated?", answer: "Yes. Out-of-range values return errors." },
+    ],
+    related: ["timestamp-converter", "date-format-converter", "regex-tester", "url-parser"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-03-29",
+  },
+  {
+    slug: "sql-formatter",
+    title: "SQL Formatter",
+    shortDescription: "Format SQL queries with normalized spacing and readable line breaks.",
+    tags: ["sql formatter", "format sql", "pretty sql", "developer tools"],
+    intro:
+      "Make SQL easier to read by normalizing whitespace, uppercasing keywords, and adding line breaks around clauses.",
+    howToUse: [
+      "Paste SQL query text.",
+      "Click Transform to format the query.",
+      "Copy or download the formatted SQL output.",
+    ],
+    exampleInput: "select id,name from users where active = 1 order by name",
+    exampleOutput: "SELECT id, name\nFROM users\nWHERE active = 1\nORDER BY name",
+    whyUseful:
+      "Improves readability in pull requests, debugging sessions, and SQL query reviews.",
+    faq: [
+      { question: "Is this a dialect-aware formatter?", answer: "No. It is a lightweight formatter for common SQL patterns." },
+      { question: "Does it change query logic?", answer: "No. It only changes formatting." },
+    ],
+    related: ["sql-minifier", "sql-to-csv", "csv-to-sql", "json-to-csv"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-03-30",
+    outputFileName: "formatted.sql",
+    outputMimeType: "text/sql",
+  },
+  {
+    slug: "sql-minifier",
+    title: "SQL Minifier",
+    shortDescription: "Minify SQL by removing comments and extra whitespace.",
+    tags: ["sql minifier", "compress sql", "strip sql comments", "developer tools"],
+    intro:
+      "Reduce SQL text size by removing comments and collapsing whitespace while preserving query meaning.",
+    howToUse: [
+      "Paste SQL query text.",
+      "Click Transform to minify.",
+      "Copy or download compact SQL output.",
+    ],
+    exampleInput:
+      "-- user query\nSELECT id, name FROM users\nWHERE active = 1;  ",
+    exampleOutput: "SELECT id,name FROM users WHERE active=1;",
+    whyUseful:
+      "Useful for embedding SQL in scripts, logs, or payloads where compact output is preferred.",
+    faq: [
+      { question: "Does this remove SQL comments?", answer: "Yes. Line and block comments are removed." },
+      { question: "Will it validate SQL syntax?", answer: "No. It minifies text but does not execute or validate SQL." },
+    ],
+    related: ["sql-formatter", "sql-to-csv", "csv-to-sql", "regex-tester"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-03-31",
+    outputFileName: "minified.sql",
+    outputMimeType: "text/sql",
+  },
+  {
+    slug: "sql-to-csv",
+    title: "SQL to CSV Converter",
+    shortDescription: "Convert SQL INSERT VALUES statements into CSV rows.",
+    tags: ["sql to csv", "insert to csv", "sql values parser", "data conversion"],
+    intro:
+      "Extract table rows from INSERT INTO ... VALUES SQL and convert them into CSV format.",
+    howToUse: [
+      "Paste an INSERT INTO ... VALUES SQL statement.",
+      "Click Transform to parse columns and tuples.",
+      "Copy or download the resulting CSV output.",
+    ],
+    exampleInput:
+      "INSERT INTO users (id,name,city) VALUES (1,'Ana','Melbourne'),(2,'Bob','Sydney');",
+    exampleOutput: "id,name,city\n1,Ana,Melbourne\n2,Bob,Sydney",
+    whyUseful:
+      "Helps recover tabular data from SQL scripts for spreadsheet analysis and QA checks.",
+    faq: [
+      { question: "What SQL patterns are supported?", answer: "This tool supports INSERT INTO ... VALUES statements." },
+      { question: "What if columns are omitted in SQL?", answer: "Generic column_1, column_2, etc. headers are generated." },
+    ],
+    related: ["csv-to-sql", "sql-formatter", "csv-cleaner", "json-to-csv"],
+    kind: "standard",
+    categories: ["csv-tools", "developer-tools", "spreadsheet-tools"],
+    createdAt: "2026-04-01",
+    outputFileName: "converted.csv",
+    outputMimeType: "text/csv",
+  },
+  {
+    slug: "csv-merge-tool",
+    title: "CSV Merge Tool",
+    shortDescription: "Merge two CSV blocks into one output with unified headers.",
+    tags: ["csv merge", "combine csv files", "merge csv rows", "spreadsheet tools"],
+    intro:
+      "Merge two CSV datasets by combining headers and appending rows into a single CSV file.",
+    howToUse: [
+      "Paste first CSV block.",
+      "Add a blank line, then paste second CSV block.",
+      "Click Transform to merge both files into one CSV.",
+    ],
+    exampleInput:
+      "id,name\n1,Ana\n\nid,email\n2,bob@example.com",
+    exampleOutput:
+      "id,name,email\n1,Ana,\n2,,bob@example.com",
+    whyUseful:
+      "Useful for consolidating partial exports and combining records from different CSV sources.",
+    faq: [
+      { question: "Do both CSV blocks need same headers?", answer: "No. Missing columns are filled with empty values." },
+      { question: "How are rows merged?", answer: "Rows are appended; this tool does not perform key-based joins." },
+    ],
+    related: ["csv-splitter", "csv-cleaner", "csv-validator", "csv-column-mapper"],
+    kind: "standard",
+    categories: ["csv-tools", "spreadsheet-tools"],
+    createdAt: "2026-04-02",
+    outputFileName: "merged.csv",
+    outputMimeType: "text/csv",
+  },
+  {
+    slug: "csv-splitter",
+    title: "CSV Splitter",
+    shortDescription: "Split one CSV into chunk previews by row count.",
+    tags: ["csv splitter", "split csv file", "csv chunking", "spreadsheet tools"],
+    intro:
+      "Split a CSV dataset into multiple chunk previews using a configurable rows-per-file value.",
+    howToUse: [
+      "Enter rows per chunk in the first section.",
+      "Add a blank line, then paste CSV data.",
+      "Click Transform to generate chunked CSV previews.",
+    ],
+    exampleInput:
+      "2\n\nid,name\n1,Ana\n2,Bob\n3,Cam",
+    exampleOutput:
+      "--- chunk_1.csv ---\nid,name\n1,Ana\n2,Bob\n\n--- chunk_2.csv ---\nid,name\n3,Cam",
+    whyUseful:
+      "Helps break large CSV exports into smaller chunks for uploads and incremental processing.",
+    faq: [
+      { question: "Does this create physical files?", answer: "No. It generates chunk previews that you can copy and save." },
+      { question: "What chunk size should I use?", answer: "Use a positive whole number based on your target system limits." },
+    ],
+    related: ["csv-merge-tool", "csv-cleaner", "csv-validator", "csv-to-json"],
+    kind: "standard",
+    categories: ["csv-tools", "spreadsheet-tools"],
+    createdAt: "2026-04-03",
+    outputFileName: "split-preview.txt",
+    outputMimeType: "text/plain",
+  },
+  {
+    slug: "ndjson-formatter",
+    title: "NDJSON Formatter",
+    shortDescription: "Format newline-delimited JSON into readable pretty blocks.",
+    tags: ["ndjson formatter", "json lines formatter", "format ndjson", "developer tools"],
+    intro:
+      "Format JSON Lines (NDJSON) input by pretty-printing each line while preserving record boundaries.",
+    howToUse: [
+      "Paste one JSON object per line.",
+      "Click Transform to validate and format each line.",
+      "Copy or download the formatted NDJSON output.",
+    ],
+    exampleInput:
+      '{"id":1,"event":"signup"}\n{"id":2,"event":"login"}',
+    exampleOutput:
+      '{\n  "id": 1,\n  "event": "signup"\n}\n\n{\n  "id": 2,\n  "event": "login"\n}',
+    whyUseful:
+      "Improves readability when inspecting log pipelines, event streams, and JSONL exports.",
+    faq: [
+      { question: "Will this validate each line?", answer: "Yes. Invalid JSON lines return line-numbered errors." },
+      { question: "Does it change record order?", answer: "No. Output preserves input line order." },
+    ],
+    related: ["ndjson-to-csv", "json-formatter", "json-validator", "json-to-csv"],
+    kind: "standard",
+    categories: ["json-tools", "developer-tools"],
+    createdAt: "2026-04-04",
+    outputFileName: "formatted.ndjson.txt",
+    outputMimeType: "text/plain",
+  },
+  {
+    slug: "url-parser",
+    title: "URL Parser",
+    shortDescription: "Parse URLs into protocol, host, path, hash, and query parameters.",
+    tags: ["url parser", "parse query string", "url analyzer", "developer tools"],
+    intro:
+      "Break a full URL into structured components and decoded query parameters for debugging.",
+    howToUse: [
+      "Paste a full absolute URL including protocol.",
+      "Click Transform to parse URL components.",
+      "Inspect and copy/download the parsed JSON output.",
+    ],
+    exampleInput:
+      "https://example.com:8080/path/to/page?utm_source=newsletter&id=42#section",
+    exampleOutput:
+      '{\n  "protocol": "https:",\n  "host": "example.com:8080",\n  "pathname": "/path/to/page",\n  "queryParams": {\n    "utm_source": "newsletter",\n    "id": "42"\n  }\n}',
+    whyUseful:
+      "Useful for debugging redirects, query params, tracking links, and API callback URLs.",
+    faq: [
+      { question: "Does this support relative URLs?", answer: "No. Input must be an absolute URL with protocol." },
+      { question: "How are duplicate query params shown?", answer: "Duplicate keys are returned as arrays." },
+    ],
+    related: ["url-encoder", "url-decoder", "jwt-decoder", "regex-tester"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-04-05",
+    outputFileName: "parsed-url.json",
+    outputMimeType: "application/json",
+  },
+  {
+    slug: "date-format-converter",
+    title: "Date Format Converter",
+    shortDescription: "Convert date strings and timestamps into common machine-readable formats.",
+    tags: ["date format converter", "unix to date", "iso date converter", "developer tools"],
+    intro:
+      "Convert dates into ISO, UTC, local time, and Unix timestamp representations.",
+    howToUse: [
+      "Paste a date string or Unix timestamp.",
+      "Click Transform to normalize formats.",
+      "Copy/download the multi-format JSON output.",
+    ],
+    exampleInput: "1710000000",
+    exampleOutput:
+      '{\n  "iso8601": "2024-03-09T16:00:00.000Z",\n  "unixSeconds": 1710000000,\n  "dateOnlyUtc": "2024-03-09"\n}',
+    whyUseful:
+      "Helps developers and analysts convert dates across APIs, logs, and data pipelines without timezone confusion.",
+    faq: [
+      { question: "Are both seconds and milliseconds supported?", answer: "Yes. Numeric input auto-detects Unix seconds or milliseconds." },
+      { question: "What happens with invalid dates?", answer: "The tool returns a clear validation error." },
+    ],
+    related: ["timestamp-converter", "cron-expression-parser", "url-parser", "json-formatter"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-04-06",
+  },
+  {
     slug: "timestamp-converter",
     title: "Timestamp Converter",
     shortDescription: "Convert Unix timestamps and date strings into readable time formats.",

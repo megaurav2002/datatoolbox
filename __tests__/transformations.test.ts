@@ -5,12 +5,16 @@ describe("transformations", () => {
     expect(Object.keys(transformations).sort()).toEqual([
       "base64-decoder",
       "base64-encoder",
+      "cron-expression-parser",
       "csv-cleaner",
       "csv-column-mapper",
+      "csv-merge-tool",
+      "csv-splitter",
       "csv-to-excel",
       "csv-to-json",
       "csv-to-sql",
       "csv-validator",
+      "date-format-converter",
       "excel-to-csv",
       "extract-emails",
       "extract-numbers",
@@ -18,18 +22,24 @@ describe("transformations", () => {
       "json-flatten-to-csv",
       "json-formatter",
       "json-minifier",
+      "json-path-extractor",
       "json-schema-generator",
       "json-to-csv",
       "json-validator",
       "jwt-decoder",
       "mermaid-editor",
+      "ndjson-formatter",
       "ndjson-to-csv",
       "regex-tester",
       "remove-duplicate-lines",
       "sort-lines-alphabetically",
+      "sql-formatter",
+      "sql-minifier",
+      "sql-to-csv",
       "timestamp-converter",
       "url-decoder",
       "url-encoder",
+      "url-parser",
       "uuid-generator",
     ]);
   });
@@ -176,6 +186,38 @@ describe("transformations", () => {
     it("throws when csv section is missing", () => {
       expect(() => transformations["csv-column-mapper"]("name:full_name\n\n\n")).toThrow(
         "CSV Column Mapper requires mapping rules first, then a blank line, then CSV data.",
+      );
+    });
+  });
+
+  describe("csv-merge-tool", () => {
+    it("merges csv blocks with union headers", () => {
+      const result = transformations["csv-merge-tool"](
+        "id,name\n1,Ana\n\nid,email\n2,bob@example.com",
+      );
+      expect(result.output).toBe("id,name,email\n1,Ana,\n2,,bob@example.com");
+      expect(result.downloadFileName).toBe("merged.csv");
+      expect(result.downloadMimeType).toBe("text/csv");
+    });
+
+    it("throws when second csv block is missing", () => {
+      expect(() => transformations["csv-merge-tool"]("id,name\n1,Ana")).toThrow(
+        "CSV Merge Tool requires two CSV blocks separated by a blank line.",
+      );
+    });
+  });
+
+  describe("csv-splitter", () => {
+    it("splits csv rows into chunk previews", () => {
+      const result = transformations["csv-splitter"]("2\n\nid,name\n1,Ana\n2,Bob\n3,Cam");
+      expect(result.output).toContain("--- chunk_1.csv ---");
+      expect(result.output).toContain("--- chunk_2.csv ---");
+      expect(result.downloadFileName).toBe("split-preview.txt");
+    });
+
+    it("throws for invalid chunk size", () => {
+      expect(() => transformations["csv-splitter"]("0\n\nid,name\n1,Ana")).toThrow(
+        "CSV Splitter requires a positive whole number of rows per file.",
       );
     });
   });
@@ -352,6 +394,35 @@ describe("transformations", () => {
     });
   });
 
+  describe("ndjson-formatter", () => {
+    it("formats ndjson into pretty json blocks", () => {
+      const result = transformations["ndjson-formatter"]('{"id":1}\n{"id":2}');
+      expect(result.output).toContain('{\n  "id": 1\n}');
+      expect(result.output).toContain('{\n  "id": 2\n}');
+    });
+
+    it("throws for invalid ndjson line", () => {
+      expect(() => transformations["ndjson-formatter"]('{"id":1}\n{bad}')).toThrow(
+        "NDJSON Formatter found invalid JSON at line 2.",
+      );
+    });
+  });
+
+  describe("json-path-extractor", () => {
+    it("extracts nested json value by path", () => {
+      const result = transformations["json-path-extractor"](
+        'user.profile.email\n{"user":{"profile":{"email":"ana@example.com"}}}',
+      );
+      expect(result.output).toBe("ana@example.com");
+    });
+
+    it("throws when path is missing", () => {
+      expect(() =>
+        transformations["json-path-extractor"]('user.profile.phone\n{"user":{"profile":{"email":"ana@example.com"}}}'),
+      ).toThrow("JSON Path Extractor: path not found in input JSON.");
+    });
+  });
+
   describe("jwt-decoder", () => {
     it("decodes jwt header and payload", () => {
       const token =
@@ -385,6 +456,87 @@ describe("transformations", () => {
     it("throws when token segments are not decodable json", () => {
       expect(() => transformations["jwt-decoder"]("abc.def.ghi")).toThrow(
         "JWT Decoder could not decode token. Ensure it is a valid JWT.",
+      );
+    });
+  });
+
+  describe("cron-expression-parser", () => {
+    it("explains 5-field cron expressions", () => {
+      const result = transformations["cron-expression-parser"]("*/15 9-17 * * 1-5");
+      expect(result.output).toContain("Every 15 minutes");
+      expect(result.output).toContain("day-of-week");
+    });
+
+    it("throws for invalid field count", () => {
+      expect(() => transformations["cron-expression-parser"]("* * * *")).toThrow(
+        "Cron Expression Parser requires 5 fields: minute hour day-of-month month day-of-week.",
+      );
+    });
+
+    it("rejects zero step values", () => {
+      expect(() => transformations["cron-expression-parser"]("*/0 * * * *")).toThrow(
+        "Cron Expression Parser: minute step value must be between 1 and 59.",
+      );
+    });
+
+    it("supports day-of-week 7 as Sunday", () => {
+      const result = transformations["cron-expression-parser"]("0 9 * * 7");
+      expect(result.output).toContain("Sunday (7)");
+    });
+  });
+
+  describe("sql tools", () => {
+    it("formats sql clauses with line breaks", () => {
+      const result = transformations["sql-formatter"](
+        "select id,name from users where active = 1 order by name",
+      );
+      expect(result.output).toContain("SELECT");
+      expect(result.output).toContain("\nFROM");
+      expect(result.downloadFileName).toBe("formatted.sql");
+    });
+
+    it("minifies sql by removing comments and whitespace", () => {
+      const result = transformations["sql-minifier"]("-- c\nSELECT id, name FROM users WHERE active = 1;");
+      expect(result.output).toBe("SELECT id,name FROM users WHERE active=1;");
+      expect(result.downloadFileName).toBe("minified.sql");
+    });
+
+    it("converts sql insert values to csv", () => {
+      const result = transformations["sql-to-csv"](
+        "INSERT INTO users (id,name,city) VALUES (1,'Ana','Melbourne'),(2,'Bob','Sydney');",
+      );
+      expect(result.output).toBe("id,name,city\n1,Ana,Melbourne\n2,Bob,Sydney");
+      expect(result.downloadFileName).toBe("converted.csv");
+    });
+  });
+
+  describe("url-parser", () => {
+    it("parses url into component json", () => {
+      const result = transformations["url-parser"](
+        "https://example.com:8080/path?p=1&p=2#hash",
+      );
+      expect(result.output).toContain('"host": "example.com:8080"');
+      expect(result.output).toContain('"p": [');
+      expect(result.downloadFileName).toBe("parsed-url.json");
+    });
+
+    it("throws for invalid absolute url", () => {
+      expect(() => transformations["url-parser"]("/relative/path")).toThrow(
+        "URL Parser requires a valid absolute URL including protocol (e.g. https://...).",
+      );
+    });
+  });
+
+  describe("date-format-converter", () => {
+    it("converts unix timestamp into multiple date formats", () => {
+      const result = transformations["date-format-converter"]("1710000000");
+      expect(result.output).toContain('"unixSeconds": 1710000000');
+      expect(result.output).toContain('"dateOnlyUtc":');
+    });
+
+    it("throws for invalid date input", () => {
+      expect(() => transformations["date-format-converter"]("not-a-date")).toThrow(
+        "Date Format Converter requires a valid date string or unix timestamp.",
       );
     });
   });

@@ -307,6 +307,126 @@
     "url": "/tools/hash-generator"
   },
   {
+    "slug": "json-path-extractor",
+    "title": "JSON Path Extractor",
+    "description": "Extract nested values from JSON using dot and bracket path syntax.",
+    "tags": [
+      "json path extractor",
+      "json path query",
+      "extract json value",
+      "developer tools"
+    ],
+    "url": "/tools/json-path-extractor"
+  },
+  {
+    "slug": "cron-expression-parser",
+    "title": "Cron Expression Parser",
+    "description": "Explain 5-field cron expressions in readable language.",
+    "tags": [
+      "cron parser",
+      "cron expression parser",
+      "crontab helper",
+      "developer tools"
+    ],
+    "url": "/tools/cron-expression-parser"
+  },
+  {
+    "slug": "sql-formatter",
+    "title": "SQL Formatter",
+    "description": "Format SQL queries with normalized spacing and readable line breaks.",
+    "tags": [
+      "sql formatter",
+      "format sql",
+      "pretty sql",
+      "developer tools"
+    ],
+    "url": "/tools/sql-formatter"
+  },
+  {
+    "slug": "sql-minifier",
+    "title": "SQL Minifier",
+    "description": "Minify SQL by removing comments and extra whitespace.",
+    "tags": [
+      "sql minifier",
+      "compress sql",
+      "strip sql comments",
+      "developer tools"
+    ],
+    "url": "/tools/sql-minifier"
+  },
+  {
+    "slug": "sql-to-csv",
+    "title": "SQL to CSV Converter",
+    "description": "Convert SQL INSERT VALUES statements into CSV rows.",
+    "tags": [
+      "sql to csv",
+      "insert to csv",
+      "sql values parser",
+      "data conversion"
+    ],
+    "url": "/tools/sql-to-csv"
+  },
+  {
+    "slug": "csv-merge-tool",
+    "title": "CSV Merge Tool",
+    "description": "Merge two CSV blocks into one output with unified headers.",
+    "tags": [
+      "csv merge",
+      "combine csv files",
+      "merge csv rows",
+      "spreadsheet tools"
+    ],
+    "url": "/tools/csv-merge-tool"
+  },
+  {
+    "slug": "csv-splitter",
+    "title": "CSV Splitter",
+    "description": "Split one CSV into chunk previews by row count.",
+    "tags": [
+      "csv splitter",
+      "split csv file",
+      "csv chunking",
+      "spreadsheet tools"
+    ],
+    "url": "/tools/csv-splitter"
+  },
+  {
+    "slug": "ndjson-formatter",
+    "title": "NDJSON Formatter",
+    "description": "Format newline-delimited JSON into readable pretty blocks.",
+    "tags": [
+      "ndjson formatter",
+      "json lines formatter",
+      "format ndjson",
+      "developer tools"
+    ],
+    "url": "/tools/ndjson-formatter"
+  },
+  {
+    "slug": "url-parser",
+    "title": "URL Parser",
+    "description": "Parse URLs into protocol, host, path, hash, and query parameters.",
+    "tags": [
+      "url parser",
+      "parse query string",
+      "url analyzer",
+      "developer tools"
+    ],
+    "url": "/tools/url-parser"
+  },
+  {
+    "slug": "date-format-converter",
+    "title": "Date Format Converter",
+    "description": "Convert date strings and timestamps into common machine-readable formats.",
+    "tags": [
+      "date format converter",
+      "unix to date",
+      "iso date converter",
+      "developer tools"
+    ],
+    "url": "/tools/date-format-converter"
+  },
+  {
     "slug": "timestamp-converter",
     "title": "Timestamp Converter",
     "description": "Convert Unix timestamps and date strings into readable time formats.",
