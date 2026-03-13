@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { hubPath, hubsBySlug } from "@/lib/hubs";
+import { hubsBySlug } from "@/lib/hubs";
 import { guidePath, guidesBySlug, type GuideDefinition } from "@/lib/guides";
+import { toolsCategoryCanonical } from "@/lib/tool-category-content";
 import { toolsBySlug } from "@/lib/tools";
 
 type GuidePageProps = {
@@ -83,7 +84,7 @@ export default function GuidePage({ guide }: GuidePageProps) {
               {guide.relatedHubSlugs.map((hubSlug, index) => (
                 <span key={hubSlug}>
                   {index > 0 ? ", " : ""}
-                  <Link className="underline" href={hubPath(hubSlug)}>
+                  <Link className="underline" href={toolsCategoryCanonical(hubSlug)}>
                     {hubsBySlug[hubSlug].title}
                   </Link>
                 </span>

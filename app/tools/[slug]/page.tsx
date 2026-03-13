@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ToolLayout from "@/components/ToolLayout";
 import { generateToolFAQs } from "@/lib/generateToolFAQs";
-import { hubPath, relatedHubsForTool } from "@/lib/hubs";
+import { relatedHubsForTool } from "@/lib/hubs";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
+import { toolsCategoryCanonical } from "@/lib/tool-category-content";
 import { tools, toolsBySlug } from "@/lib/tools";
 import ToolClient from "./ToolClient";
 
@@ -122,7 +123,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
                 "@type": "ListItem",
                 position: 2,
                 name: primaryHub.title,
-                item: absoluteUrl(hubPath(primaryHub.slug)),
+                item: absoluteUrl(toolsCategoryCanonical(primaryHub.slug)),
               },
             ]
           : []),

@@ -1,6 +1,7 @@
 import { toolsBySlug } from "@/lib/tools";
 import type { ToolDefinition } from "@/lib/types";
-import { hubPath, type HubSlug } from "@/lib/hubs";
+import type { HubSlug } from "@/lib/hubs";
+import { toolsCategoryCanonical } from "@/lib/tool-category-content";
 
 export type GuideSlug =
   | "how-to-convert-json-to-csv"
@@ -42,7 +43,7 @@ export const guides: GuideDefinition[] = [
       "Copy or download the CSV file for spreadsheet use.",
     ],
     primaryToolSlug: "json-to-csv",
-    relatedToolSlugs: ["json-flatten-to-csv", "csv-cleaner", "csv-validator"],
+    relatedToolSlugs: ["json-flatten-to-csv", "json-validator", "json-formatter", "csv-cleaner", "csv-validator"],
     relatedGuideSlugs: ["how-to-flatten-json", "how-to-clean-csv-data"],
     relatedHubSlugs: ["json-tools", "csv-tools"],
   },
@@ -65,7 +66,7 @@ export const guides: GuideDefinition[] = [
       "Validate the cleaned file and then export it for your target system.",
     ],
     primaryToolSlug: "csv-cleaner",
-    relatedToolSlugs: ["csv-validator", "remove-duplicate-lines", "sort-lines-alphabetically"],
+    relatedToolSlugs: ["csv-validator", "remove-duplicate-lines", "sort-lines-alphabetically", "csv-to-json"],
     relatedGuideSlugs: ["how-to-import-csv-into-sql"],
     relatedHubSlugs: ["data-cleaning-tools", "csv-tools"],
   },
@@ -87,7 +88,7 @@ export const guides: GuideDefinition[] = [
       "Select SQL dialect, generate output, and copy/download SQL statements.",
     ],
     primaryToolSlug: "csv-to-sql",
-    relatedToolSlugs: ["csv-cleaner", "csv-validator", "csv-to-json"],
+    relatedToolSlugs: ["csv-cleaner", "csv-validator", "csv-to-json", "sql-formatter"],
     relatedGuideSlugs: ["how-to-clean-csv-data"],
     relatedHubSlugs: ["csv-tools", "developer-data-tools"],
   },
@@ -109,7 +110,7 @@ export const guides: GuideDefinition[] = [
       "Copy or download the output for downstream use.",
     ],
     primaryToolSlug: "json-flatten-to-csv",
-    relatedToolSlugs: ["json-to-csv", "json-formatter", "csv-cleaner"],
+    relatedToolSlugs: ["json-to-csv", "json-formatter", "json-validator", "csv-cleaner"],
     relatedGuideSlugs: ["how-to-convert-json-to-csv"],
     relatedHubSlugs: ["json-tools", "developer-data-tools"],
   },
@@ -137,5 +138,5 @@ export function guideTools(guide: GuideDefinition): ToolDefinition[] {
 }
 
 export function guideHubLinks(guide: GuideDefinition): Array<{ slug: HubSlug; href: string }> {
-  return guide.relatedHubSlugs.map((slug) => ({ slug, href: hubPath(slug) }));
+  return guide.relatedHubSlugs.map((slug) => ({ slug, href: toolsCategoryCanonical(slug) }));
 }

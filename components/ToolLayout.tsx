@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { generateToolFAQs } from "@/lib/generateToolFAQs";
 import { guidePath, relatedGuidesForTool } from "@/lib/guides";
-import { hubPath, relatedHubsForTool } from "@/lib/hubs";
+import { relatedHubsForTool } from "@/lib/hubs";
+import { toolsCategoryCanonical } from "@/lib/tool-category-content";
 import type { ToolDefinition } from "@/lib/types";
 import { toolsBySlug } from "@/lib/tools";
 
@@ -64,11 +65,48 @@ function commonUseCasesForTool(tool: ToolDefinition): string[] {
   ];
 }
 
+function commonMistakesForTool(tool: ToolDefinition): string[] {
+  if (tool.commonMistakes && tool.commonMistakes.length > 0) {
+    return tool.commonMistakes;
+  }
+
+  if (tool.categories.includes("csv-tools")) {
+    return [
+      "Using data without checking whether the header row matches expected column names.",
+      "Skipping validation before import, which can hide row-width or delimiter issues.",
+      "Converting files before cleaning duplicate or malformed records.",
+    ];
+  }
+
+  if (tool.categories.includes("json-tools")) {
+    return [
+      "Pasting partial JSON fragments instead of complete valid objects or arrays.",
+      "Assuming nested keys flatten automatically without checking output columns.",
+      "Mixing JSON arrays and objects when the tool expects one specific structure.",
+    ];
+  }
+
+  if (tool.categories.includes("developer-tools")) {
+    return [
+      "Treating decoded or formatted output as a security check when it is only a transformation.",
+      "Copying transformed values without confirming expected encoding or timestamp units.",
+      "Using sample data formats that differ from production payload structure.",
+    ];
+  }
+
+  return [
+    "Running transformations on raw input without checking formatting first.",
+    "Assuming output is production-ready without validating edge cases.",
+    "Skipping related tools that can catch upstream data-quality issues.",
+  ];
+}
+
 export default function ToolLayout({ tool, children }: ToolLayoutProps) {
   const faqs = generateToolFAQs(tool);
   const relatedGuides = relatedGuidesForTool(tool.slug);
   const relatedHubs = relatedHubsForTool(tool.slug);
   const commonUseCases = commonUseCasesForTool(tool);
+  const commonMistakes = commonMistakesForTool(tool);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -115,6 +153,15 @@ export default function ToolLayout({ tool, children }: ToolLayoutProps) {
             ))}
           </ul>
           <p className="mt-3 text-sm text-slate-700">{tool.whyUseful}</p>
+        </section>
+
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900">Common mistakes to avoid</h2>
+          <ul className="mt-3 list-inside list-disc space-y-2 text-slate-700">
+            {commonMistakes.map((mistake) => (
+              <li key={mistake}>{mistake}</li>
+            ))}
+          </ul>
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -176,7 +223,7 @@ export default function ToolLayout({ tool, children }: ToolLayoutProps) {
               {relatedHubs.map((hub, index) => (
                 <span key={hub.slug}>
                   {index > 0 ? " " : ""}
-                  <Link href={hubPath(hub.slug)} className="underline">
+                  <Link href={toolsCategoryCanonical(hub.slug)} className="underline">
                     {hub.title}
                   </Link>
                   {index < relatedHubs.length - 1 ? "," : ""}

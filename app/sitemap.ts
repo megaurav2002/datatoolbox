@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 import { categories } from "@/lib/categories";
 import { guides } from "@/lib/guides";
-import { hubs, hubPath } from "@/lib/hubs";
 import { getSiteUrl } from "@/lib/seo";
+import { toolsCategoryContent } from "@/lib/tool-category-content";
 import { tools } from "@/lib/tools";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
   const now = new Date();
+  const toolsCategorySlugs = new Set(Object.keys(toolsCategoryContent));
 
   return [
     {
@@ -40,17 +41,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.4,
     },
-    ...hubs.map((hub) => ({
-      url: `${base}${hubPath(hub.slug)}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.87,
-    })),
-    ...categories.map((category) => ({
+    ...categories
+      .filter((category) => !toolsCategorySlugs.has(category.slug))
+      .map((category) => ({
       url: `${base}/tools/${category.slug}`,
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.55,
+    })),
+    ...Object.keys(toolsCategoryContent).map((slug) => ({
+      url: `${base}/tools/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.86,
     })),
     ...guides.map((guide) => ({
       url: `${base}/guides/${guide.slug}`,

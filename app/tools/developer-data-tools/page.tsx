@@ -5,15 +5,15 @@ import {
   toolsCategoryStructuredData,
 } from "@/lib/tools-category-page";
 
-export const metadata: Metadata = getToolsCategoryMetadata("csv-tools");
+export const metadata: Metadata = getToolsCategoryMetadata("developer-data-tools");
 
-export default function CsvToolsPage() {
-  const structuredData = toolsCategoryStructuredData("csv-tools");
+export default function DeveloperDataToolsPage() {
+  const structuredData = toolsCategoryStructuredData("developer-data-tools");
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      {renderToolsCategoryPage("csv-tools")}
+      {renderToolsCategoryPage("developer-data-tools")}
     </>
   );
 }

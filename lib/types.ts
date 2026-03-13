@@ -16,6 +16,7 @@ export type ToolDefinition = {
   exampleInput: string;
   exampleOutput: string;
   whyUseful: string;
+  commonMistakes?: string[];
   faq: Array<{ question: string; answer: string }>;
   related: string[];
   kind: ToolKind;

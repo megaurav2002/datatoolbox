@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GuidePage from "@/components/GuidePage";
 import { guidePath, guides, guidesBySlug } from "@/lib/guides";
-import { hubPath, hubsBySlug } from "@/lib/hubs";
+import { hubsBySlug } from "@/lib/hubs";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
+import { toolsCategoryCanonical } from "@/lib/tool-category-content";
 import { toolsBySlug } from "@/lib/tools";
 
 type GuideRouteProps = {
@@ -111,7 +112,7 @@ export default async function GuideSlugPage({ params }: GuideRouteProps) {
       "@type": "ListItem",
       position: index + 1,
       name: hubsBySlug[hubSlug].title,
-      url: absoluteUrl(hubPath(hubSlug)),
+      url: absoluteUrl(toolsCategoryCanonical(hubSlug)),
     })),
   };
 

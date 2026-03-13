@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CategoryDefinition } from "@/lib/categories";
-import { hubPath, hubsBySlug, type HubSlug } from "@/lib/hubs";
+import { hubsBySlug, type HubSlug } from "@/lib/hubs";
+import { toolsCategoryCanonical } from "@/lib/tool-category-content";
 import type { ToolDefinition } from "@/lib/types";
 
 type CategoryPageProps = {
@@ -26,7 +27,7 @@ export default function CategoryPage({ category, tools }: CategoryPageProps) {
         <p className="mt-3 max-w-3xl text-slate-700">{category.description}</p>
         <p className="mt-3 text-sm text-slate-700">
           Looking for the SEO hub page?{" "}
-          <Link className="underline" href={hubPath(mappedHubSlug)}>
+          <Link className="underline" href={toolsCategoryCanonical(mappedHubSlug)}>
             View {hubsBySlug[mappedHubSlug].title}
           </Link>
           .
@@ -61,22 +62,22 @@ export default function CategoryPage({ category, tools }: CategoryPageProps) {
         <h2 className="text-xl font-semibold text-slate-900">Explore more categories</h2>
         <ul className="mt-3 flex flex-wrap gap-3 text-sm text-slate-700">
           <li>
-            <Link className="underline" href="/csv-tools">
+            <Link className="underline" href="/tools/csv-tools">
               CSV Tools
             </Link>
           </li>
           <li>
-            <Link className="underline" href="/json-tools">
+            <Link className="underline" href="/tools/json-tools">
               JSON Tools
             </Link>
           </li>
           <li>
-            <Link className="underline" href="/data-cleaning-tools">
+            <Link className="underline" href="/tools/data-cleaning-tools">
               Data Cleaning Tools
             </Link>
           </li>
           <li>
-            <Link className="underline" href="/developer-data-tools">
+            <Link className="underline" href="/tools/developer-data-tools">
               Developer Data Tools
             </Link>
           </li>

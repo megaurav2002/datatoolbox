@@ -80,10 +80,10 @@ export default function RootLayout({
             <div>
               <h2 className="font-semibold text-slate-900">Category Hubs</h2>
               <ul className="mt-2 space-y-1">
-                <li><Link className="underline" href="/csv-tools">CSV Tools</Link></li>
-                <li><Link className="underline" href="/json-tools">JSON Tools</Link></li>
-                <li><Link className="underline" href="/data-cleaning-tools">Data Cleaning Tools</Link></li>
-                <li><Link className="underline" href="/developer-data-tools">Developer Data Tools</Link></li>
+                <li><Link className="underline" href="/tools/csv-tools">CSV Tools</Link></li>
+                <li><Link className="underline" href="/tools/json-tools">JSON Tools</Link></li>
+                <li><Link className="underline" href="/tools/data-cleaning-tools">Data Cleaning Tools</Link></li>
+                <li><Link className="underline" href="/tools/developer-data-tools">Developer Data Tools</Link></li>
               </ul>
             </div>
             <div>

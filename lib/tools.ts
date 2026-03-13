@@ -4,20 +4,31 @@ export const tools: ToolDefinition[] = [
   {
     slug: "csv-to-json",
     title: "CSV to JSON Converter",
-    shortDescription: "Convert CSV rows into JSON objects instantly.",
+    shortDescription: "Convert CSV rows into structured JSON objects for apps and APIs.",
     tags: ["csv", "json", "converter", "spreadsheet", "data transformation"],
-    intro: "Convert comma-separated values into structured JSON for APIs and JavaScript apps.",
+    intro:
+      "Convert CSV files into JSON objects that are easier to consume in JavaScript applications, API fixtures, and automation scripts. The converter reads the first row as field names, maps each data row to an object, and returns clean JSON output you can copy or download.",
     howToUse: [
-      "Paste CSV with headers in the first row.",
-      "Click Transform to generate JSON.",
-      "Copy output or download the JSON file.",
+      "Paste CSV content with a header row in line one.",
+      "Click Transform to parse rows and create JSON objects.",
+      "Review the output, then copy it or download a `.json` file.",
     ],
     exampleInput: "name,email\nAna,ana@example.com",
     exampleOutput: '[\n  {\n    "name": "Ana",\n    "email": "ana@example.com"\n  }\n]',
-    whyUseful: "Great for moving spreadsheet data into web apps quickly.",
+    whyUseful:
+      "This is useful when spreadsheet exports need to become API seed data, mock payloads, or JSON fixtures in development.",
+    commonMistakes: [
+      "Using CSV without a header row, which causes unclear output keys.",
+      "Leaving inconsistent column counts across rows, which can create missing values.",
+      "Forgetting to clean duplicate or empty rows before conversion.",
+    ],
     faq: [
       { question: "Does this support headers?", answer: "Yes. First CSV row is used as object keys." },
       { question: "Can I download output?", answer: "Yes, download button exports JSON." },
+      {
+        question: "How are missing column values handled?",
+        answer: "Missing cells are returned as empty strings so each object keeps a consistent shape.",
+      },
     ],
     related: ["json-formatter", "csv-cleaner", "csv-to-sql", "json-validator"],
     kind: "standard",
@@ -31,14 +42,29 @@ export const tools: ToolDefinition[] = [
     title: "JSON to CSV Converter",
     shortDescription: "Turn JSON arrays into CSV for spreadsheets.",
     tags: ["json", "csv", "converter", "spreadsheet", "export"],
-    intro: "Convert JSON arrays of objects into CSV format compatible with Excel and Sheets.",
-    howToUse: ["Paste JSON array.", "Click Transform.", "Copy or download CSV."],
+    intro:
+      "Transform a JSON array of objects into CSV columns that open cleanly in Excel, Google Sheets, and BI tools. This converter is designed for API responses and exported JSON where you need tabular output quickly.",
+    howToUse: [
+      "Paste a valid JSON array of objects.",
+      "Click Transform to generate CSV headers and rows.",
+      "Copy the CSV output or download it for spreadsheet use.",
+    ],
     exampleInput: '[{"name":"Ana","email":"ana@example.com"}]',
     exampleOutput: "name,email\nAna,ana@example.com",
-    whyUseful: "Useful for exporting API data to spreadsheet workflows.",
+    whyUseful:
+      "Useful for analysts and operators who receive JSON from APIs but need to filter, sort, and share results in spreadsheets.",
+    commonMistakes: [
+      "Pasting a single JSON object instead of an array of objects.",
+      "Assuming nested objects automatically flatten into columns.",
+      "Ignoring sparse keys across records, which can create empty cells.",
+    ],
     faq: [
       { question: "What JSON shape is expected?", answer: "A non-empty array of objects." },
       { question: "Are missing keys handled?", answer: "Yes. Missing values are left empty." },
+      {
+        question: "Can I convert nested JSON too?",
+        answer: "For nested structures, use JSON Flatten / JSON to CSV first to avoid complex cell values.",
+      },
     ],
     related: ["csv-to-json", "json-flatten-to-csv", "json-minifier", "csv-validator"],
     kind: "standard",
@@ -198,14 +224,29 @@ export const tools: ToolDefinition[] = [
     title: "JSON Formatter",
     shortDescription: "Beautify JSON with indentation.",
     tags: ["json", "formatter", "beautify", "developer"],
-    intro: "Format minified or compact JSON into readable structure.",
-    howToUse: ["Paste JSON.", "Click Transform.", "Copy formatted JSON."],
+    intro:
+      "Format compact or minified JSON into readable, consistently indented output. This helps when reviewing API payloads, configuration files, and logs that are hard to scan in one-line form.",
+    howToUse: [
+      "Paste JSON into the input box.",
+      "Click Transform to validate and pretty-print the payload.",
+      "Copy the formatted JSON or continue into related tools.",
+    ],
     exampleInput: '{"name":"Ana","active":true}',
     exampleOutput: '{\n  "name": "Ana",\n  "active": true\n}',
-    whyUseful: "Improves readability and debugging speed.",
+    whyUseful:
+      "Readable JSON reduces debugging time and makes payload reviews easier in pull requests, docs, and incident analysis.",
+    commonMistakes: [
+      "Pasting JavaScript-style objects with trailing commas or single quotes.",
+      "Expecting formatter output to fix schema or business-logic errors.",
+      "Formatting only one branch of a payload and missing nested issues elsewhere.",
+    ],
     faq: [
       { question: "Does this validate JSON too?", answer: "Yes. Invalid JSON returns an error." },
       { question: "Will key order change?", answer: "No, existing key order is preserved." },
+      {
+        question: "Can I use this before minifying?",
+        answer: "Yes. A common workflow is format for review, validate, then minify for transport.",
+      },
     ],
     related: ["json-validator", "json-minifier", "json-flatten-to-csv", "csv-to-json"],
     kind: "standard",
@@ -217,16 +258,31 @@ export const tools: ToolDefinition[] = [
     title: "JSON Validator",
     shortDescription: "Validate JSON syntax instantly.",
     tags: ["json", "validator", "syntax", "developer"],
-    intro: "Check whether your JSON is syntactically valid before using it.",
-    howToUse: ["Paste JSON.", "Click Transform.", "Read validation result."],
+    intro:
+      "Validate JSON syntax before sending data to APIs, config loaders, or downstream transformations. The validator gives fast pass/fail feedback so you can catch malformed payloads early.",
+    howToUse: [
+      "Paste JSON input into the editor.",
+      "Click Transform to run syntax validation.",
+      "Read the result and fix any parsing errors before proceeding.",
+    ],
     exampleInput: '{"name":"Ana"}',
     exampleOutput: "Valid JSON.",
-    whyUseful: "Prevents parser errors in code and APIs.",
+    whyUseful:
+      "Early syntax validation prevents avoidable parser failures in production services, automation jobs, and deployment pipelines.",
+    commonMistakes: [
+      "Assuming valid syntax means the data also matches your schema.",
+      "Overlooking quote, comma, or bracket mismatches in long payloads.",
+      "Validating fragments that are not complete JSON documents.",
+    ],
     faq: [
       { question: "Do you fix invalid JSON?", answer: "No, this tool validates and reports errors." },
       { question: "Can large files be checked?", answer: "Yes, if your browser can load them." },
+      {
+        question: "Does validation include business rules?",
+        answer: "No. This checks syntax only. Use JSON Schema Generator for structure planning.",
+      },
     ],
-    related: ["json-formatter", "json-minifier", "csv-to-json"],
+    related: ["json-formatter", "json-minifier", "csv-to-json", "json-schema-generator"],
     kind: "standard",
     categories: ["json-tools", "developer-tools"],
     createdAt: "2026-03-06",
@@ -236,16 +292,31 @@ export const tools: ToolDefinition[] = [
     title: "JSON Minifier",
     shortDescription: "Compress JSON by removing whitespace.",
     tags: ["json", "minifier", "compress", "developer"],
-    intro: "Minify JSON payloads for faster transfer and smaller file size.",
-    howToUse: ["Paste JSON.", "Click Transform.", "Copy or download minified output."],
+    intro:
+      "Minify JSON by removing non-essential whitespace while preserving data values. This is useful when payload size matters for requests, embedded configs, or storage constraints.",
+    howToUse: [
+      "Paste valid JSON.",
+      "Click Transform to generate compact output.",
+      "Copy or download the minified JSON for use in your workflow.",
+    ],
     exampleInput: '{\n  "name": "Ana"\n}',
     exampleOutput: '{"name":"Ana"}',
-    whyUseful: "Reduces payload sizes in APIs and configs.",
+    whyUseful:
+      "Smaller JSON payloads reduce transfer overhead and keep configuration blobs compact without changing semantics.",
+    commonMistakes: [
+      "Trying to minify invalid JSON that should be validated first.",
+      "Minifying before review, which makes debugging harder.",
+      "Assuming minification performs compression beyond whitespace removal.",
+    ],
     faq: [
       { question: "Does it change data?", answer: "No, only formatting whitespace is removed." },
       { question: "Can I download output?", answer: "Yes. Download as JSON is supported." },
+      {
+        question: "Should I validate before minifying?",
+        answer: "Yes. Run JSON Validator first when data comes from unknown or user-provided sources.",
+      },
     ],
-    related: ["json-formatter", "json-validator", "json-to-csv"],
+    related: ["json-formatter", "json-validator", "json-to-csv", "json-schema-generator"],
     kind: "standard",
     categories: ["json-tools", "developer-tools"],
     createdAt: "2026-03-07",
@@ -391,16 +462,31 @@ export const tools: ToolDefinition[] = [
     title: "Base64 Encoder",
     shortDescription: "Encode plain text into Base64 format.",
     tags: ["base64", "encoder", "developer", "text"],
-    intro: "Convert regular text input into Base64 for transport, tokens, and quick debugging.",
-    howToUse: ["Paste plain text.", "Click Transform.", "Copy the Base64 output."],
+    intro:
+      "Encode plain text into Base64 for cases where systems require safe text transport in headers, payloads, or config fields. This is useful for debugging encoded content and preparing deterministic test data.",
+    howToUse: [
+      "Paste raw text that you want to encode.",
+      "Click Transform to generate Base64 output.",
+      "Copy the encoded string or pass it to Base64 Decoder for verification.",
+    ],
     exampleInput: "hello world",
     exampleOutput: "aGVsbG8gd29ybGQ=",
-    whyUseful: "Useful when APIs or tools require Base64-encoded text payloads.",
+    whyUseful:
+      "Useful when APIs, auth systems, or integration tooling require Base64 text instead of raw strings.",
+    commonMistakes: [
+      "Confusing Base64 encoding with encryption.",
+      "Encoding already encoded values multiple times by accident.",
+      "Using URL contexts that require URL-safe transformations instead of standard Base64.",
+    ],
     faq: [
       { question: "Does this support Unicode text?", answer: "Yes. Unicode text is encoded safely." },
       { question: "Can I encode multiline text?", answer: "Yes. Newlines are preserved in encoding." },
+      {
+        question: "Is Base64 secure for secrets?",
+        answer: "No. Base64 is reversible encoding, not security or encryption.",
+      },
     ],
-    related: ["base64-decoder", "url-encoder", "uuid-generator"],
+    related: ["base64-decoder", "url-encoder", "url-decoder", "jwt-decoder"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-03-12",
@@ -410,16 +496,31 @@ export const tools: ToolDefinition[] = [
     title: "Base64 Decoder",
     shortDescription: "Decode Base64 content back into readable text.",
     tags: ["base64", "decoder", "developer", "text"],
-    intro: "Decode Base64 strings into plain text for inspection and debugging.",
-    howToUse: ["Paste Base64 input.", "Click Transform.", "Copy decoded text output."],
+    intro:
+      "Decode Base64-encoded strings back into readable text to inspect payloads, debug API responses, and verify encoded config values.",
+    howToUse: [
+      "Paste a Base64 string into the input field.",
+      "Click Transform to decode the value.",
+      "Review and copy the decoded output for debugging or verification.",
+    ],
     exampleInput: "aGVsbG8gd29ybGQ=",
     exampleOutput: "hello world",
-    whyUseful: "Quickly inspect encoded values from APIs, logs, and payloads.",
+    whyUseful:
+      "Quickly reveals encoded payload content during API debugging, token analysis, and integration troubleshooting.",
+    commonMistakes: [
+      "Decoding malformed strings with missing padding characters.",
+      "Assuming decoded output is JSON without validating it.",
+      "Mixing URL-encoded text with Base64 data in a single step.",
+    ],
     faq: [
       { question: "Why does decoding fail?", answer: "Input must be valid Base64 with proper padding." },
       { question: "Can I decode URL-safe Base64?", answer: "Standard Base64 input is expected." },
+      {
+        question: "Can this decode JWT segments?",
+        answer: "For full token inspection use JWT Decoder, which parses header and payload automatically.",
+      },
     ],
-    related: ["base64-encoder", "url-decoder", "json-formatter"],
+    related: ["base64-encoder", "url-decoder", "json-formatter", "jwt-decoder"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-03-13",
@@ -438,12 +539,22 @@ export const tools: ToolDefinition[] = [
     exampleInput: "3",
     exampleOutput:
       "3f0b7f2d-7378-4f6c-a2d8-2b7c1d9f0e55\n7f854ec9-fbaf-4db4-9b89-3c6bfa42a4f1\n2146efdf-4a5e-4ec8-98e7-f4291f652d06",
-    whyUseful: "Saves time when you need valid UUIDs for test records and integrations.",
+    whyUseful:
+      "Saves time when building fixtures, seeding databases, and creating realistic IDs for integration tests.",
+    commonMistakes: [
+      "Using UUIDs where sequential numeric IDs are required by downstream systems.",
+      "Generating too few IDs for bulk test data setup.",
+      "Assuming UUID generation guarantees ordering semantics.",
+    ],
     faq: [
       { question: "Which UUID version is generated?", answer: "This tool generates UUID version 4 values." },
       { question: "Can I generate many IDs at once?", answer: "Yes, enter a number up to 100." },
+      {
+        question: "Can I use generated IDs in production?",
+        answer: "Yes, UUID v4 values are valid identifiers; verify your system expects this format.",
+      },
     ],
-    related: ["base64-encoder", "url-encoder", "json-formatter"],
+    related: ["timestamp-converter", "hash-generator", "base64-encoder", "url-encoder"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-03-14",
@@ -453,16 +564,31 @@ export const tools: ToolDefinition[] = [
     title: "URL Encoder",
     shortDescription: "Encode text for safe use in URL query strings.",
     tags: ["url", "encoder", "developer", "query string"],
-    intro: "Encode reserved characters so text can be safely used in URLs and query parameters.",
-    howToUse: ["Paste text.", "Click Transform.", "Copy encoded URL text."],
+    intro:
+      "Encode reserved characters so values can be safely inserted into URLs, query strings, and callback parameters without breaking request parsing.",
+    howToUse: [
+      "Paste raw query value text or a parameter string.",
+      "Click Transform to percent-encode reserved characters.",
+      "Copy the encoded output into your URL or integration settings.",
+    ],
     exampleInput: "name=John Doe&city=New York",
     exampleOutput: "name%3DJohn%20Doe%26city%3DNew%20York",
-    whyUseful: "Prevents URL-breaking characters from causing request and parsing issues.",
+    whyUseful:
+      "Prevents malformed URLs and query parsing errors when values contain spaces, symbols, or special characters.",
+    commonMistakes: [
+      "Encoding full URLs when only query parameter values should be encoded.",
+      "Encoding the same value multiple times and producing unreadable output.",
+      "Mixing URL encoding with Base64 encoding when only one is required.",
+    ],
     faq: [
       { question: "When should I URL-encode text?", answer: "Encode text before placing it in query parameters." },
       { question: "Why are spaces changed?", answer: "Spaces are encoded to keep URLs valid and unambiguous." },
+      {
+        question: "Does this replace complete URL builders?",
+        answer: "No. It handles encoding; use URL Parser to inspect complete URLs after assembly.",
+      },
     ],
-    related: ["url-decoder", "base64-encoder", "json-formatter"],
+    related: ["url-decoder", "url-parser", "base64-encoder", "json-formatter"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-03-15",
@@ -472,16 +598,31 @@ export const tools: ToolDefinition[] = [
     title: "URL Decoder",
     shortDescription: "Decode URL-encoded strings into readable text.",
     tags: ["url", "decoder", "developer", "query string"],
-    intro: "Convert encoded URL strings back to human-readable text for debugging and analysis.",
-    howToUse: ["Paste URL-encoded text.", "Click Transform.", "Copy decoded output."],
+    intro:
+      "Decode percent-encoded URL strings back into readable text so you can inspect query parameters, redirect values, and logged request data.",
+    howToUse: [
+      "Paste URL-encoded text.",
+      "Click Transform to decode encoded characters.",
+      "Copy the decoded output for debugging or cleanup.",
+    ],
     exampleInput: "name%3DJohn%20Doe%26city%3DNew%20York",
     exampleOutput: "name=John Doe&city=New York",
-    whyUseful: "Makes encoded query strings and logs easier to inspect and troubleshoot.",
+    whyUseful:
+      "Makes encoded query strings and callback parameters readable during debugging and incident investigation.",
+    commonMistakes: [
+      "Decoding malformed strings with partial percent sequences.",
+      "Assuming decoded output is safe to execute without validation.",
+      "Decoding already plain text and expecting changes.",
+    ],
     faq: [
       { question: "What if decoding fails?", answer: "Input may contain malformed percent-encoding." },
       { question: "Does this decode full URLs?", answer: "Yes, encoded URL strings and query values are supported." },
+      {
+        question: "Should I parse after decoding?",
+        answer: "Yes. URL Parser helps inspect host, path, and query fields after decoding.",
+      },
     ],
-    related: ["url-encoder", "base64-decoder", "extract-emails"],
+    related: ["url-encoder", "url-parser", "base64-decoder", "extract-emails"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-03-16",
@@ -503,11 +644,20 @@ export const tools: ToolDefinition[] = [
       "Pattern: /\\b\\w{4}\\b/g\nTotal matches: 5\nMatches:\n1. This\n2. line\n3. many\n4. word\n5. text",
     whyUseful:
       "Helps developers debug and validate regex patterns before using them in code, filters, or search logic.",
+    commonMistakes: [
+      "Forgetting regex flags such as `g` or `i` and getting unexpected matches.",
+      "Not escaping backslashes when copying patterns between environments.",
+      "Testing patterns on unrealistic samples that do not match production data.",
+    ],
     faq: [
       { question: "Can I use regex flags?", answer: "Yes. Use /pattern/flags syntax such as /test/gi." },
       { question: "Does it show all matches?", answer: "Yes, it reports total matches and each matched value." },
+      {
+        question: "Can I test multiline input?",
+        answer: "Yes. Paste multiline content and include the `m` flag when your pattern requires it.",
+      },
     ],
-    related: ["extract-emails", "extract-numbers", "json-validator"],
+    related: ["extract-emails", "extract-numbers", "json-validator", "url-parser"],
     kind: "standard",
     categories: ["developer-tools", "text-tools"],
     createdAt: "2026-03-17",
@@ -559,9 +709,18 @@ export const tools: ToolDefinition[] = [
       '{\n  "header": {\n    "alg": "HS256",\n    "typ": "JWT"\n  },\n  "payload": {\n    "sub": "1234567890",\n    "name": "Ana"\n  }\n}',
     whyUseful:
       "Helps developers troubleshoot auth flows by quickly inspecting JWT contents without external tooling.",
+    commonMistakes: [
+      "Assuming decoding means token signature verification.",
+      "Sharing production tokens in unsafe channels while debugging.",
+      "Ignoring `exp`, `iat`, and `aud` claims during auth investigations.",
+    ],
     faq: [
       { question: "Does this verify JWT signatures?", answer: "No. This tool decodes token content only and does not verify signatures." },
       { question: "Is my token uploaded?", answer: "No. Decoding happens in your browser." },
+      {
+        question: "Can I inspect expired tokens?",
+        answer: "Yes. Expired tokens can still be decoded for troubleshooting claim values.",
+      },
     ],
     related: ["base64-decoder", "json-formatter", "json-validator", "url-decoder"],
     kind: "standard",
@@ -576,19 +735,28 @@ export const tools: ToolDefinition[] = [
     shortDescription: "Generate MD5 and SHA hashes from text input.",
     tags: ["hash generator", "md5 generator", "sha256 hash", "checksum tool"],
     intro:
-      "Create deterministic hash digests from text using MD5, SHA-1, SHA-256, SHA-384, or SHA-512.",
+      "Generate deterministic hash digests from text using MD5, SHA-1, SHA-256, SHA-384, or SHA-512. This is useful for checksum workflows, integrity checks, and reproducible comparisons across systems.",
     howToUse: [
       "Paste text into the input field.",
       "Choose a hash algorithm from the dropdown.",
-      "Generate and copy/download the hash output.",
+      "Generate the digest, then copy or download the result.",
     ],
     exampleInput: "hello world",
     exampleOutput: "5eb63bbbe01eeed093cb22bb8f5acdc3",
     whyUseful:
       "Useful for checksums, deterministic IDs, and validating content integrity across systems.",
+    commonMistakes: [
+      "Using MD5 for security-sensitive scenarios.",
+      "Comparing hashes generated from text with hidden whitespace differences.",
+      "Assuming one algorithm output is interchangeable with another.",
+    ],
     faq: [
       { question: "Which algorithms are supported?", answer: "MD5, SHA-1, SHA-256, SHA-384, and SHA-512 are supported." },
       { question: "Should I use MD5 for security?", answer: "No. MD5 is weak for security purposes and should only be used for compatibility checks." },
+      {
+        question: "Can I hash multiline input?",
+        answer: "Yes. Input is hashed exactly as entered, including newline characters.",
+      },
     ],
     related: ["base64-encoder", "base64-decoder", "jwt-decoder", "url-encoder"],
     kind: "standard",
@@ -655,19 +823,28 @@ export const tools: ToolDefinition[] = [
     shortDescription: "Format SQL queries with normalized spacing and readable line breaks.",
     tags: ["sql formatter", "format sql", "pretty sql", "developer tools"],
     intro:
-      "Make SQL easier to read by normalizing whitespace, uppercasing keywords, and adding line breaks around clauses.",
+      "Format SQL into a cleaner, review-friendly layout by normalizing whitespace, uppercasing common keywords, and adding sensible line breaks around major clauses.",
     howToUse: [
       "Paste SQL query text.",
       "Click Transform to format the query.",
-      "Copy or download the formatted SQL output.",
+      "Copy or download the formatted SQL for review or commits.",
     ],
     exampleInput: "select id,name from users where active = 1 order by name",
     exampleOutput: "SELECT id, name\nFROM users\nWHERE active = 1\nORDER BY name",
     whyUseful:
       "Improves readability in pull requests, debugging sessions, and SQL query reviews.",
+    commonMistakes: [
+      "Treating formatting output as SQL syntax validation.",
+      "Assuming formatter behavior is identical across SQL dialects.",
+      "Skipping query testing after manual edits made post-format.",
+    ],
     faq: [
       { question: "Is this a dialect-aware formatter?", answer: "No. It is a lightweight formatter for common SQL patterns." },
       { question: "Does it change query logic?", answer: "No. It only changes formatting." },
+      {
+        question: "Should I run this before minifying SQL?",
+        answer: "Yes. Format for readability first, then use SQL Minifier if compact output is needed.",
+      },
     ],
     related: ["sql-minifier", "sql-to-csv", "csv-to-sql", "json-to-csv"],
     kind: "standard",
@@ -880,7 +1057,7 @@ export const tools: ToolDefinition[] = [
     shortDescription: "Convert Unix timestamps and date strings into readable time formats.",
     tags: ["timestamp", "converter", "unix", "date", "developer"],
     intro:
-      "Convert Unix seconds, Unix milliseconds, or date strings into UTC, local time, and normalized timestamp output.",
+      "Convert Unix seconds, Unix milliseconds, or date strings into UTC, local time, and normalized timestamp output so you can debug event timelines and API payloads quickly.",
     howToUse: [
       "Paste a Unix timestamp (seconds or milliseconds) or a date string.",
       "Click Transform to convert it.",
@@ -891,11 +1068,20 @@ export const tools: ToolDefinition[] = [
       '{\n  "input": "1710000000",\n  "unixSeconds": 1710000000,\n  "unixMilliseconds": 1710000000000,\n  "utc": "2024-03-09T16:00:00.000Z"\n}',
     whyUseful:
       "Useful for debugging API payloads, logs, analytics events, and systems that store Unix timestamps.",
+    commonMistakes: [
+      "Confusing Unix seconds with Unix milliseconds.",
+      "Comparing values across systems without checking timezone context.",
+      "Assuming ambiguous date strings parse the same way in every environment.",
+    ],
     faq: [
       { question: "Does it support seconds and milliseconds?", answer: "Yes, both Unix seconds and milliseconds are supported." },
       { question: "Can I convert date strings too?", answer: "Yes, standard date strings can be parsed and converted." },
+      {
+        question: "Why do local and UTC values differ?",
+        answer: "Local time includes your timezone offset, while UTC is timezone-neutral.",
+      },
     ],
-    related: ["json-formatter", "uuid-generator", "url-decoder"],
+    related: ["date-format-converter", "cron-expression-parser", "uuid-generator", "json-formatter"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-03-18",

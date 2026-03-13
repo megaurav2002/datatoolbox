@@ -2,7 +2,7 @@
   {
     "slug": "csv-to-json",
     "title": "CSV to JSON Converter",
-    "description": "Convert CSV rows into JSON objects instantly.",
+    "description": "Convert CSV rows into structured JSON objects for apps and APIs.",
     "tags": [
       "csv",
       "json",

@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
-import { getCategoryMetadata, renderCategoryPage } from "@/lib/category-page";
+import {
+  getToolsCategoryMetadata,
+  renderToolsCategoryPage,
+  toolsCategoryStructuredData,
+} from "@/lib/tools-category-page";
 
-export const metadata: Metadata = getCategoryMetadata("json-tools");
+export const metadata: Metadata = getToolsCategoryMetadata("json-tools");
 
 export default function JsonToolsPage() {
-  return renderCategoryPage("json-tools");
+  const structuredData = toolsCategoryStructuredData("json-tools");
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      {renderToolsCategoryPage("json-tools")}
+    </>
+  );
 }
