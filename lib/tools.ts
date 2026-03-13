@@ -483,6 +483,199 @@ export const tools: ToolDefinition[] = [
     createdAt: "2026-03-11",
   },
   {
+    slug: "character-counter",
+    title: "Character Counter",
+    shortDescription: "Count characters, words, and lines in text input.",
+    tags: ["character counter", "word count", "text statistics", "text tools"],
+    intro:
+      "Count characters, non-whitespace characters, words, and lines from plain text so you can quickly validate content length limits.",
+    howToUse: [
+      "Paste your text into the input area.",
+      "Click Transform to generate text statistics.",
+      "Review the JSON output for character, word, and line counts.",
+    ],
+    exampleInput: "Release notes for sprint 12.\nFixes: login timeout, CSV import error.",
+    exampleOutput:
+      '{\n  "characters": 68,\n  "charactersExcludingSpaces": 58,\n  "words": 10,\n  "lines": 2\n}',
+    whyUseful:
+      "Useful when preparing social posts, meta descriptions, commit messages, and text fields with strict length limits.",
+    commonMistakes: [
+      "Assuming spaces are excluded from the default character count.",
+      "Comparing counts across tools that handle newline characters differently.",
+      "Expecting punctuation to be ignored in word counts.",
+    ],
+    faq: [
+      { question: "Does Character Counter include spaces in character count?", answer: "Yes. `characters` includes spaces and punctuation." },
+      { question: "Does Character Counter count line breaks?", answer: "Yes. Newline characters are included in the total character count." },
+      { question: "What is charactersExcludingSpaces?", answer: "It removes all whitespace characters so you can measure compact text length." },
+    ],
+    related: ["slug-generator", "random-string-generator", "remove-duplicate-lines", "text-diff-checker"],
+    kind: "standard",
+    categories: ["text-tools"],
+    createdAt: "2026-04-07",
+    outputFileName: "character-count.json",
+    outputMimeType: "application/json",
+  },
+  {
+    slug: "slug-generator",
+    title: "Slug Generator",
+    shortDescription: "Convert text into clean URL-friendly slugs.",
+    tags: ["slug generator", "url slug", "seo", "text tools"],
+    intro:
+      "Generate lowercase, URL-safe slugs from titles and phrases by removing punctuation and replacing spacing with hyphens.",
+    howToUse: [
+      "Paste a title or phrase.",
+      "Click Transform to generate a slug.",
+      "Copy the slug for routes, blog URLs, or content systems.",
+    ],
+    exampleInput: "How to Import CSV into SQL (Step-by-Step)",
+    exampleOutput: "how-to-import-csv-into-sql-step-by-step",
+    whyUseful:
+      "Helps produce consistent URL paths for CMS entries, documentation pages, and SEO-friendly internal routes.",
+    commonMistakes: [
+      "Expecting uppercase letters to be preserved in slugs.",
+      "Pasting only symbols, which can produce an empty slug.",
+      "Assuming every locale-specific character maps perfectly without review.",
+    ],
+    faq: [
+      { question: "Does Slug Generator remove punctuation?", answer: "Yes. Non-alphanumeric characters are removed or replaced with hyphens." },
+      { question: "Can Slug Generator handle accented characters?", answer: "Yes. Common accented characters are normalized before slug generation." },
+      { question: "Why did I get an empty slug?", answer: "Input with only symbols or whitespace cannot form a valid slug." },
+    ],
+    related: ["character-counter", "url-encoder", "remove-duplicate-lines", "random-string-generator"],
+    kind: "standard",
+    categories: ["text-tools", "developer-tools"],
+    createdAt: "2026-04-08",
+  },
+  {
+    slug: "text-diff-checker",
+    title: "Text Diff Checker",
+    shortDescription: "Compare two text blocks and see lines that changed.",
+    tags: ["text diff checker", "compare text", "line diff", "developer tools"],
+    intro:
+      "Compare two text blocks line-by-line to identify lines that appear only in the first input, only in the second input, or in both.",
+    howToUse: [
+      "Paste the first text block.",
+      "Leave a blank line, then paste the second text block.",
+      "Click Transform to view grouped line differences.",
+    ],
+    exampleInput:
+      "name,email\nAna,ana@example.com\nBob,bob@example.com\n\nname,email\nAna,ana@example.com\nCam,cam@example.com",
+    exampleOutput:
+      "First input lines: 3\n\nSecond input lines: 3\n\nOnly in first input:\n- Bob,bob@example.com\n\nOnly in second input:\n- Cam,cam@example.com\n\nIn both inputs:\n- name,email\n- Ana,ana@example.com",
+    whyUseful:
+      "Useful for quick diff checks on config files, exports, and list changes without opening a full code diff tool.",
+    commonMistakes: [
+      "Forgetting the blank line separator between the two inputs.",
+      "Expecting character-level highlighting when this tool compares by line.",
+      "Assuming reordered lines are treated as unchanged in the same section.",
+    ],
+    faq: [
+      { question: "Does Text Diff Checker compare by line or character?", answer: "It compares by line, not by character." },
+      { question: "How do I separate the two inputs?", answer: "Use one blank line between the first and second text blocks." },
+      { question: "Does Text Diff Checker keep duplicate lines?", answer: "Yes. It compares line presence and reports section membership." },
+    ],
+    related: ["remove-duplicate-lines", "sort-lines-alphabetically", "csv-validator", "character-counter"],
+    kind: "standard",
+    categories: ["text-tools", "developer-tools"],
+    createdAt: "2026-04-09",
+  },
+  {
+    slug: "password-generator",
+    title: "Password Generator",
+    shortDescription: "Generate random passwords with configurable length.",
+    tags: ["password generator", "strong password", "security tools", "developer tools"],
+    intro:
+      "Generate random passwords using uppercase, lowercase, digits, and symbols for account setup, test environments, and secret rotation workflows.",
+    howToUse: [
+      "Leave input empty for a default 16-character password, or enter a length from 8 to 128.",
+      "Click Transform to generate a password.",
+      "Copy the output and store it in your password manager.",
+    ],
+    exampleInput: "24",
+    exampleOutput: "A9!fQ2#kLm7@xP4$wR8&nT1?",
+    whyUseful:
+      "Provides quick password generation without external tools when provisioning accounts or rotating credentials.",
+    commonMistakes: [
+      "Using short password lengths that do not meet policy requirements.",
+      "Storing generated passwords in plain text notes.",
+      "Assuming generated output should be reused across multiple accounts.",
+    ],
+    faq: [
+      { question: "What length does Password Generator support?", answer: "You can generate passwords from 8 to 128 characters." },
+      { question: "Does Password Generator include symbols?", answer: "Yes. Output includes letters, digits, and common symbols." },
+      { question: "Can I use this for production credentials?", answer: "Yes, but store generated passwords in a secure password manager." },
+    ],
+    related: ["random-string-generator", "hash-generator", "uuid-generator", "jwt-encoder"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-04-10",
+    outputFileName: "password.txt",
+    outputMimeType: "text/plain",
+  },
+  {
+    slug: "random-string-generator",
+    title: "Random String Generator",
+    shortDescription: "Generate random alphanumeric strings for test data.",
+    tags: ["random string generator", "alphanumeric generator", "test data", "developer tools"],
+    intro:
+      "Generate random alphanumeric strings for sample data, temporary identifiers, and testing workflows where deterministic format is not required.",
+    howToUse: [
+      "Leave input empty for a 16-character string, or enter a length from 1 to 512.",
+      "Click Transform to generate output.",
+      "Copy the random string for your test case or seed data.",
+    ],
+    exampleInput: "12",
+    exampleOutput: "a8F2mK9qT1bZ",
+    whyUseful:
+      "Helps create quick placeholder values in test payloads, forms, and integration fixtures.",
+    commonMistakes: [
+      "Using random strings where cryptographic tokens are required.",
+      "Assuming alphanumeric output includes symbols by default.",
+      "Forgetting to set a fixed length when schema fields are strict.",
+    ],
+    faq: [
+      { question: "Does Random String Generator include symbols?", answer: "No. It generates alphanumeric characters only." },
+      { question: "What length range is supported?", answer: "You can request between 1 and 512 characters." },
+      { question: "Is this the same as a password generator?", answer: "No. Password Generator includes symbols and stronger complexity by default." },
+    ],
+    related: ["password-generator", "uuid-generator", "character-counter", "slug-generator"],
+    kind: "standard",
+    categories: ["developer-tools", "text-tools"],
+    createdAt: "2026-04-11",
+  },
+  {
+    slug: "yaml-validator",
+    title: "YAML Validator",
+    shortDescription: "Validate YAML syntax and catch indentation issues quickly.",
+    tags: ["yaml validator", "validate yaml", "kubernetes yaml", "config validation"],
+    intro:
+      "Validate YAML syntax for configuration files and deployment manifests, including indentation-sensitive structures used in CI and infrastructure tooling.",
+    howToUse: [
+      "Paste YAML content into the input area.",
+      "Click Transform to validate syntax.",
+      "Review the result and fix any line/indentation errors.",
+    ],
+    exampleInput: "version: 1\nservices:\n  api:\n    image: node:20\n    ports:\n      - 3000:3000",
+    exampleOutput: "Valid YAML.",
+    whyUseful:
+      "Catches syntax mistakes before YAML files break deployments, pipelines, or application startup.",
+    commonMistakes: [
+      "Mixing tabs and spaces in indentation.",
+      "Forgetting list item markers (`-`) for sequence values.",
+      "Using invalid key-value formatting in nested blocks.",
+    ],
+    faq: [
+      { question: "Does YAML Validator check schema rules?", answer: "No. It validates YAML syntax only, not domain-specific schemas." },
+      { question: "Can YAML Validator catch indentation errors?", answer: "Yes. Invalid indentation is reported as a parse error." },
+      { question: "Can I validate Kubernetes manifests?", answer: "Yes. It validates YAML structure used in Kubernetes files." },
+    ],
+    related: ["json-validator", "json-formatter", "text-diff-checker", "slug-generator"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-04-12",
+  },
+  {
     slug: "base64-encoder",
     title: "Base64 Encoder",
     shortDescription: "Encode plain text into Base64 format.",
@@ -717,6 +910,41 @@ export const tools: ToolDefinition[] = [
     outputMimeType: "image/svg+xml",
   },
   {
+    slug: "jwt-encoder",
+    title: "JWT Encoder",
+    shortDescription: "Encode JSON header and payload into an unsigned JWT token.",
+    tags: ["jwt encoder", "encode jwt", "jwt payload tool", "developer tools"],
+    intro:
+      "Encode JWT header and payload JSON into a token string for testing auth flows, mock integrations, and local development scenarios.",
+    howToUse: [
+      "Paste payload JSON, or provide header JSON then a blank line then payload JSON.",
+      "Click Transform to encode Base64URL JWT segments.",
+      "Copy the generated unsigned token for testing.",
+    ],
+    exampleInput:
+      '{"sub":"user_123","role":"admin","iat":1710000000}',
+    exampleOutput:
+      "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJ1c2VyXzEyMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcxMDAwMDAwMH0.",
+    whyUseful:
+      "Useful for creating mock tokens during development when you need realistic JWT structure without running an auth server.",
+    commonMistakes: [
+      "Assuming encoded output is signed and secure for production.",
+      "Pasting arrays instead of JSON objects for header or payload.",
+      "Using tokens with `alg: none` in environments that require signature verification.",
+    ],
+    faq: [
+      { question: "Does JWT Encoder sign the token?", answer: "No. It produces an unsigned token for development and testing." },
+      { question: "Can I provide a custom JWT header?", answer: "Yes. Add header JSON, blank line, then payload JSON." },
+      { question: "What payload format is required?", answer: "Payload must be a valid JSON object." },
+    ],
+    related: ["jwt-decoder", "base64-encoder", "json-formatter", "json-validator"],
+    kind: "standard",
+    categories: ["developer-tools", "json-tools"],
+    createdAt: "2026-04-13",
+    outputFileName: "encoded-jwt.txt",
+    outputMimeType: "text/plain",
+  },
+  {
     slug: "jwt-decoder",
     title: "JWT Decoder",
     shortDescription: "Decode JWT header and payload claims instantly in your browser.",
@@ -747,7 +975,7 @@ export const tools: ToolDefinition[] = [
         answer: "Yes. Expired tokens can still be decoded for troubleshooting claim values.",
       },
     ],
-    related: ["base64-decoder", "json-formatter", "json-validator", "url-decoder"],
+    related: ["jwt-encoder", "base64-decoder", "json-formatter", "json-validator"],
     kind: "standard",
     categories: ["developer-tools", "json-tools"],
     createdAt: "2026-03-26",

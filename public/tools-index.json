@@ -199,6 +199,78 @@
     "url": "/tools/extract-numbers"
   },
   {
+    "slug": "character-counter",
+    "title": "Character Counter",
+    "description": "Count characters, words, and lines in text input.",
+    "tags": [
+      "character counter",
+      "word count",
+      "text statistics",
+      "text tools"
+    ],
+    "url": "/tools/character-counter"
+  },
+  {
+    "slug": "slug-generator",
+    "title": "Slug Generator",
+    "description": "Convert text into clean URL-friendly slugs.",
+    "tags": [
+      "slug generator",
+      "url slug",
+      "seo",
+      "text tools"
+    ],
+    "url": "/tools/slug-generator"
+  },
+  {
+    "slug": "text-diff-checker",
+    "title": "Text Diff Checker",
+    "description": "Compare two text blocks and see lines that changed.",
+    "tags": [
+      "text diff checker",
+      "compare text",
+      "line diff",
+      "developer tools"
+    ],
+    "url": "/tools/text-diff-checker"
+  },
+  {
+    "slug": "password-generator",
+    "title": "Password Generator",
+    "description": "Generate random passwords with configurable length.",
+    "tags": [
+      "password generator",
+      "strong password",
+      "security tools",
+      "developer tools"
+    ],
+    "url": "/tools/password-generator"
+  },
+  {
+    "slug": "random-string-generator",
+    "title": "Random String Generator",
+    "description": "Generate random alphanumeric strings for test data.",
+    "tags": [
+      "random string generator",
+      "alphanumeric generator",
+      "test data",
+      "developer tools"
+    ],
+    "url": "/tools/random-string-generator"
+  },
+  {
+    "slug": "yaml-validator",
+    "title": "YAML Validator",
+    "description": "Validate YAML syntax and catch indentation issues quickly.",
+    "tags": [
+      "yaml validator",
+      "validate yaml",
+      "kubernetes yaml",
+      "config validation"
+    ],
+    "url": "/tools/yaml-validator"
+  },
+  {
     "slug": "base64-encoder",
     "title": "Base64 Encoder",
     "description": "Encode plain text into Base64 format.",
@@ -281,6 +353,18 @@
       "developer tools"
     ],
     "url": "/tools/mermaid-editor"
+  },
+  {
+    "slug": "jwt-encoder",
+    "title": "JWT Encoder",
+    "description": "Encode JSON header and payload into an unsigned JWT token.",
+    "tags": [
+      "jwt encoder",
+      "encode jwt",
+      "jwt payload tool",
+      "developer tools"
+    ],
+    "url": "/tools/jwt-encoder"
   },
   {
     "slug": "jwt-decoder",

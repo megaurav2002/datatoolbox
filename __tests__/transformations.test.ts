@@ -5,6 +5,7 @@ describe("transformations", () => {
     expect(Object.keys(transformations).sort()).toEqual([
       "base64-decoder",
       "base64-encoder",
+      "character-counter",
       "cron-expression-parser",
       "csv-cleaner",
       "csv-column-mapper",
@@ -27,20 +28,26 @@ describe("transformations", () => {
       "json-to-csv",
       "json-validator",
       "jwt-decoder",
+      "jwt-encoder",
       "mermaid-editor",
       "ndjson-formatter",
       "ndjson-to-csv",
+      "password-generator",
+      "random-string-generator",
       "regex-tester",
       "remove-duplicate-lines",
+      "slug-generator",
       "sort-lines-alphabetically",
       "sql-formatter",
       "sql-minifier",
       "sql-to-csv",
+      "text-diff-checker",
       "timestamp-converter",
       "url-decoder",
       "url-encoder",
       "url-parser",
       "uuid-generator",
+      "yaml-validator",
     ]);
   });
 
@@ -573,6 +580,46 @@ describe("transformations", () => {
       const result = transformations["extract-numbers"]("no digits");
       expect(result.output).toBe("No numbers found.");
     });
+
+    it("counts characters, words, and lines", () => {
+      const result = transformations["character-counter"]("hello world\nline two");
+      const parsed = JSON.parse(result.output) as {
+        characters: number;
+        charactersExcludingSpaces: number;
+        words: number;
+        lines: number;
+      };
+      expect(parsed.characters).toBe(20);
+      expect(parsed.words).toBe(4);
+      expect(parsed.lines).toBe(2);
+      expect(result.downloadFileName).toBe("character-count.json");
+      expect(result.downloadMimeType).toBe("application/json");
+    });
+
+    it("generates url-friendly slugs", () => {
+      const result = transformations["slug-generator"]("How to Import CSV into SQL!");
+      expect(result.output).toBe("how-to-import-csv-into-sql");
+    });
+
+    it("throws when slug cannot be generated", () => {
+      expect(() => transformations["slug-generator"]("!!!")).toThrow(
+        "Slug Generator could not build a slug from the provided input.",
+      );
+    });
+
+    it("compares two text blocks by line", () => {
+      const result = transformations["text-diff-checker"]("apple\nbanana\n\napple\npear");
+      expect(result.output).toContain("Only in first input:");
+      expect(result.output).toContain("- banana");
+      expect(result.output).toContain("Only in second input:");
+      expect(result.output).toContain("- pear");
+    });
+
+    it("throws when text diff input does not include two blocks", () => {
+      expect(() => transformations["text-diff-checker"]("only one block")).toThrow(
+        "Text Diff Checker requires two text blocks separated by a blank line.",
+      );
+    });
   });
 
   describe("developer tools", () => {
@@ -593,6 +640,27 @@ describe("transformations", () => {
 
     it("throws when mermaid editor input is empty", () => {
       expect(() => transformations["mermaid-editor"]("   ")).toThrow("Please provide input.");
+    });
+
+    it("encodes payload object into unsigned jwt", () => {
+      const result = transformations["jwt-encoder"]('{"sub":"user_1","role":"admin"}');
+      expect(result.output.split(".")).toHaveLength(3);
+      expect(result.output.endsWith(".")).toBe(true);
+      expect(result.downloadFileName).toBe("encoded-jwt.txt");
+      expect(result.downloadMimeType).toBe("text/plain");
+    });
+
+    it("supports custom header block for jwt encoding", () => {
+      const result = transformations["jwt-encoder"](
+        '{"alg":"HS256","typ":"JWT"}\n\n{"sub":"user_1"}',
+      );
+      expect(result.output.split(".")).toHaveLength(3);
+    });
+
+    it("throws when jwt payload is not an object", () => {
+      expect(() => transformations["jwt-encoder"]("[1,2,3]")).toThrow(
+        "JWT Encoder payload must be a JSON object.",
+      );
     });
 
     it("encodes text to base64", () => {
@@ -734,6 +802,42 @@ describe("transformations", () => {
       );
     });
 
+    it("generates random alphanumeric strings", () => {
+      const result = transformations["random-string-generator"]("24");
+      expect(result.output).toHaveLength(24);
+      expect(result.output).toMatch(/^[A-Za-z0-9]+$/);
+    });
+
+    it("throws for invalid random string length", () => {
+      expect(() => transformations["random-string-generator"]("0")).toThrow(
+        "Random String Generator expects a whole number between 1 and 512.",
+      );
+    });
+
+    it("generates passwords with default length", () => {
+      const result = transformations["password-generator"]("");
+      expect(result.output).toHaveLength(16);
+      expect(result.downloadFileName).toBe("password.txt");
+      expect(result.downloadMimeType).toBe("text/plain");
+    });
+
+    it("throws for invalid password length", () => {
+      expect(() => transformations["password-generator"]("4")).toThrow(
+        "Password Generator expects a whole number between 8 and 128.",
+      );
+    });
+
+    it("validates yaml input", () => {
+      const result = transformations["yaml-validator"]("version: 1\nservices:\n  api:\n    image: node:20");
+      expect(result.output).toBe("Valid YAML.");
+    });
+
+    it("throws for invalid yaml input", () => {
+      expect(() => transformations["yaml-validator"]("services:\n  - name: api\n   image: bad-indent")).toThrow(
+        "YAML Validator:",
+      );
+    });
+
     it("uses fallback UUID generation when randomUUID is unavailable", () => {
       const originalCrypto = globalThis.crypto;
       Object.defineProperty(globalThis, "crypto", {
@@ -851,7 +955,11 @@ describe("transformations", () => {
   describe("shared invalid input handling", () => {
     it("throws for empty input across all transformation functions", () => {
       Object.entries(transformations).forEach(([slug, transform]) => {
-        if (slug === "uuid-generator") {
+        if (
+          slug === "uuid-generator" ||
+          slug === "password-generator" ||
+          slug === "random-string-generator"
+        ) {
           return;
         }
         expect(() => transform("  \n  ")).toThrow("Please provide input.");

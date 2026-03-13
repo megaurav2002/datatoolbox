@@ -1,4 +1,5 @@
 import type { TransformResult } from "@/lib/types";
+import { parse as parseYaml } from "yaml";
 import { generateMd5Hash } from "@/lib/transformations/hash";
 import {
   ensureInput,
@@ -275,6 +276,53 @@ function uuidGenerator(input: string): TransformResult {
   return toTransformResult(uuids.join("\n"));
 }
 
+function randomInt(maxExclusive: number): number {
+  if (
+    typeof crypto !== "undefined" &&
+    "getRandomValues" in crypto &&
+    typeof crypto.getRandomValues === "function"
+  ) {
+    // Rejection sampling avoids modulo bias for security-sensitive generators.
+    const range = 0x100000000;
+    const acceptable = range - (range % maxExclusive);
+    const bytes = new Uint32Array(1);
+
+    while (true) {
+      crypto.getRandomValues(bytes);
+      const value = bytes[0];
+      if (value < acceptable) {
+        return value % maxExclusive;
+      }
+    }
+  }
+
+  return Math.floor(Math.random() * maxExclusive);
+}
+
+function buildRandomString(length: number, charset: string): string {
+  return Array.from({ length }, () => charset[randomInt(charset.length)]).join("");
+}
+
+function parseLengthInput(
+  input: string,
+  toolName: string,
+  minimum: number,
+  maximum: number,
+  defaultLength: number,
+): number {
+  const trimmed = input.trim();
+  if (!trimmed) {
+    return defaultLength;
+  }
+
+  const length = Number(trimmed);
+  if (!Number.isInteger(length) || length < minimum || length > maximum) {
+    throw new Error(`${toolName} expects a whole number between ${minimum} and ${maximum}.`);
+  }
+
+  return length;
+}
+
 function urlEncoder(input: string): TransformResult {
   return toTransformResult(encodeURIComponent(ensureInput(input)));
 }
@@ -371,6 +419,179 @@ function timestampConverter(input: string): TransformResult {
       2,
     ),
   );
+}
+
+function parseTwoInputBlocks(input: string, toolName: string): [string, string] {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const [leftBlock, rightBlock] = normalized.split(/\n\s*\n/, 2);
+
+  if (!leftBlock || !rightBlock) {
+    throw new Error(`${toolName} requires two text blocks separated by a blank line.`);
+  }
+
+  return [leftBlock, rightBlock];
+}
+
+function lineFrequency(lines: string[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  lines.forEach((line) => {
+    counts.set(line, (counts.get(line) ?? 0) + 1);
+  });
+  return counts;
+}
+
+function textDiffChecker(input: string): TransformResult {
+  const [firstBlock, secondBlock] = parseTwoInputBlocks(input, "Text Diff Checker");
+  const firstLines = firstBlock.split("\n");
+  const secondLines = secondBlock.split("\n");
+  const firstCounts = lineFrequency(firstLines);
+  const secondCounts = lineFrequency(secondLines);
+
+  const onlyInFirst: string[] = [];
+  const onlyInSecond: string[] = [];
+  const inBoth: string[] = [];
+
+  const firstSeen = new Set<string>();
+  firstLines.forEach((line) => {
+    if (firstSeen.has(line)) {
+      return;
+    }
+    firstSeen.add(line);
+
+    const firstCount = firstCounts.get(line) ?? 0;
+    const secondCount = secondCounts.get(line) ?? 0;
+
+    if (firstCount > secondCount) {
+      onlyInFirst.push(line);
+    } else if (secondCount > firstCount) {
+      onlyInSecond.push(line);
+    } else {
+      inBoth.push(line);
+    }
+  });
+
+  secondLines.forEach((line) => {
+    if (firstSeen.has(line)) {
+      return;
+    }
+
+    const firstCount = firstCounts.get(line) ?? 0;
+    const secondCount = secondCounts.get(line) ?? 0;
+    if (secondCount > firstCount) {
+      onlyInSecond.push(line);
+    }
+  });
+
+  const serializeSection = (title: string, lines: string[]) =>
+    `${title}\n${lines.length > 0 ? lines.map((line) => `- ${line}`).join("\n") : "(none)"}`;
+
+  return toTransformResult(
+    [
+      `First input lines: ${firstLines.length}`,
+      `Second input lines: ${secondLines.length}`,
+      serializeSection("Only in first input:", onlyInFirst),
+      serializeSection("Only in second input:", onlyInSecond),
+      serializeSection("In both inputs:", inBoth),
+    ].join("\n\n"),
+  );
+}
+
+function passwordGenerator(input: string): TransformResult {
+  const length = parseLengthInput(input, "Password Generator", 8, 128, 16);
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{};:,.?/|";
+  const output = buildRandomString(length, charset);
+
+  return toTransformResult(output, "password.txt", "text/plain");
+}
+
+function yamlValidator(input: string): TransformResult {
+  const source = ensureInput(input);
+  try {
+    parseYaml(source);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`YAML Validator: ${error.message}`);
+    }
+    throw new Error("YAML Validator: invalid YAML input.");
+  }
+
+  return toTransformResult("Valid YAML.");
+}
+
+function encodeBase64UrlUtf8(value: string): string {
+  const base64 = encodeBase64Utf8(value);
+  return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function jwtEncoder(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const [headerBlock, payloadBlock] = normalized.split(/\n\s*\n/, 2);
+
+  let header: unknown = { alg: "none", typ: "JWT" };
+  let payload: unknown;
+
+  if (payloadBlock) {
+    header = parseJsonInput(headerBlock, "JWT Encoder header");
+    payload = parseJsonInput(payloadBlock, "JWT Encoder payload");
+  } else {
+    payload = parseJsonInput(normalized, "JWT Encoder payload");
+  }
+
+  if (typeof header !== "object" || header === null || Array.isArray(header)) {
+    throw new Error("JWT Encoder header must be a JSON object.");
+  }
+
+  if (typeof payload !== "object" || payload === null || Array.isArray(payload)) {
+    throw new Error("JWT Encoder payload must be a JSON object.");
+  }
+
+  const encodedHeader = encodeBase64UrlUtf8(JSON.stringify(header));
+  const encodedPayload = encodeBase64UrlUtf8(JSON.stringify(payload));
+  const token = `${encodedHeader}.${encodedPayload}.`;
+
+  return toTransformResult(token, "encoded-jwt.txt", "text/plain");
+}
+
+function characterCounter(input: string): TransformResult {
+  const source = ensureInput(input);
+  const normalized = source.replace(/\r\n?/g, "\n");
+  const trimmed = normalized.trim();
+  const words = trimmed ? trimmed.split(/\s+/).length : 0;
+  const lines = normalized.split("\n").length;
+  const characters = normalized.length;
+  const charactersExcludingSpaces = normalized.replace(/\s/g, "").length;
+
+  return toTransformResult(
+    JSON.stringify(
+      { characters, charactersExcludingSpaces, words, lines },
+      null,
+      2,
+    ),
+    "character-count.json",
+    "application/json",
+  );
+}
+
+function slugGenerator(input: string): TransformResult {
+  const normalized = ensureInput(input)
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+
+  if (!normalized) {
+    throw new Error("Slug Generator could not build a slug from the provided input.");
+  }
+
+  return toTransformResult(normalized);
+}
+
+function randomStringGenerator(input: string): TransformResult {
+  const length = parseLengthInput(input, "Random String Generator", 1, 512, 16);
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return toTransformResult(buildRandomString(length, charset));
 }
 
 function csvToSql(input: string): TransformResult {
@@ -656,6 +877,7 @@ function jsonFlattenToCsv(input: string): TransformResult {
 }
 
 export const transformations: Record<string, (input: string) => TransformResult> = {
+  "character-counter": withTransformErrorBoundary(characterCounter),
   "csv-column-mapper": withTransformErrorBoundary(csvColumnMapper),
   "csv-merge-tool": withTransformErrorBoundary(csvMergeTool),
   "csv-splitter": withTransformErrorBoundary(csvSplitter),
@@ -666,6 +888,7 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "json-path-extractor": withTransformErrorBoundary(jsonPathExtractor),
   "json-schema-generator": withTransformErrorBoundary(jsonSchemaGenerator),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
+  "jwt-encoder": withTransformErrorBoundary(jwtEncoder),
   "jwt-decoder": withTransformErrorBoundary(jwtDecoder),
   "hash-generator": withTransformErrorBoundary(hashGenerator),
   "mermaid-editor": withTransformErrorBoundary(mermaidEditor),
@@ -684,14 +907,19 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "json-minifier": withTransformErrorBoundary(jsonMinifier),
   "remove-duplicate-lines": withTransformErrorBoundary(removeDuplicateLines),
   "sort-lines-alphabetically": withTransformErrorBoundary(sortLinesAlphabetically),
+  "password-generator": withTransformErrorBoundary(passwordGenerator),
+  "random-string-generator": withTransformErrorBoundary(randomStringGenerator),
   "extract-emails": withTransformErrorBoundary(extractEmails),
   "extract-numbers": withTransformErrorBoundary(extractNumbers),
   "base64-encoder": withTransformErrorBoundary(base64Encoder),
   "base64-decoder": withTransformErrorBoundary(base64Decoder),
+  "slug-generator": withTransformErrorBoundary(slugGenerator),
+  "text-diff-checker": withTransformErrorBoundary(textDiffChecker),
   "uuid-generator": withTransformErrorBoundary(uuidGenerator),
   "url-encoder": withTransformErrorBoundary(urlEncoder),
   "url-decoder": withTransformErrorBoundary(urlDecoder),
   "url-parser": withTransformErrorBoundary(urlParser),
+  "yaml-validator": withTransformErrorBoundary(yamlValidator),
   "regex-tester": withTransformErrorBoundary(regexTester),
   "timestamp-converter": withTransformErrorBoundary(timestampConverter),
 };
