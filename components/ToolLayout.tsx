@@ -28,10 +28,92 @@ function commonUseCasesForTool(tool: ToolDefinition): string[] {
       "Normalizing contact fields for marketing lists.",
       "Cleaning spreadsheet exports before analytics.",
     ],
+    "remove-duplicate-lines": [
+      "Deduplicating email or username lists before outreach.",
+      "Cleaning repeated log lines before incident review.",
+      "Removing duplicate tags or keywords before upload.",
+    ],
+    "json-validator": [
+      "Checking webhook payload syntax before deployment.",
+      "Validating edited JSON config files before save.",
+      "Quickly isolating malformed API responses during debugging.",
+    ],
+    "json-formatter": [
+      "Making compact API payloads readable in code reviews.",
+      "Formatting JSON logs for easier incident triage.",
+      "Preparing JSON snippets for documentation and tickets.",
+    ],
+    "json-minifier": [
+      "Reducing JSON payload size for transport-sensitive calls.",
+      "Compressing configuration JSON for embedding in scripts.",
+      "Preparing compact fixtures for tests and demos.",
+    ],
+    "timestamp-converter": [
+      "Converting Unix timestamps in logs to readable time.",
+      "Debugging event-order issues across services and timezones.",
+      "Checking API payload dates in UTC and local time.",
+    ],
+    "url-parser": [
+      "Inspecting callback URLs during OAuth and webhook integration.",
+      "Debugging tracking links and query parameters.",
+      "Breaking down redirect URLs to verify host and path values.",
+    ],
+    "sql-formatter": [
+      "Cleaning SQL queries before pull request review.",
+      "Improving readability of copied queries from logs.",
+      "Standardizing query formatting for team documentation.",
+    ],
+    "sql-minifier": [
+      "Compacting SQL embedded in scripts or config values.",
+      "Removing comments before shipping SQL snippets.",
+      "Reducing SQL text size for logs and payload fields.",
+    ],
+    "regex-tester": [
+      "Validating extraction patterns before shipping code.",
+      "Debugging mismatched filters in parsing pipelines.",
+      "Comparing pattern behavior across sample input variations.",
+    ],
+    "base64-encoder": [
+      "Encoding credential fragments for integration setup.",
+      "Preparing Base64 samples for API testing.",
+      "Converting text payloads for systems expecting Base64 values.",
+    ],
+    "base64-decoder": [
+      "Inspecting encoded payload values from logs.",
+      "Decoding API response fields for debugging.",
+      "Verifying whether an integration output is valid Base64.",
+    ],
   };
 
   if (specificUseCases[tool.slug]) {
     return specificUseCases[tool.slug];
+  }
+
+  if (tool.slug.includes("-to-")) {
+    const [inputSlug, outputSlug] = tool.slug.split("-to-");
+    const inputFormat = inputSlug.replace(/-/g, " ");
+    const outputFormat = outputSlug.replace(/-/g, " ");
+    return [
+      `Converting ${inputFormat || "source"} data into ${outputFormat || "target"} format for downstream tools.`,
+      "Preparing transformed data for imports, reporting, or API workflows.",
+      "Reducing manual reformatting work between systems with incompatible formats.",
+    ];
+  }
+
+  if (tool.slug.includes("validator")) {
+    return [
+      "Catching malformed input before import or deployment.",
+      "Checking payload structure during debugging and QA.",
+      "Preventing format-related errors in downstream tools.",
+    ];
+  }
+
+  if (tool.slug.includes("formatter")) {
+    return [
+      "Making dense content easier to review and debug.",
+      "Standardizing output before sharing queries or payloads.",
+      "Cleaning generated text for readable documentation.",
+    ];
   }
 
   if (tool.categories.includes("csv-tools")) {
@@ -68,6 +150,51 @@ function commonUseCasesForTool(tool: ToolDefinition): string[] {
 function commonMistakesForTool(tool: ToolDefinition): string[] {
   if (tool.commonMistakes && tool.commonMistakes.length > 0) {
     return tool.commonMistakes;
+  }
+
+  const specificMistakes: Record<string, string[]> = {
+    "remove-duplicate-lines": [
+      "Expecting comma-separated values in one line to be deduplicated individually.",
+      "Assuming case-insensitive matching when line matching is case-sensitive.",
+      "Forgetting that unique blank lines can remain in output.",
+    ],
+    "json-validator": [
+      "Pasting JavaScript objects with single quotes and trailing commas.",
+      "Assuming syntax validation also checks schema rules.",
+      "Validating truncated JSON fragments instead of full documents.",
+    ],
+    "json-formatter": [
+      "Pasting invalid JSON and expecting formatted output.",
+      "Confusing JSON with JavaScript object literal syntax.",
+      "Leaving trailing commas that break parsing.",
+    ],
+    "timestamp-converter": [
+      "Mixing Unix seconds and Unix milliseconds.",
+      "Comparing UTC values with local times without timezone context.",
+      "Assuming ambiguous date strings parse identically in all environments.",
+    ],
+    "url-parser": [
+      "Pasting relative URLs without a protocol.",
+      "Assuming duplicate query keys map to a single value.",
+      "Forgetting percent-decoding when inspecting encoded parameters.",
+    ],
+    "regex-tester": [
+      "Forgetting regex flags and misreading match counts.",
+      "Copying patterns without escaping backslashes correctly.",
+      "Testing against unrealistic sample text that misses edge cases.",
+    ],
+  };
+
+  if (specificMistakes[tool.slug]) {
+    return specificMistakes[tool.slug];
+  }
+
+  if (tool.slug.includes("-to-")) {
+    return [
+      "Using input that does not match the source format expected by the converter.",
+      "Assuming nested or irregular records will map cleanly without review.",
+      "Skipping output validation before importing into another system.",
+    ];
   }
 
   if (tool.categories.includes("csv-tools")) {

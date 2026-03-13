@@ -5,301 +5,150 @@ type FAQItem = {
   answer: string;
 };
 
-const categoryFAQTemplates: Record<string, (toolName: string) => FAQItem[]> = {
-  "json-tools": (toolName) => [
+const toolFAQTemplates: Partial<Record<string, FAQItem[]>> = {
+  "remove-duplicate-lines": [
     {
-      question: "What is JSON formatting?",
-      answer:
-        "JSON formatting makes JSON easier to read by adding indentation and consistent spacing. This is useful when reviewing API payloads and configuration files.",
+      question: "Does Remove Duplicate Lines keep the first occurrence?",
+      answer: "Yes. The first instance of each line is kept and later repeats are removed.",
     },
     {
-      question: "Why should I validate JSON?",
-      answer:
-        "Validating JSON helps catch syntax issues before you use the data in an app, API, or import flow. It reduces parsing errors and saves debugging time.",
+      question: "Does Remove Duplicate Lines preserve original order?",
+      answer: "Yes. Remaining lines stay in their original top-to-bottom order.",
     },
     {
-      question: `What causes invalid JSON in the ${toolName}?`,
-      answer:
-        "Invalid JSON is usually caused by trailing commas, missing quotes around keys or strings, mismatched brackets, or other syntax mistakes.",
+      question: "Is duplicate matching case-sensitive?",
+      answer: "Yes. `Apple` and `apple` are treated as different lines.",
     },
   ],
-  "csv-tools": (toolName) => [
+  "json-validator": [
     {
-      question: "What is a CSV file?",
-      answer:
-        "A CSV file is a plain text format where values are separated by commas. It is commonly used for spreadsheet exports, data imports, and simple tabular data exchange.",
+      question: "What makes JSON invalid in this validator?",
+      answer: "Common issues are trailing commas, missing quotes, unescaped characters, and mismatched braces or brackets.",
     },
     {
-      question: `How do I use the ${toolName} with spreadsheet data?`,
-      answer:
-        "Copy your CSV content from a spreadsheet export or text file, paste it into the tool input, run the transformation, and review the output before copying or downloading it.",
-    },
-    {
-      question: "Why is my CSV not parsing correctly?",
-      answer:
-        "CSV parsing issues usually come from inconsistent column counts, unescaped quotes, commas inside values, or line breaks inside cells.",
-    },
-  ],
-  "text-tools": (toolName) => [
-    {
-      question: `How do I use the ${toolName} with large text blocks?`,
-      answer:
-        "Paste your text into the tool, run it in the browser, and review the cleaned output. For very large text files, response speed will depend on browser memory and device performance.",
-    },
-    {
-      question: "How do I remove duplicate lines from text?",
-      answer:
-        "Paste your text with one item per line into the tool and run it. The tool keeps the first occurrence of each line and removes repeats.",
-    },
-    {
-      question: "Can this tool process large text files?",
-      answer:
-        "Yes, for typical browser-sized inputs. Since processing is usually client-side, very large files may still be limited by the browser and device resources.",
-    },
-  ],
-  "developer-tools": (toolName) => [
-    {
-      question: `Who is the ${toolName} for?`,
-      answer:
-        "This tool is useful for developers, analysts, and technical users who need a quick browser-based utility without installing extra software.",
-    },
-    {
-      question: "Why use an online developer utility instead of installing a package?",
-      answer:
-        "An online utility is faster for quick checks, one-off tasks, and debugging. It avoids setup time and works immediately in the browser.",
-    },
-  ],
-  "spreadsheet-tools": (toolName) => [
-    {
-      question: `Can I use the ${toolName} with Excel or Google Sheets data?`,
-      answer:
-        "Yes. Most spreadsheet-oriented tools work well with copied spreadsheet content or data exported from Excel and Google Sheets.",
-    },
-    {
-      question: "Why use a spreadsheet tool in the browser?",
-      answer:
-        "Browser-based spreadsheet tools are useful for quick conversions, cleanups, and formula-related tasks without opening a full spreadsheet workflow.",
-    },
-  ],
-};
-
-const toolFAQTemplates: Record<string, FAQItem[]> = {
-  "base64-encoder": [
-    {
-      question: "How do I encode text to Base64?",
-      answer:
-        "Paste plain text into the Base64 Encoder and run the tool. It converts your input into a Base64 string you can copy immediately.",
-    },
-    {
-      question: "Why use Base64 encoding?",
-      answer:
-        "Base64 is useful when text must be transferred through systems that expect ASCII-safe data, such as tokens, payload fields, or transport layers.",
-    },
-    {
-      question: "Does Base64 encoding encrypt my data?",
-      answer:
-        "No. Base64 only encodes data for transport and readability constraints. It is not a security or encryption method.",
-    },
-  ],
-  "base64-decoder": [
-    {
-      question: "How do I decode a Base64 string?",
-      answer:
-        "Paste the Base64 value into the decoder and run the tool. It returns the original readable text when the input is valid.",
-    },
-    {
-      question: "Why is my Base64 decode failing?",
-      answer:
-        "Decode errors usually come from malformed input, invalid characters, missing padding, or partial strings copied from logs.",
-    },
-    {
-      question: "Can I decode Base64 generated by APIs?",
-      answer:
-        "Yes. Standard Base64 content from APIs, tokens, and payload fields can be decoded if the full value is provided.",
-    },
-  ],
-  "uuid-generator": [
-    {
-      question: "What is a UUID v4?",
-      answer:
-        "UUID v4 is a randomly generated identifier format commonly used for unique database keys, request IDs, and distributed systems.",
-    },
-    {
-      question: "How many UUIDs can I generate at once?",
-      answer:
-        "You can generate one by default or provide a count to generate multiple UUIDs in a single run.",
-    },
-    {
-      question: "Are generated UUIDs unique?",
-      answer:
-        "UUID v4 values are designed to have extremely low collision probability, making them practical for most application use cases.",
-    },
-  ],
-  "url-encoder": [
-    {
-      question: "How do I URL encode text?",
-      answer:
-        "Paste your raw text into the URL Encoder and run it. Special characters are converted into URL-safe percent-encoded values.",
-    },
-    {
-      question: "When should I URL encode data?",
-      answer:
-        "Encode values before placing user input or special characters into query parameters, redirect URLs, or tracking links.",
-    },
-    {
-      question: "Why are spaces and symbols changed in encoded URLs?",
-      answer:
-        "Reserved characters are encoded so browsers and servers interpret the URL consistently without breaking parameters.",
-    },
-  ],
-  "url-decoder": [
-    {
-      question: "How do I decode URL-encoded text?",
-      answer:
-        "Paste the encoded value into the URL Decoder and run the tool to convert percent-encoded characters back to readable text.",
-    },
-    {
-      question: "Why does URL decoding fail?",
-      answer:
-        "Decoding fails when input contains invalid percent-encoding sequences or incomplete encoded bytes.",
-    },
-    {
-      question: "Can I decode full query strings?",
-      answer:
-        "Yes. You can decode full query strings or individual encoded parameter values to inspect request data more easily.",
-    },
-  ],
-  "regex-tester": [
-    {
-      question: "How do I test a regex pattern online?",
-      answer:
-        "Enter your regex on the first line, add test text below it, and run the tool to see how many matches were found and what they are.",
-    },
-    {
-      question: "Why is my regular expression not matching?",
-      answer:
-        "Common issues include missing flags, incorrect escaping, misplaced anchors, and patterns that do not fit the text format you are testing.",
-    },
-    {
-      question: "Can I use regex flags like g, i, and m?",
-      answer:
-        "Yes. The Regex Tester supports standard JavaScript flags such as global, case-insensitive, and multiline.",
+      question: "Does JSON Validator check schema rules?",
+      answer: "No. It checks JSON syntax only, not schema constraints or business logic.",
     },
   ],
   "timestamp-converter": [
     {
-      question: "How do I convert Unix timestamp to date?",
-      answer:
-        "Paste your Unix timestamp into the tool and run it to get UTC time, local time, Unix seconds, and Unix milliseconds.",
+      question: "How does Timestamp Converter detect seconds vs milliseconds?",
+      answer: "It inspects numeric length and converts both representations into normalized UTC and local-time values.",
     },
     {
-      question: "Does the Timestamp Converter support seconds and milliseconds?",
-      answer:
-        "Yes. The converter detects both formats and normalizes them into consistent output fields.",
-    },
-    {
-      question: "Why is my timestamp conversion incorrect?",
-      answer:
-        "Conversion differences are often caused by timezone interpretation, invalid date strings, or mixing seconds and milliseconds.",
+      question: "Does Timestamp Converter show UTC and local time?",
+      answer: "Yes. It returns UTC output and local-time output so timezone offsets are clear.",
     },
   ],
-  "csv-to-sql": [
+  "base64-decoder": [
     {
-      question: "How do I convert CSV to SQL INSERT statements?",
-      answer:
-        "Paste or upload your CSV, choose INSERT-only mode, and generate SQL. The tool maps each CSV row into an INSERT value tuple.",
+      question: "Why can Base64 Decoder fail on some strings?",
+      answer: "Failures usually come from invalid characters, truncated input, or incorrect padding.",
     },
     {
-      question: "Can this CSV to SQL tool generate CREATE TABLE statements?",
-      answer:
-        "Yes. Use CREATE TABLE + INSERT mode to generate schema and data insert statements in one output.",
-    },
-    {
-      question: "Does CSV to SQL support MySQL and PostgreSQL?",
-      answer:
-        "Yes. You can choose Generic SQL, PostgreSQL, MySQL, or SQLite dialect output before generating SQL.",
+      question: "Can Base64 Decoder handle URL-safe Base64?",
+      answer: "This decoder expects standard Base64 input. Convert URL-safe variants first if needed.",
     },
   ],
-  "json-flatten-to-csv": [
+  "regex-tester": [
     {
-      question: "How do I flatten nested JSON online?",
-      answer:
-        "Paste nested JSON into the tool and run flattening. Nested keys are converted to dot notation such as user.address.city.",
+      question: "Can Regex Tester run patterns with flags?",
+      answer: "Yes. Use `/pattern/flags` format, for example `/error\\d+/gi`.",
     },
     {
-      question: "How are arrays handled when flattening JSON?",
-      answer:
-        "Arrays are kept as JSON strings by default so data is preserved in a single column without losing structure.",
-    },
-    {
-      question: "Can I convert nested JSON directly to CSV?",
-      answer:
-        "Yes. After flattening, switch output to CSV to copy or download a spreadsheet-ready file.",
+      question: "Why do I get zero matches in Regex Tester?",
+      answer: "Check escaping, anchors, and flags. Small syntax differences can change matching behavior.",
     },
   ],
-  "csv-cleaner": [
+  "sql-formatter": [
     {
-      question: "How do I clean CSV data online?",
-      answer:
-        "Upload or paste CSV data, enable the cleaning options you need, and run the tool to get a normalized CSV output.",
+      question: "Does SQL Formatter change query logic?",
+      answer: "No. It reformats text for readability but does not execute or rewrite query semantics.",
     },
     {
-      question: "Can CSV Cleaner remove duplicate rows?",
-      answer:
-        "Yes. Enable row deduplication to keep only unique rows and reduce duplicate records before import.",
-    },
-    {
-      question: "What does CSV normalization include?",
-      answer:
-        "Normalization options include trimming whitespace, normalizing header names, lowercasing email addresses, and basic phone cleanup.",
+      question: "Is SQL Formatter fully dialect-aware?",
+      answer: "It handles common SQL patterns and is best used as a lightweight readability formatter.",
     },
   ],
 };
 
-export function generateToolFAQs(tool: ToolDefinition): FAQItem[] {
-  const name = tool.title;
+function inputExpectation(tool: ToolDefinition): string {
+  if (tool.categories.includes("csv-tools")) {
+    return "Use CSV-like tabular input, typically with a header row first.";
+  }
 
-  const baseFAQs: FAQItem[] = [
+  if (tool.categories.includes("json-tools")) {
+    return "Use valid JSON input unless the tool explicitly asks for path or pattern syntax first.";
+  }
+
+  if (tool.categories.includes("text-tools")) {
+    return "Use plain text input, usually one item per line for list-oriented tools.";
+  }
+
+  if (tool.slug.includes("sql")) {
+    return "Use SQL text input in the format described by the tool example.";
+  }
+
+  return "Use the format shown in the example input on this page.";
+}
+
+function outputExpectation(tool: ToolDefinition): string {
+  if (tool.outputFileName) {
+    return `It returns transformed output you can copy or download as \`${tool.outputFileName}\`.`;
+  }
+
+  return "It returns transformed output that you can copy directly from the result panel.";
+}
+
+function commonFailureHint(tool: ToolDefinition): string {
+  if (tool.commonMistakes && tool.commonMistakes.length > 0) {
+    return `A common issue is: ${tool.commonMistakes[0]}`;
+  }
+
+  return "Most failures come from malformed input that does not match the expected format.";
+}
+
+function dynamicToolFAQs(tool: ToolDefinition): FAQItem[] {
+  return [
     {
-      question: `What does the ${name} tool do?`,
-      answer: `${name} helps you quickly process and transform your data directly in the browser.`,
+      question: `What input format does ${tool.title} expect?`,
+      answer: inputExpectation(tool),
     },
     {
-      question: `How do I use the ${name}?`,
-      answer:
-        "Paste your input data into the tool, run the transformation, and then copy or download the generated output.",
+      question: `What does ${tool.title} output?`,
+      answer: outputExpectation(tool),
     },
     {
-      question: `Is the ${name} free to use?`,
-      answer: "Yes. DataToolbox tools are free to use without registration.",
+      question: `Why might ${tool.title} return an error?`,
+      answer: commonFailureHint(tool),
     },
     {
-      question: `Does the ${name} process data securely?`,
-      answer:
-        "Yes. Most DataToolbox tools process data directly in your browser and do not require uploading your data to a server.",
+      question: `Does ${tool.title} run in the browser?`,
+      answer: "Yes. Transformations are designed for in-browser usage so you can test and iterate quickly.",
     },
     {
-      question: `What types of input does the ${name} support?`,
-      answer:
-        "The tool accepts standard text input for the relevant format, such as CSV, JSON, or plain text, depending on the tool.",
+      question: `Can I copy or download results from ${tool.title}?`,
+      answer: tool.outputFileName
+        ? "Yes. You can copy the result or use the download action when file output is available."
+        : "Yes. You can copy transformed output directly from the tool.",
     },
   ];
+}
 
-  const categoryFAQs = tool.categories.flatMap((category) =>
-    categoryFAQTemplates[category] ? categoryFAQTemplates[category](name) : [],
-  );
+export function generateToolFAQs(tool: ToolDefinition): FAQItem[] {
+  const merged = [...(toolFAQTemplates[tool.slug] ?? []), ...tool.faq, ...dynamicToolFAQs(tool)];
+  const unique: FAQItem[] = [];
+  const seen = new Set<string>();
 
-  const toolSpecificFAQs = toolFAQTemplates[tool.slug] ?? [];
-  const mergedFAQs = [...baseFAQs, ...categoryFAQs, ...toolSpecificFAQs, ...tool.faq];
-  const seenQuestions = new Set<string>();
-
-  return mergedFAQs.filter((item) => {
-    const normalized = item.question.trim().toLowerCase();
-    if (seenQuestions.has(normalized)) {
-      return false;
+  for (const item of merged) {
+    const key = item.question.trim().toLowerCase();
+    if (seen.has(key)) {
+      continue;
     }
 
-    seenQuestions.add(normalized);
-    return true;
-  });
+    seen.add(key);
+    unique.push(item);
+  }
+
+  return unique.slice(0, 8);
 }
