@@ -164,6 +164,20 @@ describe("transformations", () => {
         "CSV Column Mapper mapping rules must use source:target format, e.g. name:full_name.",
       );
     });
+
+    it("throws when mapping creates duplicate headers", () => {
+      expect(() =>
+        transformations["csv-column-mapper"](
+          "first:name,last:name\n\nfirst,last\nAna,Doe",
+        ),
+      ).toThrow("CSV Column Mapper produced duplicate target headers. Adjust mapping rules.");
+    });
+
+    it("throws when csv section is missing", () => {
+      expect(() => transformations["csv-column-mapper"]("name:full_name\n\n\n")).toThrow(
+        "CSV Column Mapper requires mapping rules first, then a blank line, then CSV data.",
+      );
+    });
   });
 
   describe("csv-validator", () => {
@@ -291,6 +305,17 @@ describe("transformations", () => {
         "JSON Schema Generator: invalid JSON syntax.",
       );
     });
+
+    it("generates schema for empty array input", () => {
+      const result = transformations["json-schema-generator"]("[]");
+      expect(result.output).toContain('"type": "array"');
+      expect(result.output).toContain('"items": {}');
+    });
+
+    it("supports mixed-type arrays using anyOf", () => {
+      const result = transformations["json-schema-generator"]('[1,"two",{"id":3}]');
+      expect(result.output).toContain('"anyOf"');
+    });
   });
 
   describe("ndjson-to-csv", () => {
@@ -311,6 +336,18 @@ describe("transformations", () => {
     it("throws with line number for invalid ndjson", () => {
       expect(() => transformations["ndjson-to-csv"]('{"id":1}\n{bad}')).toThrow(
         "NDJSON to CSV found invalid JSON at line 2.",
+      );
+    });
+
+    it("throws when ndjson input has no object lines", () => {
+      expect(() => transformations["ndjson-to-csv"]("\n\n")).toThrow(
+        "Please provide input.",
+      );
+    });
+
+    it("throws when ndjson line is not an object", () => {
+      expect(() => transformations["ndjson-to-csv"]('{"id":1}\n[1,2]')).toThrow(
+        "NDJSON to CSV expects objects on each line. Invalid record at line 2.",
       );
     });
   });
@@ -343,6 +380,12 @@ describe("transformations", () => {
         "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
       const result = transformations["jwt-decoder"](token);
       expect(result.output).toContain('"name": "Ana"');
+    });
+
+    it("throws when token segments are not decodable json", () => {
+      expect(() => transformations["jwt-decoder"]("abc.def.ghi")).toThrow(
+        "JWT Decoder could not decode token. Ensure it is a valid JWT.",
+      );
     });
   });
 

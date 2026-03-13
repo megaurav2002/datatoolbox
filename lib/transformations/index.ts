@@ -1,5 +1,5 @@
 import type { TransformResult } from "@/lib/types";
-import md5 from "blueimp-md5";
+import { generateMd5Hash } from "@/lib/transformations/hash";
 import {
   ensureInput,
   normalizeLines,
@@ -631,7 +631,7 @@ function jwtDecoder(input: string): TransformResult {
 }
 
 function hashGenerator(input: string): TransformResult {
-  return toTransformResult(md5(ensureInput(input)), "hash.txt", "text/plain");
+  return toTransformResult(generateMd5Hash(ensureInput(input)), "hash.txt", "text/plain");
 }
 
 function mermaidEditor(input: string): TransformResult {

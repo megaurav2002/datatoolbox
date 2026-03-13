@@ -1,15 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import md5 from "blueimp-md5";
 import ToolOutput from "@/components/ToolOutput";
+import { generateHashValue, type HashAlgorithm } from "@/lib/transformations/hash";
 import type { ToolDefinition } from "@/lib/types";
 
 type HashGeneratorToolProps = {
   tool: ToolDefinition;
 };
-
-type HashAlgorithm = "md5" | "sha-1" | "sha-256" | "sha-384" | "sha-512";
 
 const algorithmLabels: Record<HashAlgorithm, string> = {
   md5: "MD5",
@@ -18,19 +16,6 @@ const algorithmLabels: Record<HashAlgorithm, string> = {
   "sha-384": "SHA-384",
   "sha-512": "SHA-512",
 };
-
-const subtleAlgorithmMap: Record<Exclude<HashAlgorithm, "md5">, AlgorithmIdentifier> = {
-  "sha-1": "SHA-1",
-  "sha-256": "SHA-256",
-  "sha-384": "SHA-384",
-  "sha-512": "SHA-512",
-};
-
-function bytesToHex(buffer: ArrayBuffer): string {
-  return Array.from(new Uint8Array(buffer))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
 
 export default function HashGeneratorTool({ tool }: HashGeneratorToolProps) {
   const [input, setInput] = useState(tool.exampleInput);
@@ -50,18 +35,8 @@ export default function HashGeneratorTool({ tool }: HashGeneratorToolProps) {
     setError("");
 
     try {
-      if (algorithm === "md5") {
-        setOutput(md5(input));
-        return;
-      }
-
-      if (!globalThis.crypto?.subtle) {
-        throw new Error("This browser does not support SHA hashing APIs.");
-      }
-
-      const bytes = new TextEncoder().encode(input);
-      const digest = await globalThis.crypto.subtle.digest(subtleAlgorithmMap[algorithm], bytes);
-      setOutput(bytesToHex(digest));
+      const hash = await generateHashValue(input, algorithm);
+      setOutput(hash);
     } catch (caughtError) {
       setOutput("");
       setError(caughtError instanceof Error ? caughtError.message : "Failed to generate hash.");
