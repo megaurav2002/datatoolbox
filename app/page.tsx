@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import HomeToolExplorer from "@/components/HomeToolExplorer";
 import { categories } from "@/lib/categories";
 import { guides } from "@/lib/guides";
-import { hubs } from "@/lib/hubs";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
 import { toolsBySlug } from "@/lib/tools";
 
 export const metadata: Metadata = {
-  title: buildMetaTitle("Free Online Data Tools"),
+  title: buildMetaTitle("Free Online Data Tools - JSON, CSV, SQL Utilities"),
   description:
-    "Free online CSV, JSON, spreadsheet, text, and developer tools to clean and transform data quickly.",
+    "Free browser-based tools to clean, convert, validate, and transform JSON, CSV, SQL, and text data instantly. No uploads or signup required.",
   alternates: {
     canonical: "/",
   },
@@ -18,24 +17,23 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: "Free Online Data Tools | DataToolbox",
+    title: "Free Online Data Tools - JSON, CSV, SQL Utilities | DataToolbox",
     description:
-      "Free online CSV, JSON, spreadsheet, text, and developer tools to clean and transform data quickly.",
+      "Free browser-based tools to clean, convert, validate, and transform JSON, CSV, SQL, and text data instantly. No uploads or signup required.",
     url: absoluteUrl("/"),
     type: "website",
   },
 };
 
 const popularSlugs = [
-  "csv-to-json",
-  "csv-to-sql",
   "json-formatter",
-  "csv-cleaner",
-  "json-flatten-to-csv",
   "json-validator",
   "remove-duplicate-lines",
-  "extract-emails",
-  "extract-numbers",
+  "base64-encoder",
+  "base64-decoder",
+  "uuid-generator",
+  "regex-tester",
+  "timestamp-converter",
 ] as const;
 
 const websiteJsonLd = {
@@ -44,7 +42,7 @@ const websiteJsonLd = {
   name: "DataToolbox",
   url: absoluteUrl("/"),
   description:
-    "Free online CSV, JSON, spreadsheet, text, and developer tools to clean and transform data quickly.",
+    "Free browser-based tools to clean, convert, validate, and transform JSON, CSV, SQL, and text data instantly.",
 };
 
 export default function HomePage() {
@@ -60,7 +58,6 @@ export default function HomePage() {
       />
       <HomeToolExplorer
         categories={categories}
-        hubs={hubs}
         guides={guides}
         popularTools={popularTools}
       />
