@@ -3,7 +3,7 @@ import HomeToolExplorer from "@/components/HomeToolExplorer";
 import { categories } from "@/lib/categories";
 import { guides } from "@/lib/guides";
 import { absoluteUrl, buildMetaTitle } from "@/lib/seo";
-import { toolsBySlug } from "@/lib/tools";
+import { recentTools, toolsBySlug } from "@/lib/tools";
 
 export const metadata: Metadata = {
   title: buildMetaTitle("Free Online Data Tools - JSON, CSV, SQL Utilities"),
@@ -49,6 +49,7 @@ export default function HomePage() {
   const popularTools = popularSlugs
     .map((slug) => toolsBySlug[slug])
     .filter((tool) => Boolean(tool));
+  const latestTools = recentTools(8);
 
   return (
     <>
@@ -60,6 +61,7 @@ export default function HomePage() {
         categories={categories}
         guides={guides}
         popularTools={popularTools}
+        latestTools={latestTools}
       />
     </>
   );

@@ -10,12 +10,14 @@ type HomeToolExplorerProps = {
   categories: CategoryDefinition[];
   guides: GuideDefinition[];
   popularTools: ToolDefinition[];
+  latestTools: ToolDefinition[];
 };
 
 export default function HomeToolExplorer({
   categories,
   guides,
   popularTools,
+  latestTools,
 }: HomeToolExplorerProps) {
   const categoryCards = [
     {
@@ -143,6 +145,20 @@ export default function HomeToolExplorer({
             </Link>
           ))}
         </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-2xl font-semibold text-slate-900">Recently Added Tools</h2>
+        <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {latestTools.map((tool) => (
+            <li key={tool.slug} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <Link className="font-semibold text-slate-900 underline" href={`/tools/${tool.slug}`}>
+                {tool.title}
+              </Link>
+              <p className="mt-2 text-sm text-slate-700">{tool.shortDescription}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="mt-10">
