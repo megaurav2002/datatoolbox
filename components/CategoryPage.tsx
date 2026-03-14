@@ -26,7 +26,7 @@ export default function CategoryPage({ category, tools }: CategoryPageProps) {
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">{category.title}</h1>
         <p className="mt-3 max-w-3xl text-slate-700">{category.description}</p>
         <p className="mt-3 text-sm text-slate-700">
-          Looking for the SEO hub page?{" "}
+          Looking for related tools in this area?{" "}
           <Link className="underline" href={toolsCategoryCanonical(mappedHubSlug)}>
             View {hubsBySlug[mappedHubSlug].title}
           </Link>
