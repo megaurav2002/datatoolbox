@@ -33,10 +33,18 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
 
   const toolUrl = absoluteUrl(`/tools/${tool.slug}`);
   const categoryKeywords = tool.categories.map((category) => category.replace(/-/g, " "));
+  const metadataTitle =
+    tool.slug === "json-to-csv"
+      ? "JSON to CSV Converter - Free Online Tool"
+      : `${tool.title} - Free Online Tool`;
+  const metadataDescription =
+    tool.slug === "json-to-csv"
+      ? "Convert a JSON array of objects into spreadsheet-ready CSV instantly. Free online JSON to CSV converter for Excel, Google Sheets, and data exports."
+      : tool.shortDescription;
 
   return {
-    title: buildMetaTitle(`${tool.title} - Free Online Tool`),
-    description: tool.shortDescription,
+    title: buildMetaTitle(metadataTitle),
+    description: metadataDescription,
     keywords: [
       tool.title,
       "free online tool",
@@ -55,14 +63,14 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     },
     openGraph: {
       title: `${tool.title} - DataToolbox`,
-      description: tool.shortDescription,
+      description: metadataDescription,
       url: toolUrl,
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: `${tool.title} - DataToolbox`,
-      description: tool.shortDescription,
+      description: metadataDescription,
     },
   };
 }

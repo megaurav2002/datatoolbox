@@ -15,6 +15,7 @@ export type ToolDefinition = {
   howToUse: string[];
   exampleInput: string;
   exampleOutput: string;
+  exampleNotes?: string[];
   whyUseful: string;
   commonMistakes?: string[];
   faq: Array<{ question: string; answer: string }>;

@@ -40,33 +40,77 @@ export const tools: ToolDefinition[] = [
   {
     slug: "json-to-csv",
     title: "JSON to CSV Converter",
-    shortDescription: "Turn JSON arrays into CSV for spreadsheets.",
-    tags: ["json", "csv", "converter", "spreadsheet", "export"],
+    shortDescription:
+      "Convert a JSON array of objects into spreadsheet-ready CSV instantly. Free online JSON to CSV converter for Excel, Google Sheets, and data exports.",
+    tags: [
+      "json to csv converter",
+      "json to csv",
+      "convert json to csv",
+      "free json to csv converter",
+      "how to convert json to csv",
+      "spreadsheet export",
+    ],
     intro:
-      "Transform a JSON array of objects into CSV columns that open cleanly in Excel, Google Sheets, and BI tools. This converter is designed for API responses and exported JSON where you need tabular output quickly.",
+      "Convert a JSON array of objects into spreadsheet-ready CSV. This is useful for API responses, exports, and quick analysis in Excel or Google Sheets. If your JSON contains nested objects or arrays, flatten JSON first so each value maps to a clean column.",
     howToUse: [
       "Paste a valid JSON array of objects.",
-      "Click Transform to generate CSV headers and rows.",
-      "Copy the CSV output or download it for spreadsheet use.",
+      "Check that all records use the fields you expect.",
+      "Run the conversion.",
+      "Review the generated header row and values.",
+      "Copy or download the CSV.",
     ],
-    exampleInput: '[{"name":"Ana","email":"ana@example.com"}]',
-    exampleOutput: "name,email\nAna,ana@example.com",
+    exampleInput:
+      '[\n  { "name": "Ana", "email": "ana@example.com", "age": 28 },\n  { "name": "Bob", "email": "bob@example.com", "age": 34 }\n]',
+    exampleOutput: "name,email,age\nAna,ana@example.com,28\nBob,bob@example.com,34",
+    exampleNotes: [
+      "Keys become column headers.",
+      "Each object becomes one CSV row.",
+      "Missing keys become empty cells.",
+    ],
     whyUseful:
-      "Useful for analysts and operators who receive JSON from APIs but need to filter, sort, and share results in spreadsheets.",
+      "Useful when you need to convert API JSON into CSV quickly for spreadsheet review, team sharing, or import into CSV-based systems.",
     commonMistakes: [
       "Pasting a single JSON object instead of an array of objects.",
-      "Assuming nested objects automatically flatten into columns.",
-      "Ignoring sparse keys across records, which can create empty cells.",
+      "Using invalid JSON syntax (missing quotes, commas, or brackets).",
+      "Expecting nested objects to flatten automatically.",
+      "Using inconsistent keys across objects and misreading empty cells.",
+      "Pasting NDJSON (one object per line) instead of a JSON array.",
     ],
     faq: [
-      { question: "What JSON shape is expected?", answer: "A non-empty array of objects." },
-      { question: "Are missing keys handled?", answer: "Yes. Missing values are left empty." },
       {
-        question: "Can I convert nested JSON too?",
-        answer: "For nested structures, use JSON Flatten / JSON to CSV first to avoid complex cell values.",
+        question: "What JSON format does this converter accept?",
+        answer: "It expects a non-empty JSON array of objects, for example `[{\"name\":\"Ana\"},{\"name\":\"Bob\"}]`.",
+      },
+      {
+        question: "Can I convert a single JSON object to CSV?",
+        answer: "Yes. Wrap it in an array first, for example `[{\"name\":\"Ana\"}]`.",
+      },
+      {
+        question: "How are missing keys handled?",
+        answer: "If an object is missing a key that exists in the header set, that row gets an empty CSV cell for that column.",
+      },
+      {
+        question: "Can this convert nested JSON?",
+        answer: "Not directly into separate columns. Use JSON Flatten / JSON to CSV first for nested payloads.",
+      },
+      {
+        question: "Why did my JSON to CSV conversion fail?",
+        answer: "Typical causes are invalid JSON, using a single object instead of an array, or including non-object values in the array.",
+      },
+      {
+        question: "Is this JSON to CSV converter free?",
+        answer: "Yes, it is free to use.",
+      },
+      {
+        question: "Does this run in the browser?",
+        answer: "Yes. Conversion runs entirely in your browser.",
+      },
+      {
+        question: "Can I open the output in Excel or Google Sheets?",
+        answer: "Yes. The generated CSV is compatible with Excel, Google Sheets, and most CSV import workflows.",
       },
     ],
-    related: ["csv-to-json", "json-flatten-to-csv", "json-minifier", "csv-validator"],
+    related: ["json-flatten-to-csv", "csv-to-json", "json-validator", "json-formatter", "ndjson-to-csv"],
     kind: "standard",
     categories: ["csv-tools", "json-tools", "spreadsheet-tools"],
     createdAt: "2026-03-02",

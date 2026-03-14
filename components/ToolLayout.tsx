@@ -261,6 +261,13 @@ export default function ToolLayout({ tool, children }: ToolLayoutProps) {
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">Example output</h2>
           <pre className="mt-3 overflow-auto rounded-lg bg-slate-100 p-3 text-sm text-slate-800">{tool.exampleOutput}</pre>
+          {tool.exampleNotes && tool.exampleNotes.length > 0 ? (
+            <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-slate-700">
+              {tool.exampleNotes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          ) : null}
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">

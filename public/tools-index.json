@@ -15,13 +15,14 @@
   {
     "slug": "json-to-csv",
     "title": "JSON to CSV Converter",
-    "description": "Turn JSON arrays into CSV for spreadsheets.",
+    "description": "Convert a JSON array of objects into spreadsheet-ready CSV instantly. Free online JSON to CSV converter for Excel, Google Sheets, and data exports.",
     "tags": [
-      "json",
-      "csv",
-      "converter",
-      "spreadsheet",
-      "export"
+      "json to csv converter",
+      "json to csv",
+      "convert json to csv",
+      "free json to csv converter",
+      "how to convert json to csv",
+      "spreadsheet export"
     ],
     "url": "/tools/json-to-csv"
   },
