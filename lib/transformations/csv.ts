@@ -2,7 +2,7 @@ function isSignificantRow(row: string[]): boolean {
   return row.length > 1 || row.some((cell) => cell.length > 0);
 }
 
-export function parseCsv(input: string): string[][] {
+export function parseCsv(input: string, delimiter = ","): string[][] {
   const rows: string[][] = [];
   let row: string[] = [];
   let value = "";
@@ -22,7 +22,7 @@ export function parseCsv(input: string): string[][] {
       continue;
     }
 
-    if (char === "," && !inQuotes) {
+    if (char === delimiter && !inQuotes) {
       row.push(value);
       value = "";
       continue;

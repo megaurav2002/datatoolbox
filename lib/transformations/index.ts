@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { sha256 } from "js-sha256";
 import type { TransformResult } from "@/lib/types";
-import { parse as parseYaml } from "yaml";
+import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import { generateMd5Hash } from "@/lib/transformations/hash";
 import {
   ensureInput,
@@ -594,6 +594,262 @@ function randomStringGenerator(input: string): TransformResult {
   const length = parseLengthInput(input, "Random String Generator", 1, 512, 16);
   const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   return toTransformResult(buildRandomString(length, charset));
+}
+
+function wordCounter(input: string): TransformResult {
+  const source = ensureInput(input);
+  const normalized = source.replace(/\r\n?/g, "\n");
+  const trimmed = normalized.trim();
+  const words = trimmed ? trimmed.split(/\s+/).length : 0;
+  const lines = normalized.split("\n").length;
+  const paragraphs = trimmed ? trimmed.split(/\n\s*\n/).filter(Boolean).length : 0;
+  const characters = normalized.length;
+  const charactersExcludingSpaces = normalized.replace(/\s/g, "").length;
+
+  return toTransformResult(
+    JSON.stringify(
+      { words, characters, charactersExcludingSpaces, lines, paragraphs },
+      null,
+      2,
+    ),
+    "word-count.json",
+    "application/json",
+  );
+}
+
+function toTitleCase(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/\b([a-z])/g, (match) => match.toUpperCase());
+}
+
+function toSentenceCase(value: string): string {
+  const lowered = value.toLowerCase();
+  return lowered.replace(/(^\s*[a-z])|([.!?]\s+[a-z])/g, (segment) => segment.toUpperCase());
+}
+
+function splitWords(value: string): string[] {
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .split(/[^a-zA-Z0-9]+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
+function toKebabCase(value: string): string {
+  return splitWords(value).map((part) => part.toLowerCase()).join("-");
+}
+
+function toSnakeCase(value: string): string {
+  return splitWords(value).map((part) => part.toLowerCase()).join("_");
+}
+
+function toCamelCase(value: string): string {
+  const parts = splitWords(value).map((part) => part.toLowerCase());
+  if (parts.length === 0) {
+    return "";
+  }
+  return parts[0] + parts.slice(1).map((part) => part[0].toUpperCase() + part.slice(1)).join("");
+}
+
+function caseConverter(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const [modeLine, textBlock] = normalized.split(/\n\s*\n/, 2);
+
+  if (!textBlock) {
+    throw new Error("Case Converter requires mode on first line, blank line, then text input.");
+  }
+
+  const mode = modeLine.trim().toLowerCase();
+  const value = textBlock;
+
+  const transformed = (() => {
+    switch (mode) {
+      case "uppercase":
+      case "upper":
+        return value.toUpperCase();
+      case "lowercase":
+      case "lower":
+        return value.toLowerCase();
+      case "title":
+      case "title-case":
+        return toTitleCase(value);
+      case "sentence":
+      case "sentence-case":
+        return toSentenceCase(value);
+      case "kebab":
+      case "kebab-case":
+        return toKebabCase(value);
+      case "snake":
+      case "snake-case":
+        return toSnakeCase(value);
+      case "camel":
+      case "camel-case":
+        return toCamelCase(value);
+      default:
+        throw new Error(
+          "Case Converter mode must be one of: uppercase, lowercase, title, sentence, kebab, snake, camel.",
+        );
+    }
+  })();
+
+  return toTransformResult(transformed);
+}
+
+function removeLineBreaks(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const configMatch = normalized.match(/^([^\n]+)\n\s*\n([\s\S]*)$/);
+  const explicitModeToken = configMatch?.[1].trim().toLowerCase();
+  const validModes = new Set(["single-line", "normalize"]);
+  const hasModeBlock = Boolean(explicitModeToken && validModes.has(explicitModeToken));
+  const hasModePrefix = Boolean(explicitModeToken?.startsWith("mode="));
+  const mode = hasModeBlock ? explicitModeToken! : "single-line";
+  const text = hasModeBlock ? configMatch?.[2] ?? "" : normalized;
+
+  if (!text.trim()) {
+    throw new Error("Please provide input.");
+  }
+
+  if (hasModePrefix && !hasModeBlock) {
+    throw new Error("Remove Line Breaks mode must be `single-line` or `normalize`.");
+  }
+
+  if (mode === "normalize") {
+    return toTransformResult(text.replace(/\n{3,}/g, "\n\n"));
+  }
+
+  return toTransformResult(
+    text
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .join(" "),
+  );
+}
+
+function csvViewer(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const configMatch = normalized.match(/^([^\n]+)\n\s*\n([\s\S]*)$/);
+  const delimiterLine = configMatch?.[1].trim().toLowerCase() ?? "";
+  const hasConfig = delimiterLine.startsWith("delimiter=");
+  const csvSource = hasConfig ? configMatch?.[2] ?? "" : normalized;
+  const delimiterConfig = hasConfig ? delimiterLine : "delimiter=comma";
+  const delimiter = (() => {
+    const value = delimiterConfig.split("=")[1];
+    switch (value) {
+      case "comma":
+        return ",";
+      case "semicolon":
+        return ";";
+      case "tab":
+        return "\t";
+      case "pipe":
+        return "|";
+      default:
+        throw new Error("CSV Viewer delimiter must be comma, semicolon, tab, or pipe.");
+    }
+  })();
+
+  const rows = parseCsv(csvSource, delimiter);
+  if (rows.length === 0) {
+    throw new Error("CSV Viewer requires at least one row.");
+  }
+
+  const header = rows[0];
+  const body = rows.slice(1, 51);
+  const toRow = (cells: string[]) => `| ${cells.map((cell) => cell.replace(/\|/g, "\\|")).join(" | ")} |`;
+  const separator = `| ${header.map(() => "---").join(" | ")} |`;
+  const markdownTable = [toRow(header), separator, ...body.map((row) => toRow(row))].join("\n");
+
+  return toTransformResult(markdownTable);
+}
+
+function htmlEncoder(input: string): TransformResult {
+  const encoded = ensureInput(input)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+  return toTransformResult(encoded);
+}
+
+function htmlDecoder(input: string): TransformResult {
+  const decoded = ensureInput(input)
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&");
+  return toTransformResult(decoded);
+}
+
+function yamlToJsonConverter(input: string): TransformResult {
+  const parsed = parseYaml(ensureInput(input));
+  return toTransformResult(JSON.stringify(parsed, null, 2), "converted.json", "application/json");
+}
+
+function jsonToYamlConverter(input: string): TransformResult {
+  const parsed = parseJsonInput(input, "JSON to YAML Converter");
+  const yaml = stringifyYaml(parsed).trimEnd();
+  return toTransformResult(yaml, "converted.yaml", "application/x-yaml");
+}
+
+function cronExpressionBuilder(input: string): TransformResult {
+  const parsed = parseJsonInput(input, "Cron Expression Builder");
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new Error("Cron Expression Builder requires a JSON object input.");
+  }
+
+  const config = parsed as Record<string, unknown>;
+  const minute = String(config.minute ?? "0").trim();
+  const hour = String(config.hour ?? "*").trim();
+  const dayOfMonth = String(config.dayOfMonth ?? "*").trim();
+  const month = String(config.month ?? "*").trim();
+  const dayOfWeek = String(config.dayOfWeek ?? "*").trim();
+  const cron = `${minute} ${hour} ${dayOfMonth} ${month} ${dayOfWeek}`;
+
+  // Reuse parser validation so builder output is always a valid 5-field cron expression.
+  cronExpressionParser(cron);
+  return toTransformResult(cron, "cron-expression.txt", "text/plain");
+}
+
+function loremWord(): string {
+  const words = [
+    "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+    "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
+    "magna", "aliqua",
+  ];
+  return words[randomInt(words.length)];
+}
+
+function loremIpsumGenerator(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const [modeLine, countLine] = normalized.split(/\n/, 2);
+  const mode = modeLine.trim().toLowerCase();
+  const count = parseLengthInput(countLine ?? "", "Lorem Ipsum Generator", 1, 500, 3);
+
+  if (!["words", "sentences", "paragraphs"].includes(mode)) {
+    throw new Error("Lorem Ipsum Generator mode must be `words`, `sentences`, or `paragraphs`.");
+  }
+
+  if (mode === "words") {
+    return toTransformResult(Array.from({ length: count }, () => loremWord()).join(" "));
+  }
+
+  const makeSentence = () => {
+    const length = 8 + randomInt(10);
+    const words = Array.from({ length }, () => loremWord());
+    words[0] = words[0][0].toUpperCase() + words[0].slice(1);
+    return `${words.join(" ")}.`;
+  };
+
+  if (mode === "sentences") {
+    return toTransformResult(Array.from({ length: count }, () => makeSentence()).join(" "));
+  }
+
+  const makeParagraph = () => Array.from({ length: 3 + randomInt(4) }, () => makeSentence()).join(" ");
+  return toTransformResult(Array.from({ length: count }, () => makeParagraph()).join("\n\n"));
 }
 
 function markdownInlineToHtml(line: string): string {
@@ -1232,6 +1488,16 @@ function jsonFlattenToCsv(input: string): TransformResult {
 }
 
 export const transformations: Record<string, (input: string) => TransformResult> = {
+  "word-counter": withTransformErrorBoundary(wordCounter),
+  "case-converter": withTransformErrorBoundary(caseConverter),
+  "remove-line-breaks": withTransformErrorBoundary(removeLineBreaks),
+  "csv-viewer": withTransformErrorBoundary(csvViewer),
+  "html-encoder": withTransformErrorBoundary(htmlEncoder),
+  "html-decoder": withTransformErrorBoundary(htmlDecoder),
+  "yaml-to-json": withTransformErrorBoundary(yamlToJsonConverter),
+  "json-to-yaml": withTransformErrorBoundary(jsonToYamlConverter),
+  "cron-expression-builder": withTransformErrorBoundary(cronExpressionBuilder),
+  "lorem-ipsum-generator": withTransformErrorBoundary(loremIpsumGenerator),
   "character-counter": withTransformErrorBoundary(characterCounter),
   "csv-column-mapper": withTransformErrorBoundary(csvColumnMapper),
   "csv-merge-tool": withTransformErrorBoundary(csvMergeTool),

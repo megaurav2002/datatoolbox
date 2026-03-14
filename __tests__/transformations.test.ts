@@ -6,7 +6,9 @@ describe("transformations", () => {
       "base64-decoder",
       "base64-encoder",
       "bcrypt-hash-generator",
+      "case-converter",
       "character-counter",
+      "cron-expression-builder",
       "cron-expression-parser",
       "csv-cleaner",
       "csv-column-mapper",
@@ -16,12 +18,15 @@ describe("transformations", () => {
       "csv-to-json",
       "csv-to-sql",
       "csv-validator",
+      "csv-viewer",
       "date-format-converter",
       "excel-to-csv",
       "extract-emails",
       "extract-numbers",
       "hash-generator",
       "hmac-generator",
+      "html-decoder",
+      "html-encoder",
       "html-to-markdown",
       "json-diff-checker",
       "json-flatten-to-csv",
@@ -31,9 +36,11 @@ describe("transformations", () => {
       "json-schema-generator",
       "json-to-csv",
       "json-to-xml",
+      "json-to-yaml",
       "json-validator",
       "jwt-decoder",
       "jwt-encoder",
+      "lorem-ipsum-generator",
       "markdown-to-html",
       "mermaid-editor",
       "ndjson-formatter",
@@ -44,6 +51,7 @@ describe("transformations", () => {
       "random-string-generator",
       "regex-tester",
       "remove-duplicate-lines",
+      "remove-line-breaks",
       "slug-generator",
       "sort-lines-alphabetically",
       "sql-formatter",
@@ -55,8 +63,10 @@ describe("transformations", () => {
       "url-encoder",
       "url-parser",
       "uuid-generator",
+      "word-counter",
       "xml-to-json",
       "xml-validator",
+      "yaml-to-json",
       "yaml-validator",
     ]);
   });
@@ -658,6 +668,57 @@ describe("transformations", () => {
       expect(result.output).toBe("No numbers found.");
     });
 
+    it("counts words, characters, lines, and paragraphs", () => {
+      const result = transformations["word-counter"](
+        "First paragraph here.\n\nSecond paragraph now.",
+      );
+      const parsed = JSON.parse(result.output) as {
+        words: number;
+        characters: number;
+        lines: number;
+        paragraphs: number;
+      };
+      expect(parsed.words).toBe(6);
+      expect(parsed.lines).toBe(3);
+      expect(parsed.paragraphs).toBe(2);
+      expect(result.downloadFileName).toBe("word-count.json");
+      expect(result.downloadMimeType).toBe("application/json");
+    });
+
+    it("converts text to requested case mode", () => {
+      expect(transformations["case-converter"]("snake\n\nCustomer Order ID").output).toBe(
+        "customer_order_id",
+      );
+      expect(transformations["case-converter"]("kebab\n\nCustomer Order ID").output).toBe(
+        "customer-order-id",
+      );
+      expect(transformations["case-converter"]("camel\n\nCustomer Order ID").output).toBe(
+        "customerOrderId",
+      );
+    });
+
+    it("throws for invalid case converter mode", () => {
+      expect(() => transformations["case-converter"]("pascal\n\nHello world")).toThrow(
+        "Case Converter mode must be one of: uppercase, lowercase, title, sentence, kebab, snake, camel.",
+      );
+    });
+
+    it("removes line breaks in default single-line mode", () => {
+      const result = transformations["remove-line-breaks"]("Line one\nLine two\n\nLine three");
+      expect(result.output).toBe("Line one Line two Line three");
+    });
+
+    it("normalizes line breaks in normalize mode", () => {
+      const result = transformations["remove-line-breaks"]("normalize\n\nLine one\n\n\n\nLine two");
+      expect(result.output).toBe("Line one\n\nLine two");
+    });
+
+    it("throws for invalid remove-line-breaks mode", () => {
+      expect(() => transformations["remove-line-breaks"]("mode=compact\n\nLine one")).toThrow(
+        "Remove Line Breaks mode must be `single-line` or `normalize`.",
+      );
+    });
+
     it("counts characters, words, and lines", () => {
       const result = transformations["character-counter"]("hello world\nline two");
       const parsed = JSON.parse(result.output) as {
@@ -958,6 +1019,80 @@ describe("transformations", () => {
       expect(() => transformations["bcrypt-hash-generator"]("secret\n\n2")).toThrow(
         "Bcrypt Hash Generator expects a whole number between 4 and 15.",
       );
+    });
+
+    it("renders csv viewer markdown table with delimiter config", () => {
+      const result = transformations["csv-viewer"](
+        "delimiter=semicolon\n\nid;name;city\n1;Ana;Melbourne\n2;Bob;Sydney",
+      );
+      expect(result.output).toContain("| id | name | city |");
+      expect(result.output).toContain("| 1 | Ana | Melbourne |");
+      expect(result.output).toContain("| 2 | Bob | Sydney |");
+    });
+
+    it("throws for invalid csv viewer delimiter", () => {
+      expect(() => transformations["csv-viewer"]("delimiter=space\n\na,b\n1,2")).toThrow(
+        "CSV Viewer delimiter must be comma, semicolon, tab, or pipe.",
+      );
+    });
+
+    it("encodes and decodes html entities", () => {
+      const encoded = transformations["html-encoder"]("<div>Tom & 'Jerry'</div>");
+      expect(encoded.output).toBe("&lt;div&gt;Tom &amp; &#39;Jerry&#39;&lt;/div&gt;");
+      const decoded = transformations["html-decoder"](encoded.output);
+      expect(decoded.output).toBe("<div>Tom & 'Jerry'</div>");
+    });
+
+    it("converts yaml to json", () => {
+      const result = transformations["yaml-to-json"]("version: 1\nservice:\n  name: api");
+      expect(result.output).toContain('"version": 1');
+      expect(result.output).toContain('"service"');
+      expect(result.downloadFileName).toBe("converted.json");
+      expect(result.downloadMimeType).toBe("application/json");
+    });
+
+    it("converts json to yaml", () => {
+      const result = transformations["json-to-yaml"]('{"service":{"name":"api"},"ports":[80,443]}');
+      expect(result.output).toContain("service:");
+      expect(result.output).toContain("name: api");
+      expect(result.output).toContain("- 80");
+      expect(result.downloadFileName).toBe("converted.yaml");
+      expect(result.downloadMimeType).toBe("application/x-yaml");
+    });
+
+    it("builds cron expression from config object", () => {
+      const result = transformations["cron-expression-builder"](
+        '{"minute":"30","hour":"9","dayOfMonth":"*","month":"*","dayOfWeek":"1-5"}',
+      );
+      expect(result.output).toBe("30 9 * * 1-5");
+      expect(result.downloadFileName).toBe("cron-expression.txt");
+      expect(result.downloadMimeType).toBe("text/plain");
+    });
+
+    it("throws when cron builder input is not object", () => {
+      expect(() => transformations["cron-expression-builder"]('["*","*","*","*","*"]')).toThrow(
+        "Cron Expression Builder requires a JSON object input.",
+      );
+    });
+
+    it("throws when cron builder creates out-of-range fields", () => {
+      expect(() =>
+        transformations["cron-expression-builder"](
+          '{"minute":"70","hour":"9","dayOfMonth":"*","month":"*","dayOfWeek":"1-5"}',
+        ),
+      ).toThrow("Cron Expression Parser: minute value must be between 0 and 59.");
+    });
+
+    it("generates lorem ipsum by words mode", () => {
+      const result = transformations["lorem-ipsum-generator"]("words\n5");
+      const words = result.output.split(/\s+/).filter(Boolean);
+      expect(words).toHaveLength(5);
+    });
+
+    it("generates lorem ipsum by paragraphs mode", () => {
+      const result = transformations["lorem-ipsum-generator"]("paragraphs\n2");
+      const paragraphs = result.output.split(/\n\s*\n/);
+      expect(paragraphs).toHaveLength(2);
     });
 
     it("validates yaml input", () => {

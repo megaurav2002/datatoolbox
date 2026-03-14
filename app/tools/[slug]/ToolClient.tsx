@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import ToolInput from "@/components/ToolInput";
 import ToolOutput from "@/components/ToolOutput";
 import CsvCleanerTool from "@/components/tools/CsvCleanerTool";
+import CsvViewerTool from "@/components/tools/CsvViewerTool";
+import CronExpressionBuilderTool from "@/components/tools/CronExpressionBuilderTool";
 import CsvToSqlTool from "@/components/tools/CsvToSqlTool";
 import HashGeneratorTool from "@/components/tools/HashGeneratorTool";
 import JsonFlattenToCsvTool from "@/components/tools/JsonFlattenToCsvTool";
@@ -123,6 +125,14 @@ export default function ToolClient({ tool }: ToolClientProps) {
 
   if (tool.slug === "hash-generator") {
     return <HashGeneratorTool tool={tool} />;
+  }
+
+  if (tool.slug === "csv-viewer") {
+    return <CsvViewerTool tool={tool} />;
+  }
+
+  if (tool.slug === "cron-expression-builder") {
+    return <CronExpressionBuilderTool />;
   }
 
   return <DefaultToolClient tool={tool} />;

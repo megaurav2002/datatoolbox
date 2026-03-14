@@ -148,6 +148,13 @@ export const toolsCategoryContent: Record<ToolsCategorySeoSlug, ToolsCategorySeo
       "sort-lines-alphabetically",
       "extract-emails",
       "extract-numbers",
+      "word-counter",
+      "case-converter",
+      "remove-line-breaks",
+      "character-counter",
+      "slug-generator",
+      "text-diff-checker",
+      "lorem-ipsum-generator",
     ].filter((slug) => Boolean(toolsBySlug[slug])),
     relatedCategoryLinks: [
       { href: "/tools/csv-tools", label: "CSV Tools" },

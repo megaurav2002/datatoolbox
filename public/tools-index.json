@@ -271,6 +271,127 @@
     "url": "/tools/yaml-validator"
   },
   {
+    "slug": "word-counter",
+    "title": "Word Counter",
+    "description": "Count words, characters, lines, and paragraphs in text.",
+    "tags": [
+      "word counter",
+      "text count",
+      "content length",
+      "text tools"
+    ],
+    "url": "/tools/word-counter"
+  },
+  {
+    "slug": "case-converter",
+    "title": "Case Converter",
+    "description": "Convert text between upper, lower, title, sentence, kebab, snake, and camel case.",
+    "tags": [
+      "case converter",
+      "text case",
+      "camel case",
+      "snake case",
+      "kebab case"
+    ],
+    "url": "/tools/case-converter"
+  },
+  {
+    "slug": "remove-line-breaks",
+    "title": "Remove Line Breaks",
+    "description": "Collapse multiline text into one line or normalize line breaks.",
+    "tags": [
+      "remove line breaks",
+      "text cleanup",
+      "single line text",
+      "text tools"
+    ],
+    "url": "/tools/remove-line-breaks"
+  },
+  {
+    "slug": "csv-viewer",
+    "title": "CSV Viewer",
+    "description": "Preview CSV data as a readable table with delimiter support.",
+    "tags": [
+      "csv viewer",
+      "csv table preview",
+      "csv preview",
+      "spreadsheet tools"
+    ],
+    "url": "/tools/csv-viewer"
+  },
+  {
+    "slug": "html-encoder",
+    "title": "HTML Encoder",
+    "description": "Escape unsafe HTML characters into entity-safe text.",
+    "tags": [
+      "html encoder",
+      "escape html",
+      "html entities",
+      "developer tools"
+    ],
+    "url": "/tools/html-encoder"
+  },
+  {
+    "slug": "html-decoder",
+    "title": "HTML Decoder",
+    "description": "Decode HTML entities back into readable text.",
+    "tags": [
+      "html decoder",
+      "decode html entities",
+      "html entities",
+      "developer tools"
+    ],
+    "url": "/tools/html-decoder"
+  },
+  {
+    "slug": "yaml-to-json",
+    "title": "YAML to JSON Converter",
+    "description": "Convert valid YAML into formatted JSON output.",
+    "tags": [
+      "yaml to json",
+      "convert yaml",
+      "yaml converter",
+      "developer tools"
+    ],
+    "url": "/tools/yaml-to-json"
+  },
+  {
+    "slug": "json-to-yaml",
+    "title": "JSON to YAML Converter",
+    "description": "Convert JSON objects into YAML format.",
+    "tags": [
+      "json to yaml",
+      "convert json",
+      "yaml converter",
+      "developer tools"
+    ],
+    "url": "/tools/json-to-yaml"
+  },
+  {
+    "slug": "cron-expression-builder",
+    "title": "Cron Expression Builder",
+    "description": "Build 5-field cron expressions from structured schedule input.",
+    "tags": [
+      "cron expression builder",
+      "build cron",
+      "crontab builder",
+      "developer tools"
+    ],
+    "url": "/tools/cron-expression-builder"
+  },
+  {
+    "slug": "lorem-ipsum-generator",
+    "title": "Lorem Ipsum Generator",
+    "description": "Generate placeholder text by words, sentences, or paragraphs.",
+    "tags": [
+      "lorem ipsum generator",
+      "placeholder text",
+      "dummy text",
+      "developer tools"
+    ],
+    "url": "/tools/lorem-ipsum-generator"
+  },
+  {
     "slug": "markdown-to-html",
     "title": "Markdown to HTML Converter",
     "description": "Convert Markdown text into clean HTML output.",
