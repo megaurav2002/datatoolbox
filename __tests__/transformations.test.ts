@@ -19,10 +19,12 @@ describe("transformations", () => {
       "csv-to-sql",
       "csv-validator",
       "csv-viewer",
+      "curl-to-fetch",
       "date-format-converter",
       "excel-to-csv",
       "extract-emails",
       "extract-numbers",
+      "extract-urls",
       "hash-generator",
       "hmac-generator",
       "html-decoder",
@@ -51,7 +53,10 @@ describe("transformations", () => {
       "random-string-generator",
       "regex-tester",
       "remove-duplicate-lines",
+      "remove-empty-lines",
+      "remove-extra-spaces",
       "remove-line-breaks",
+      "reverse-text",
       "slug-generator",
       "sort-lines-alphabetically",
       "sql-formatter",
@@ -66,6 +71,7 @@ describe("transformations", () => {
       "word-counter",
       "xml-to-json",
       "xml-validator",
+      "yaml-formatter",
       "yaml-to-json",
       "yaml-validator",
     ]);
@@ -668,6 +674,18 @@ describe("transformations", () => {
       expect(result.output).toBe("No numbers found.");
     });
 
+    it("extracts unique urls", () => {
+      const result = transformations["extract-urls"](
+        "Visit https://example.com and https://google.com and https://example.com.",
+      );
+      expect(result.output).toBe("https://example.com\nhttps://google.com");
+    });
+
+    it("returns no url message", () => {
+      const result = transformations["extract-urls"]("no links here");
+      expect(result.output).toBe("No URLs found.");
+    });
+
     it("counts words, characters, lines, and paragraphs", () => {
       const result = transformations["word-counter"](
         "First paragraph here.\n\nSecond paragraph now.",
@@ -717,6 +735,26 @@ describe("transformations", () => {
       expect(() => transformations["remove-line-breaks"]("mode=compact\n\nLine one")).toThrow(
         "Remove Line Breaks mode must be `single-line` or `normalize`.",
       );
+    });
+
+    it("removes extra spaces and trims lines", () => {
+      const result = transformations["remove-extra-spaces"]("  Hello   world  \n  this\t\tis   text ");
+      expect(result.output).toBe("Hello world\nthis is text");
+    });
+
+    it("removes empty lines from multiline text", () => {
+      const result = transformations["remove-empty-lines"]("apple\n\nbanana\n \n\norange");
+      expect(result.output).toBe("apple\nbanana\norange");
+    });
+
+    it("reverses text by characters by default", () => {
+      const result = transformations["reverse-text"]("hello world");
+      expect(result.output).toBe("dlrow olleh");
+    });
+
+    it("reverses text by words in words mode", () => {
+      const result = transformations["reverse-text"]("words\n\nhello world again");
+      expect(result.output).toBe("again world hello");
     });
 
     it("counts characters, words, and lines", () => {
@@ -1051,6 +1089,15 @@ describe("transformations", () => {
       expect(result.downloadMimeType).toBe("application/json");
     });
 
+    it("formats yaml content", () => {
+      const result = transformations["yaml-formatter"]("service: {name: api, ports: [3000, 3001]}");
+      expect(result.output).toContain("service:");
+      expect(result.output).toContain("name: api");
+      expect(result.output).toContain("- 3000");
+      expect(result.downloadFileName).toBe("formatted.yaml");
+      expect(result.downloadMimeType).toBe("application/x-yaml");
+    });
+
     it("converts json to yaml", () => {
       const result = transformations["json-to-yaml"]('{"service":{"name":"api"},"ports":[80,443]}');
       expect(result.output).toContain("service:");
@@ -1081,6 +1128,34 @@ describe("transformations", () => {
           '{"minute":"70","hour":"9","dayOfMonth":"*","month":"*","dayOfWeek":"1-5"}',
         ),
       ).toThrow("Cron Expression Parser: minute value must be between 0 and 59.");
+    });
+
+    it("converts simple curl command to fetch", () => {
+      const result = transformations["curl-to-fetch"]("curl https://api.example.com");
+      expect(result.output).toBe('fetch("https://api.example.com");');
+    });
+
+    it("converts curl with headers and body to fetch options", () => {
+      const result = transformations["curl-to-fetch"](
+        "curl -X POST https://api.example.com -H 'Content-Type: application/json' -d '{\"name\":\"Ana\"}'",
+      );
+      expect(result.output).toContain('fetch("https://api.example.com", {');
+      expect(result.output).toContain('method: "POST"');
+      expect(result.output).toContain('"Content-Type": "application/json"');
+      expect(result.output).toContain('body: "{\\"name\\":\\"Ana\\"}"');
+    });
+
+    it("throws for non-curl input in curl to fetch", () => {
+      expect(() => transformations["curl-to-fetch"]("https://api.example.com")).toThrow(
+        "Curl to Fetch Converter requires input starting with `curl`.",
+      );
+    });
+
+    it("uses the real URL when curl includes output flag", () => {
+      const result = transformations["curl-to-fetch"](
+        "curl -o out.json https://api.example.com/v1/users",
+      );
+      expect(result.output).toBe('fetch("https://api.example.com/v1/users");');
     });
 
     it("generates lorem ipsum by words mode", () => {

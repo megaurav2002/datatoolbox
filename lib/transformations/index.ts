@@ -186,6 +186,56 @@ function removeDuplicateLines(input: string): TransformResult {
   return toTransformResult(deduped.join("\n"));
 }
 
+function removeExtraSpaces(input: string): TransformResult {
+  const normalized = ensureInput(input)
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/[ \t]+/g, " ").trim())
+    .join("\n");
+  return toTransformResult(normalized);
+}
+
+function removeEmptyLines(input: string): TransformResult {
+  const cleaned = normalizeLines(input)
+    .map((line) => line.trimEnd())
+    .filter((line) => line.trim().length > 0)
+    .join("\n");
+  return toTransformResult(cleaned);
+}
+
+function reverseText(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const configMatch = normalized.match(/^([^\n]+)\n\s*\n([\s\S]*)$/);
+  const modeLine = configMatch?.[1].trim().toLowerCase() ?? "";
+  const hasConfig = modeLine === "characters" || modeLine === "words";
+  const mode = hasConfig ? modeLine : "characters";
+  const text = hasConfig ? configMatch?.[2] ?? "" : normalized;
+
+  if (!text.trim()) {
+    throw new Error("Please provide input.");
+  }
+
+  if (mode === "words") {
+    return toTransformResult(
+      text
+        .split(/\s+/)
+        .filter(Boolean)
+        .reverse()
+        .join(" "),
+    );
+  }
+
+  return toTransformResult(Array.from(text).reverse().join(""));
+}
+
+const urlRegex = /\bhttps?:\/\/[^\s<>"'`]+/gi;
+
+function extractUrls(input: string): TransformResult {
+  const matches = ensureInput(input).match(urlRegex) ?? [];
+  const cleaned = matches.map((url) => url.replace(/[),.;!?]+$/g, ""));
+  return toTransformResult(uniqueValues(cleaned).join("\n") || "No URLs found.");
+}
+
 function sortLinesAlphabetically(input: string): TransformResult {
   const sorted = normalizeLines(input).sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "base" }),
@@ -789,6 +839,12 @@ function yamlToJsonConverter(input: string): TransformResult {
   return toTransformResult(JSON.stringify(parsed, null, 2), "converted.json", "application/json");
 }
 
+function yamlFormatter(input: string): TransformResult {
+  const parsed = parseYaml(ensureInput(input));
+  const formatted = stringifyYaml(parsed).trimEnd();
+  return toTransformResult(formatted, "formatted.yaml", "application/x-yaml");
+}
+
 function jsonToYamlConverter(input: string): TransformResult {
   const parsed = parseJsonInput(input, "JSON to YAML Converter");
   const yaml = stringifyYaml(parsed).trimEnd();
@@ -850,6 +906,165 @@ function loremIpsumGenerator(input: string): TransformResult {
 
   const makeParagraph = () => Array.from({ length: 3 + randomInt(4) }, () => makeSentence()).join(" ");
   return toTransformResult(Array.from({ length: count }, () => makeParagraph()).join("\n\n"));
+}
+
+function splitShellArgs(input: string): string[] {
+  const tokens: string[] = [];
+  let current = "";
+  let inSingle = false;
+  let inDouble = false;
+  let escaped = false;
+
+  for (const char of input) {
+    if (escaped) {
+      current += char;
+      escaped = false;
+      continue;
+    }
+
+    if (char === "\\" && !inSingle) {
+      escaped = true;
+      continue;
+    }
+
+    if (char === "'" && !inDouble) {
+      inSingle = !inSingle;
+      continue;
+    }
+
+    if (char === "\"" && !inSingle) {
+      inDouble = !inDouble;
+      continue;
+    }
+
+    if (!inSingle && !inDouble && /\s/.test(char)) {
+      if (current) {
+        tokens.push(current);
+        current = "";
+      }
+      continue;
+    }
+
+    current += char;
+  }
+
+  if (current) {
+    tokens.push(current);
+  }
+
+  return tokens;
+}
+
+function toJsStringLiteral(value: string): string {
+  return JSON.stringify(value);
+}
+
+function curlToFetch(input: string): TransformResult {
+  const raw = ensureInput(input).trim();
+  if (!raw.toLowerCase().startsWith("curl ")) {
+    throw new Error("Curl to Fetch Converter requires input starting with `curl`.");
+  }
+
+  const tokens = splitShellArgs(raw);
+  if (tokens.length < 2) {
+    throw new Error("Curl to Fetch Converter could not parse the command.");
+  }
+
+  let method = "GET";
+  const headers: Record<string, string> = {};
+  let body = "";
+  let url = "";
+  let fallbackTarget = "";
+
+  for (let i = 1; i < tokens.length; i += 1) {
+    const token = tokens[i];
+
+    if (token === "-X" || token === "--request") {
+      method = (tokens[i + 1] ?? "").toUpperCase() || method;
+      i += 1;
+      continue;
+    }
+
+    if (token === "--url") {
+      url = tokens[i + 1] ?? url;
+      i += 1;
+      continue;
+    }
+
+    if (token === "-H" || token === "--header") {
+      const headerValue = tokens[i + 1] ?? "";
+      const separatorIndex = headerValue.indexOf(":");
+      if (separatorIndex > 0) {
+        const key = headerValue.slice(0, separatorIndex).trim();
+        const value = headerValue.slice(separatorIndex + 1).trim();
+        if (key) {
+          headers[key] = value;
+        }
+      }
+      i += 1;
+      continue;
+    }
+
+    if (
+      token === "-d" ||
+      token === "--data" ||
+      token === "--data-raw" ||
+      token === "--data-binary" ||
+      token === "--data-urlencode"
+    ) {
+      body = tokens[i + 1] ?? "";
+      if (method === "GET") {
+        method = "POST";
+      }
+      i += 1;
+      continue;
+    }
+
+    if (token === "-o" || token === "--output" || token === "-u" || token === "--user") {
+      i += 1;
+      continue;
+    }
+
+    if (!token.startsWith("-")) {
+      if (!url && /^https?:\/\//i.test(token)) {
+        url = token;
+        continue;
+      }
+      if (!fallbackTarget) {
+        fallbackTarget = token;
+      }
+    }
+  }
+
+  if (!url && /^https?:\/\//i.test(fallbackTarget)) {
+    url = fallbackTarget;
+  }
+
+  if (!url) {
+    throw new Error("Curl to Fetch Converter requires a URL in the curl command.");
+  }
+
+  const options: string[] = [];
+  if (method !== "GET") {
+    options.push(`method: ${toJsStringLiteral(method)}`);
+  }
+  if (Object.keys(headers).length > 0) {
+    const headerLines = Object.entries(headers).map(
+      ([key, value]) => `    ${toJsStringLiteral(key)}: ${toJsStringLiteral(value)}`,
+    );
+    options.push(`headers: {\n${headerLines.join(",\n")}\n  }`);
+  }
+  if (body) {
+    options.push(`body: ${toJsStringLiteral(body)}`);
+  }
+
+  if (options.length === 0) {
+    return toTransformResult(`fetch(${toJsStringLiteral(url)});`);
+  }
+
+  return toTransformResult(
+    `fetch(${toJsStringLiteral(url)}, {\n  ${options.join(",\n  ")}\n});`,
+  );
 }
 
 function markdownInlineToHtml(line: string): string {
@@ -1488,6 +1703,10 @@ function jsonFlattenToCsv(input: string): TransformResult {
 }
 
 export const transformations: Record<string, (input: string) => TransformResult> = {
+  "remove-extra-spaces": withTransformErrorBoundary(removeExtraSpaces),
+  "remove-empty-lines": withTransformErrorBoundary(removeEmptyLines),
+  "reverse-text": withTransformErrorBoundary(reverseText),
+  "extract-urls": withTransformErrorBoundary(extractUrls),
   "word-counter": withTransformErrorBoundary(wordCounter),
   "case-converter": withTransformErrorBoundary(caseConverter),
   "remove-line-breaks": withTransformErrorBoundary(removeLineBreaks),
@@ -1495,7 +1714,9 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "html-encoder": withTransformErrorBoundary(htmlEncoder),
   "html-decoder": withTransformErrorBoundary(htmlDecoder),
   "yaml-to-json": withTransformErrorBoundary(yamlToJsonConverter),
+  "yaml-formatter": withTransformErrorBoundary(yamlFormatter),
   "json-to-yaml": withTransformErrorBoundary(jsonToYamlConverter),
+  "curl-to-fetch": withTransformErrorBoundary(curlToFetch),
   "cron-expression-builder": withTransformErrorBoundary(cronExpressionBuilder),
   "lorem-ipsum-generator": withTransformErrorBoundary(loremIpsumGenerator),
   "character-counter": withTransformErrorBoundary(characterCounter),

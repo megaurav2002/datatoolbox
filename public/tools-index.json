@@ -308,6 +308,54 @@
     "url": "/tools/remove-line-breaks"
   },
   {
+    "slug": "remove-extra-spaces",
+    "title": "Remove Extra Spaces",
+    "description": "Normalize repeated spaces and clean uneven spacing in text.",
+    "tags": [
+      "remove extra spaces",
+      "normalize spacing",
+      "text cleanup",
+      "text tools"
+    ],
+    "url": "/tools/remove-extra-spaces"
+  },
+  {
+    "slug": "remove-empty-lines",
+    "title": "Remove Empty Lines",
+    "description": "Delete blank lines from multiline text while keeping content lines in order.",
+    "tags": [
+      "remove empty lines",
+      "delete blank lines",
+      "text cleanup",
+      "text tools"
+    ],
+    "url": "/tools/remove-empty-lines"
+  },
+  {
+    "slug": "reverse-text",
+    "title": "Reverse Text",
+    "description": "Reverse text characters or reverse word order for quick text transformations.",
+    "tags": [
+      "reverse text",
+      "reverse words",
+      "text utility",
+      "text tools"
+    ],
+    "url": "/tools/reverse-text"
+  },
+  {
+    "slug": "extract-urls",
+    "title": "Extract URLs from Text",
+    "description": "Find and list HTTP/HTTPS URLs from mixed text input.",
+    "tags": [
+      "extract urls",
+      "url extractor",
+      "find links in text",
+      "text tools"
+    ],
+    "url": "/tools/extract-urls"
+  },
+  {
     "slug": "csv-viewer",
     "title": "CSV Viewer",
     "description": "Preview CSV data as a readable table with delimiter support.",
@@ -344,6 +392,18 @@
     "url": "/tools/html-decoder"
   },
   {
+    "slug": "yaml-formatter",
+    "title": "YAML Formatter",
+    "description": "Format YAML with consistent indentation for readability.",
+    "tags": [
+      "yaml formatter",
+      "format yaml",
+      "prettify yaml",
+      "developer tools"
+    ],
+    "url": "/tools/yaml-formatter"
+  },
+  {
     "slug": "yaml-to-json",
     "title": "YAML to JSON Converter",
     "description": "Convert valid YAML into formatted JSON output.",
@@ -366,6 +426,18 @@
       "developer tools"
     ],
     "url": "/tools/json-to-yaml"
+  },
+  {
+    "slug": "curl-to-fetch",
+    "title": "Curl to Fetch Converter",
+    "description": "Convert curl commands into JavaScript fetch() code.",
+    "tags": [
+      "curl to fetch",
+      "curl converter",
+      "fetch generator",
+      "developer tools"
+    ],
+    "url": "/tools/curl-to-fetch"
   },
   {
     "slug": "cron-expression-builder",
