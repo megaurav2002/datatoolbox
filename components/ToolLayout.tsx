@@ -4,7 +4,7 @@ import { guidePath, relatedGuidesForTool } from "@/lib/guides";
 import { relatedHubsForTool } from "@/lib/hubs";
 import { toolsCategoryCanonical } from "@/lib/tool-category-content";
 import type { ToolDefinition } from "@/lib/types";
-import { toolsBySlug } from "@/lib/tools";
+import { tools, toolsBySlug } from "@/lib/tools";
 
 type ToolLayoutProps = {
   tool: ToolDefinition;
@@ -228,12 +228,51 @@ function commonMistakesForTool(tool: ToolDefinition): string[] {
   ];
 }
 
+function sharesCategory(a: ToolDefinition, b: ToolDefinition): boolean {
+  return a.categories.some((category) => b.categories.includes(category));
+}
+
+function sharedCategoryCount(a: ToolDefinition, b: ToolDefinition): number {
+  return a.categories.filter((category) => b.categories.includes(category)).length;
+}
+
+function relatedToolsForTool(tool: ToolDefinition): ToolDefinition[] {
+  const sameClusterTools = tools.filter(
+    (candidate) => candidate.slug !== tool.slug && sharesCategory(candidate, tool),
+  );
+
+  const preferredSameCluster = tool.related
+    .map((slug) => toolsBySlug[slug])
+    .filter((candidate): candidate is ToolDefinition => Boolean(candidate))
+    .filter((candidate) => candidate.slug !== tool.slug && sharesCategory(candidate, tool));
+
+  const fallbackRanked = [...sameClusterTools].sort((a, b) => {
+    const sharedDiff = sharedCategoryCount(b, tool) - sharedCategoryCount(a, tool);
+    if (sharedDiff !== 0) {
+      return sharedDiff;
+    }
+    return a.title.localeCompare(b.title);
+  });
+
+  const deduped: ToolDefinition[] = [];
+  const seen = new Set<string>();
+  [...preferredSameCluster, ...fallbackRanked].forEach((candidate) => {
+    if (!seen.has(candidate.slug)) {
+      seen.add(candidate.slug);
+      deduped.push(candidate);
+    }
+  });
+
+  return deduped.slice(0, 6);
+}
+
 export default function ToolLayout({ tool, children }: ToolLayoutProps) {
   const faqs = generateToolFAQs(tool);
   const relatedGuides = relatedGuidesForTool(tool.slug);
   const relatedHubs = relatedHubsForTool(tool.slug);
   const commonUseCases = commonUseCasesForTool(tool);
   const commonMistakes = commonMistakesForTool(tool);
+  const relatedTools = relatedToolsForTool(tool);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -313,20 +352,16 @@ export default function ToolLayout({ tool, children }: ToolLayoutProps) {
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">Related tools</h2>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {tool.related.map((slug) => {
-              const relatedTool = toolsBySlug[slug];
-              if (!relatedTool) {
-                return null;
-              }
-
-              return (
-                <li key={slug}>
-                  <Link href={`/tools/${slug}`} className="text-slate-700 underline hover:text-slate-900">
-                    {relatedTool.title}
-                  </Link>
-                </li>
-              );
-            })}
+            {relatedTools.map((relatedTool) => (
+              <li key={relatedTool.slug}>
+                <Link
+                  href={`/tools/${relatedTool.slug}`}
+                  className="text-slate-700 underline hover:text-slate-900"
+                >
+                  {relatedTool.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </section>
 
