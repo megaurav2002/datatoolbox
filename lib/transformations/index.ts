@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+import { sha256 } from "js-sha256";
 import type { TransformResult } from "@/lib/types";
 import { parse as parseYaml } from "yaml";
 import { generateMd5Hash } from "@/lib/transformations/hash";
@@ -594,6 +596,359 @@ function randomStringGenerator(input: string): TransformResult {
   return toTransformResult(buildRandomString(length, charset));
 }
 
+function markdownInlineToHtml(line: string): string {
+  return line
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+}
+
+function markdownToHtml(input: string): TransformResult {
+  const lines = ensureInput(input).replace(/\r\n?/g, "\n").split("\n");
+  const output: string[] = [];
+  let inList = false;
+
+  lines.forEach((rawLine) => {
+    const line = rawLine.trim();
+    if (!line) {
+      if (inList) {
+        output.push("</ul>");
+        inList = false;
+      }
+      return;
+    }
+
+    const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+    if (headingMatch) {
+      if (inList) {
+        output.push("</ul>");
+        inList = false;
+      }
+      const level = headingMatch[1].length;
+      output.push(`<h${level}>${markdownInlineToHtml(headingMatch[2])}</h${level}>`);
+      return;
+    }
+
+    const listMatch = line.match(/^[-*]\s+(.*)$/);
+    if (listMatch) {
+      if (!inList) {
+        output.push("<ul>");
+        inList = true;
+      }
+      output.push(`<li>${markdownInlineToHtml(listMatch[1])}</li>`);
+      return;
+    }
+
+    if (inList) {
+      output.push("</ul>");
+      inList = false;
+    }
+
+    output.push(`<p>${markdownInlineToHtml(line)}</p>`);
+  });
+
+  if (inList) {
+    output.push("</ul>");
+  }
+
+  return toTransformResult(output.join("\n"), "converted.html", "text/html");
+}
+
+function htmlToMarkdown(input: string): TransformResult {
+  const source = ensureInput(input);
+  const markdown = source
+    .replace(/\r\n?/g, "\n")
+    .replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, "# $1\n\n")
+    .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, "## $1\n\n")
+    .replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, "### $1\n\n")
+    .replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, "#### $1\n\n")
+    .replace(/<h5[^>]*>([\s\S]*?)<\/h5>/gi, "##### $1\n\n")
+    .replace(/<h6[^>]*>([\s\S]*?)<\/h6>/gi, "###### $1\n\n")
+    .replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, "**$1**")
+    .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, "**$1**")
+    .replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, "*$1*")
+    .replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, "*$1*")
+    .replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, "`$1`")
+    .replace(/<a[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, "[$2]($1)")
+    .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "- $1\n")
+    .replace(/<\/?(ul|ol)[^>]*>/gi, "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<p[^>]*>/gi, "")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return toTransformResult(markdown || "(no markdown output)");
+}
+
+function parseXmlDocument(source: string, context: string): Document {
+  if (typeof DOMParser === "undefined") {
+    throw new Error(`${context}: XML parser is unavailable in this environment.`);
+  }
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(source, "application/xml");
+  const parserError = doc.getElementsByTagName("parsererror")[0];
+  if (parserError) {
+    throw new Error(`${context}: invalid XML input.`);
+  }
+  return doc;
+}
+
+function xmlNodeToJson(node: Element): unknown {
+  const attributes = Array.from(node.attributes);
+  const children = Array.from(node.children);
+  const text = node.textContent?.trim() ?? "";
+
+  if (attributes.length === 0 && children.length === 0) {
+    return text;
+  }
+
+  const result: Record<string, unknown> = {};
+  if (attributes.length > 0) {
+    result["@attributes"] = Object.fromEntries(attributes.map((attr) => [attr.name, attr.value]));
+  }
+
+  children.forEach((child) => {
+    const value = xmlNodeToJson(child);
+    if (child.tagName in result) {
+      const existing = result[child.tagName];
+      if (Array.isArray(existing)) {
+        existing.push(value);
+      } else {
+        result[child.tagName] = [existing, value];
+      }
+    } else {
+      result[child.tagName] = value;
+    }
+  });
+
+  if (text && children.length === 0) {
+    result["#text"] = text;
+  }
+
+  return result;
+}
+
+function xmlValidator(input: string): TransformResult {
+  parseXmlDocument(ensureInput(input), "XML Validator");
+  return toTransformResult("Valid XML.");
+}
+
+function xmlToJson(input: string): TransformResult {
+  const doc = parseXmlDocument(ensureInput(input), "XML to JSON");
+  const root = doc.documentElement;
+  const json = { [root.tagName]: xmlNodeToJson(root) };
+  return toTransformResult(JSON.stringify(json, null, 2), "converted.json", "application/json");
+}
+
+function escapeXmlText(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function jsonValueToXml(tag: string, value: unknown): string {
+  if (Array.isArray(value)) {
+    return value.map((item) => jsonValueToXml(tag, item)).join("");
+  }
+
+  if (value === null || value === undefined) {
+    return `<${tag}></${tag}>`;
+  }
+
+  if (typeof value !== "object") {
+    return `<${tag}>${escapeXmlText(String(value))}</${tag}>`;
+  }
+
+  const objectValue = value as Record<string, unknown>;
+  const attributes = typeof objectValue["@attributes"] === "object" && objectValue["@attributes"] !== null
+    ? Object.entries(objectValue["@attributes"] as Record<string, unknown>)
+        .map(([name, attrValue]) => ` ${name}="${escapeXmlText(String(attrValue))}"`)
+        .join("")
+    : "";
+
+  const childEntries = Object.entries(objectValue).filter(([key]) => key !== "@attributes" && key !== "#text");
+  const textValue = objectValue["#text"] !== undefined ? escapeXmlText(String(objectValue["#text"])) : "";
+  const children = childEntries.map(([key, child]) => jsonValueToXml(key, child)).join("");
+  return `<${tag}${attributes}>${textValue}${children}</${tag}>`;
+}
+
+function jsonToXml(input: string): TransformResult {
+  const parsed = parseJsonInput(input, "JSON to XML");
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new Error("JSON to XML requires a JSON object input.");
+  }
+
+  const rootEntries = Object.entries(parsed as Record<string, unknown>);
+  if (rootEntries.length === 1) {
+    const [rootTag, rootValue] = rootEntries[0];
+    return toTransformResult(jsonValueToXml(rootTag, rootValue), "converted.xml", "application/xml");
+  }
+
+  const wrapped = jsonValueToXml("root", parsed);
+  return toTransformResult(wrapped, "converted.xml", "application/xml");
+}
+
+function jsonDiffChecker(input: string): TransformResult {
+  const [leftBlock, rightBlock] = parseTwoInputBlocks(input, "JSON Diff Checker");
+  const left = parseJsonInput(leftBlock, "JSON Diff Checker (left)");
+  const right = parseJsonInput(rightBlock, "JSON Diff Checker (right)");
+
+  const added: string[] = [];
+  const removed: string[] = [];
+  const changed: string[] = [];
+
+  function compare(path: string, before: unknown, after: unknown) {
+    if (before === after) {
+      return;
+    }
+
+    if (before === undefined) {
+      added.push(path);
+      return;
+    }
+
+    if (after === undefined) {
+      removed.push(path);
+      return;
+    }
+
+    if (
+      typeof before !== "object" ||
+      before === null ||
+      typeof after !== "object" ||
+      after === null
+    ) {
+      changed.push(path);
+      return;
+    }
+
+    const beforeIsArray = Array.isArray(before);
+    const afterIsArray = Array.isArray(after);
+    if (beforeIsArray !== afterIsArray) {
+      changed.push(path);
+      return;
+    }
+
+    if (beforeIsArray && afterIsArray) {
+      const max = Math.max((before as unknown[]).length, (after as unknown[]).length);
+      for (let i = 0; i < max; i += 1) {
+        compare(`${path}[${i}]`, (before as unknown[])[i], (after as unknown[])[i]);
+      }
+      return;
+    }
+
+    const keys = new Set([
+      ...Object.keys(before as Record<string, unknown>),
+      ...Object.keys(after as Record<string, unknown>),
+    ]);
+    keys.forEach((key) => {
+      const nextPath = path ? `${path}.${key}` : key;
+      compare(nextPath, (before as Record<string, unknown>)[key], (after as Record<string, unknown>)[key]);
+    });
+  }
+
+  compare("", left, right);
+  const serialize = (title: string, items: string[]) =>
+    `${title}\n${items.length > 0 ? items.map((item) => `- ${item || "(root)"}`).join("\n") : "(none)"}`;
+
+  return toTransformResult(
+    [
+      serialize("Added paths:", added),
+      serialize("Removed paths:", removed),
+      serialize("Changed paths:", changed),
+    ].join("\n\n"),
+  );
+}
+
+function queryStringBuilder(input: string): TransformResult {
+  const parsed = parseJsonInput(input, "Query String Builder");
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new Error("Query String Builder requires a JSON object input.");
+  }
+
+  const params = new URLSearchParams();
+  Object.entries(parsed as Record<string, unknown>).forEach(([key, value]) => {
+    if (value === null || value === undefined) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((item) => params.append(key, String(item)));
+      return;
+    }
+    if (typeof value === "object") {
+      throw new Error("Query String Builder does not support nested objects. Flatten values first.");
+    }
+    params.append(key, String(value));
+  });
+
+  return toTransformResult(params.toString());
+}
+
+function queryStringParser(input: string): TransformResult {
+  const raw = ensureInput(input).trim();
+  const query = (() => {
+    if (raw.includes("?")) {
+      return raw.split("?")[1].split("#")[0];
+    }
+
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) {
+      try {
+        const url = new URL(raw);
+        return url.search.replace(/^\?/, "");
+      } catch {
+        return raw.replace(/^\?/, "");
+      }
+    }
+
+    return raw.replace(/^\?/, "");
+  })();
+  const params = new URLSearchParams(query);
+  const result: Record<string, string | string[]> = {};
+
+  params.forEach((value, key) => {
+    if (key in result) {
+      const existing = result[key];
+      if (Array.isArray(existing)) {
+        existing.push(value);
+      } else {
+        result[key] = [existing, value];
+      }
+      return;
+    }
+    result[key] = value;
+  });
+
+  return toTransformResult(JSON.stringify(result, null, 2), "parsed-query.json", "application/json");
+}
+
+function hmacGenerator(input: string): TransformResult {
+  const [secret, message] = parseTwoInputBlocks(input, "HMAC Generator");
+  const digest = sha256.hmac(secret, message);
+  return toTransformResult(digest, "hmac.txt", "text/plain");
+}
+
+function bcryptHashGenerator(input: string): TransformResult {
+  const normalized = ensureInput(input).replace(/\r\n?/g, "\n");
+  const [passwordBlock, roundsBlock] = normalized.split(/\n\s*\n/, 2);
+  const password = passwordBlock.trim();
+  if (!password) {
+    throw new Error("Please provide input.");
+  }
+
+  const rounds = roundsBlock
+    ? parseLengthInput(roundsBlock, "Bcrypt Hash Generator", 4, 15, 10)
+    : 10;
+  const hash = bcrypt.hashSync(password, rounds);
+  return toTransformResult(hash, "bcrypt-hash.txt", "text/plain");
+}
+
 function csvToSql(input: string): TransformResult {
   const analysis = analyzeCsvForSql(input);
   const sql = generateSqlFromCsvRows(analysis.rows, {
@@ -886,8 +1241,10 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "cron-expression-parser": withTransformErrorBoundary(cronExpressionParser),
   "date-format-converter": withTransformErrorBoundary(dateFormatConverter),
   "json-path-extractor": withTransformErrorBoundary(jsonPathExtractor),
+  "json-diff-checker": withTransformErrorBoundary(jsonDiffChecker),
   "json-schema-generator": withTransformErrorBoundary(jsonSchemaGenerator),
   "json-to-csv": withTransformErrorBoundary(jsonToCsv),
+  "json-to-xml": withTransformErrorBoundary(jsonToXml),
   "jwt-encoder": withTransformErrorBoundary(jwtEncoder),
   "jwt-decoder": withTransformErrorBoundary(jwtDecoder),
   "hash-generator": withTransformErrorBoundary(hashGenerator),
@@ -907,6 +1264,8 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "json-minifier": withTransformErrorBoundary(jsonMinifier),
   "remove-duplicate-lines": withTransformErrorBoundary(removeDuplicateLines),
   "sort-lines-alphabetically": withTransformErrorBoundary(sortLinesAlphabetically),
+  "markdown-to-html": withTransformErrorBoundary(markdownToHtml),
+  "html-to-markdown": withTransformErrorBoundary(htmlToMarkdown),
   "password-generator": withTransformErrorBoundary(passwordGenerator),
   "random-string-generator": withTransformErrorBoundary(randomStringGenerator),
   "extract-emails": withTransformErrorBoundary(extractEmails),
@@ -919,6 +1278,12 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "url-encoder": withTransformErrorBoundary(urlEncoder),
   "url-decoder": withTransformErrorBoundary(urlDecoder),
   "url-parser": withTransformErrorBoundary(urlParser),
+  "query-string-builder": withTransformErrorBoundary(queryStringBuilder),
+  "query-string-parser": withTransformErrorBoundary(queryStringParser),
+  "hmac-generator": withTransformErrorBoundary(hmacGenerator),
+  "bcrypt-hash-generator": withTransformErrorBoundary(bcryptHashGenerator),
+  "xml-validator": withTransformErrorBoundary(xmlValidator),
+  "xml-to-json": withTransformErrorBoundary(xmlToJson),
   "yaml-validator": withTransformErrorBoundary(yamlValidator),
   "regex-tester": withTransformErrorBoundary(regexTester),
   "timestamp-converter": withTransformErrorBoundary(timestampConverter),

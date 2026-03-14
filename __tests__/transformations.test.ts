@@ -5,6 +5,7 @@ describe("transformations", () => {
     expect(Object.keys(transformations).sort()).toEqual([
       "base64-decoder",
       "base64-encoder",
+      "bcrypt-hash-generator",
       "character-counter",
       "cron-expression-parser",
       "csv-cleaner",
@@ -20,19 +21,26 @@ describe("transformations", () => {
       "extract-emails",
       "extract-numbers",
       "hash-generator",
+      "hmac-generator",
+      "html-to-markdown",
+      "json-diff-checker",
       "json-flatten-to-csv",
       "json-formatter",
       "json-minifier",
       "json-path-extractor",
       "json-schema-generator",
       "json-to-csv",
+      "json-to-xml",
       "json-validator",
       "jwt-decoder",
       "jwt-encoder",
+      "markdown-to-html",
       "mermaid-editor",
       "ndjson-formatter",
       "ndjson-to-csv",
       "password-generator",
+      "query-string-builder",
+      "query-string-parser",
       "random-string-generator",
       "regex-tester",
       "remove-duplicate-lines",
@@ -47,6 +55,8 @@ describe("transformations", () => {
       "url-encoder",
       "url-parser",
       "uuid-generator",
+      "xml-to-json",
+      "xml-validator",
       "yaml-validator",
     ]);
   });
@@ -548,6 +558,73 @@ describe("transformations", () => {
     });
   });
 
+  describe("markdown/html converters", () => {
+    it("converts markdown to html", () => {
+      const result = transformations["markdown-to-html"]("# Title\n\n- one\n- two");
+      expect(result.output).toContain("<h1>Title</h1>");
+      expect(result.output).toContain("<ul>");
+      expect(result.downloadFileName).toBe("converted.html");
+      expect(result.downloadMimeType).toBe("text/html");
+    });
+
+    it("converts html to markdown", () => {
+      const result = transformations["html-to-markdown"]("<h2>Title</h2><p>Body</p>");
+      expect(result.output).toContain("## Title");
+      expect(result.output).toContain("Body");
+    });
+  });
+
+  describe("json/xml tools", () => {
+    it("diffs two json documents", () => {
+      const result = transformations["json-diff-checker"](
+        '{"user":{"role":"admin"}}\n\n{"user":{"role":"editor","active":true}}',
+      );
+      expect(result.output).toContain("Added paths:");
+      expect(result.output).toContain("user.active");
+      expect(result.output).toContain("Changed paths:");
+      expect(result.output).toContain("user.role");
+    });
+
+    it("throws when json diff input is not two blocks", () => {
+      expect(() => transformations["json-diff-checker"]('{"a":1}')).toThrow(
+        "JSON Diff Checker requires two text blocks separated by a blank line.",
+      );
+    });
+
+    it("validates xml", () => {
+      const result = transformations["xml-validator"]("<root><item>1</item></root>");
+      expect(result.output).toBe("Valid XML.");
+    });
+
+    it("throws for invalid xml", () => {
+      expect(() => transformations["xml-validator"]("<root><item></root>")).toThrow(
+        "XML Validator: invalid XML input.",
+      );
+    });
+
+    it("converts xml to json", () => {
+      const result = transformations["xml-to-json"]('<user id="1"><name>Ana</name></user>');
+      expect(result.output).toContain('"user"');
+      expect(result.output).toContain('"@attributes"');
+      expect(result.downloadFileName).toBe("converted.json");
+      expect(result.downloadMimeType).toBe("application/json");
+    });
+
+    it("converts json to xml", () => {
+      const result = transformations["json-to-xml"]('{"user":{"name":"Ana"}}');
+      expect(result.output).toContain("<user>");
+      expect(result.output).toContain("<name>Ana</name>");
+      expect(result.downloadFileName).toBe("converted.xml");
+      expect(result.downloadMimeType).toBe("application/xml");
+    });
+
+    it("throws for non-object json to xml input", () => {
+      expect(() => transformations["json-to-xml"]('[{"name":"Ana"}]')).toThrow(
+        "JSON to XML requires a JSON object input.",
+      );
+    });
+  });
+
   describe("text tools", () => {
     it("removes duplicate lines while preserving first seen order", () => {
       const result = transformations["remove-duplicate-lines"]("apple\nbanana\napple\nbanana\npear");
@@ -824,6 +901,62 @@ describe("transformations", () => {
     it("throws for invalid password length", () => {
       expect(() => transformations["password-generator"]("4")).toThrow(
         "Password Generator expects a whole number between 8 and 128.",
+      );
+    });
+
+    it("builds query strings from json object", () => {
+      const result = transformations["query-string-builder"]('{"a":1,"b":"test","tags":["x","y"]}');
+      expect(result.output).toBe("a=1&b=test&tags=x&tags=y");
+    });
+
+    it("throws for non-object query builder input", () => {
+      expect(() => transformations["query-string-builder"]('["a","b"]')).toThrow(
+        "Query String Builder requires a JSON object input.",
+      );
+    });
+
+    it("throws for nested object values in query builder", () => {
+      expect(() => transformations["query-string-builder"]('{"filters":{"active":true}}')).toThrow(
+        "Query String Builder does not support nested objects. Flatten values first.",
+      );
+    });
+
+    it("parses query string into json", () => {
+      const result = transformations["query-string-parser"]("?a=1&tag=x&tag=y");
+      expect(result.output).toContain('"a": "1"');
+      expect(result.output).toContain('"tag": [');
+      expect(result.downloadFileName).toBe("parsed-query.json");
+      expect(result.downloadMimeType).toBe("application/json");
+    });
+
+    it("returns empty object for full url without query", () => {
+      const result = transformations["query-string-parser"]("https://example.com/path");
+      expect(result.output).toBe("{}");
+    });
+
+    it("generates hmac digest from secret and message blocks", () => {
+      const result = transformations["hmac-generator"]("secret\n\nmessage");
+      expect(result.output).toMatch(/^[a-f0-9]{64}$/);
+      expect(result.downloadFileName).toBe("hmac.txt");
+      expect(result.downloadMimeType).toBe("text/plain");
+    });
+
+    it("throws when hmac input missing second block", () => {
+      expect(() => transformations["hmac-generator"]("secret only")).toThrow(
+        "HMAC Generator requires two text blocks separated by a blank line.",
+      );
+    });
+
+    it("generates bcrypt hash", () => {
+      const result = transformations["bcrypt-hash-generator"]("super-secret");
+      expect(result.output).toMatch(/^\$2[aby]\$\d{2}\$.{53}$/);
+      expect(result.downloadFileName).toBe("bcrypt-hash.txt");
+      expect(result.downloadMimeType).toBe("text/plain");
+    });
+
+    it("throws for invalid bcrypt rounds", () => {
+      expect(() => transformations["bcrypt-hash-generator"]("secret\n\n2")).toThrow(
+        "Bcrypt Hash Generator expects a whole number between 4 and 15.",
       );
     });
 

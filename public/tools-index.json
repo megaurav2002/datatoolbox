@@ -271,6 +271,126 @@
     "url": "/tools/yaml-validator"
   },
   {
+    "slug": "markdown-to-html",
+    "title": "Markdown to HTML Converter",
+    "description": "Convert Markdown text into clean HTML output.",
+    "tags": [
+      "markdown to html",
+      "markdown converter",
+      "html conversion",
+      "developer tools"
+    ],
+    "url": "/tools/markdown-to-html"
+  },
+  {
+    "slug": "html-to-markdown",
+    "title": "HTML to Markdown Converter",
+    "description": "Convert HTML into Markdown-friendly text.",
+    "tags": [
+      "html to markdown",
+      "html converter",
+      "markdown conversion",
+      "developer tools"
+    ],
+    "url": "/tools/html-to-markdown"
+  },
+  {
+    "slug": "json-diff-checker",
+    "title": "JSON Diff Checker",
+    "description": "Compare two JSON documents and list changed paths.",
+    "tags": [
+      "json diff checker",
+      "compare json",
+      "json compare",
+      "developer tools"
+    ],
+    "url": "/tools/json-diff-checker"
+  },
+  {
+    "slug": "xml-validator",
+    "title": "XML Validator",
+    "description": "Validate XML syntax and catch malformed tags fast.",
+    "tags": [
+      "xml validator",
+      "validate xml",
+      "xml parser",
+      "developer tools"
+    ],
+    "url": "/tools/xml-validator"
+  },
+  {
+    "slug": "xml-to-json",
+    "title": "XML to JSON Converter",
+    "description": "Convert XML documents into structured JSON.",
+    "tags": [
+      "xml to json",
+      "convert xml",
+      "xml parser",
+      "developer tools"
+    ],
+    "url": "/tools/xml-to-json"
+  },
+  {
+    "slug": "json-to-xml",
+    "title": "JSON to XML Converter",
+    "description": "Convert JSON objects into XML markup.",
+    "tags": [
+      "json to xml",
+      "convert json",
+      "xml generator",
+      "developer tools"
+    ],
+    "url": "/tools/json-to-xml"
+  },
+  {
+    "slug": "query-string-builder",
+    "title": "Query String Builder",
+    "description": "Build URL query strings from JSON parameters.",
+    "tags": [
+      "query string builder",
+      "url params",
+      "query params",
+      "developer tools"
+    ],
+    "url": "/tools/query-string-builder"
+  },
+  {
+    "slug": "query-string-parser",
+    "title": "Query String Parser",
+    "description": "Parse query strings or URLs into JSON parameters.",
+    "tags": [
+      "query string parser",
+      "parse url params",
+      "query params parser",
+      "developer tools"
+    ],
+    "url": "/tools/query-string-parser"
+  },
+  {
+    "slug": "hmac-generator",
+    "title": "HMAC Generator",
+    "description": "Generate HMAC-SHA256 digests from secret and message.",
+    "tags": [
+      "hmac generator",
+      "hmac sha256",
+      "message authentication",
+      "developer tools"
+    ],
+    "url": "/tools/hmac-generator"
+  },
+  {
+    "slug": "bcrypt-hash-generator",
+    "title": "Bcrypt Hash Generator",
+    "description": "Generate bcrypt password hashes with configurable rounds.",
+    "tags": [
+      "bcrypt generator",
+      "password hash",
+      "bcrypt hash tool",
+      "developer tools"
+    ],
+    "url": "/tools/bcrypt-hash-generator"
+  },
+  {
     "slug": "base64-encoder",
     "title": "Base64 Encoder",
     "description": "Encode plain text into Base64 format.",
