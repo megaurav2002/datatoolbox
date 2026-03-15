@@ -20,6 +20,30 @@ type ToolSearchProps = {
 };
 
 const MAX_RESULTS = 8;
+let toolIndexPromise: Promise<ToolIndexItem[]> | null = null;
+
+async function loadToolIndex(): Promise<ToolIndexItem[]> {
+  if (!toolIndexPromise) {
+    toolIndexPromise = fetch("/tools-index.json", { cache: "force-cache" })
+      .then(async (response) => {
+        if (!response.ok) {
+          toolIndexPromise = null;
+          return [];
+        }
+        const payload = await response.json();
+        if (!Array.isArray(payload)) {
+          toolIndexPromise = null;
+          return [];
+        }
+        return payload as ToolIndexItem[];
+      })
+      .catch(() => {
+        toolIndexPromise = null;
+        return [];
+      });
+  }
+  return toolIndexPromise;
+}
 
 function rankResult(tool: ToolIndexItem, query: string): number {
   const q = query.toLowerCase();
@@ -48,24 +72,11 @@ export default function ToolSearch({
   useEffect(() => {
     let isMounted = true;
 
-    const loadIndex = async () => {
-      try {
-        const response = await fetch("/tools-index.json", { cache: "force-cache" });
-        if (!response.ok) {
-          return;
-        }
-        const data = (await response.json()) as ToolIndexItem[];
-        if (isMounted) {
-          setTools(data);
-        }
-      } catch {
-        if (isMounted) {
-          setTools([]);
-        }
+    void loadToolIndex().then((data) => {
+      if (isMounted) {
+        setTools(data);
       }
-    };
-
-    void loadIndex();
+    });
 
     return () => {
       isMounted = false;
@@ -92,7 +103,7 @@ export default function ToolSearch({
       return [];
     }
 
-    return [...tools]
+    return tools
       .filter((tool) => {
         return (
           tool.title.toLowerCase().includes(value) ||

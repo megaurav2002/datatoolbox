@@ -1,19 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import ToolInput from "@/components/ToolInput";
 import ToolOutput from "@/components/ToolOutput";
-import CsvCleanerTool from "@/components/tools/CsvCleanerTool";
-import CsvViewerTool from "@/components/tools/CsvViewerTool";
-import CronExpressionBuilderTool from "@/components/tools/CronExpressionBuilderTool";
-import CsvToSqlTool from "@/components/tools/CsvToSqlTool";
-import HashGeneratorTool from "@/components/tools/HashGeneratorTool";
-import JsonFlattenToCsvTool from "@/components/tools/JsonFlattenToCsvTool";
-import MermaidEditorTool from "@/components/tools/MermaidEditorTool";
-import PasswordGeneratorTool from "@/components/tools/PasswordGeneratorTool";
-import RegexTesterTool from "@/components/tools/RegexTesterTool";
-import WebsiteTechStackDetectorTool from "@/components/tools/WebsiteTechStackDetectorTool";
-import { transformations } from "@/lib/transformations";
 import type { ToolDefinition } from "@/lib/types";
 
 type ToolClientProps = {
@@ -30,6 +20,31 @@ async function parseApiResponse(response: Response): Promise<ApiResponse> {
     return (await response.json()) as ApiResponse;
   } catch {
     return {};
+  }
+}
+
+const CsvToSqlTool = dynamic(() => import("@/components/tools/CsvToSqlTool"));
+const JsonFlattenToCsvTool = dynamic(() => import("@/components/tools/JsonFlattenToCsvTool"));
+const CsvCleanerTool = dynamic(() => import("@/components/tools/CsvCleanerTool"));
+const MermaidEditorTool = dynamic(() => import("@/components/tools/MermaidEditorTool"));
+const HashGeneratorTool = dynamic(() => import("@/components/tools/HashGeneratorTool"));
+const CsvViewerTool = dynamic(() => import("@/components/tools/CsvViewerTool"));
+const CronExpressionBuilderTool = dynamic(() => import("@/components/tools/CronExpressionBuilderTool"));
+const PasswordGeneratorTool = dynamic(() => import("@/components/tools/PasswordGeneratorTool"));
+const RegexTesterTool = dynamic(() => import("@/components/tools/RegexTesterTool"));
+const WebsiteTechStackDetectorTool = dynamic(() => import("@/components/tools/WebsiteTechStackDetectorTool"));
+
+let transformationsPromise: Promise<typeof import("@/lib/transformations")> | null = null;
+
+async function loadTransformations() {
+  if (!transformationsPromise) {
+    transformationsPromise = import("@/lib/transformations");
+  }
+  try {
+    return await transformationsPromise;
+  } catch (error) {
+    transformationsPromise = null;
+    throw error;
   }
 }
 
@@ -70,6 +85,7 @@ function DefaultToolClient({ tool }: ToolClientProps) {
         setDownloadFileName(`${tool.slug}.txt`);
         setDownloadMimeType("text/plain");
       } else {
+        const { transformations } = await loadTransformations();
         const transform = transformations[tool.slug];
         if (!transform) {
           throw new Error("Transformation not implemented.");
