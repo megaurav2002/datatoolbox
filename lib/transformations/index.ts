@@ -1774,6 +1774,15 @@ function hashGenerator(input: string): TransformResult {
   return toTransformResult(generateMd5Hash(ensureInput(input)), "hash.txt", "text/plain");
 }
 
+function websiteTechStackDetector(input: string): TransformResult {
+  ensureInput(input);
+  return toTransformResult(
+    "Use the Website Tech Stack Detector interface to analyze a URL and view the structured report.",
+    "tech-stack-report.json",
+    "application/json",
+  );
+}
+
 function mermaidEditor(input: string): TransformResult {
   return toTransformResult(ensureInput(input), "diagram.mmd", "text/plain");
 }
@@ -1816,6 +1825,7 @@ export const transformations: Record<string, (input: string) => TransformResult>
   "jwt-encoder": withTransformErrorBoundary(jwtEncoder),
   "jwt-decoder": withTransformErrorBoundary(jwtDecoder),
   "hash-generator": withTransformErrorBoundary(hashGenerator),
+  "website-tech-stack-detector": withTransformErrorBoundary(websiteTechStackDetector),
   "mermaid-editor": withTransformErrorBoundary(mermaidEditor),
   "ndjson-formatter": withTransformErrorBoundary(ndjsonFormatter),
   "ndjson-to-csv": withTransformErrorBoundary(ndjsonToCsv),

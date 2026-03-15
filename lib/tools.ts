@@ -747,6 +747,72 @@ export const tools: ToolDefinition[] = [
     createdAt: "2026-04-12",
   },
   {
+    slug: "website-tech-stack-detector",
+    title: "Website Tech Stack Detector",
+    shortDescription:
+      "Detect website technology stack from a URL. Find likely framework, hosting/CDN, analytics, and libraries with confidence and evidence.",
+    tags: [
+      "website tech stack detector",
+      "detect website technology",
+      "website built with checker",
+      "what tech stack is this site using",
+      "tech stack finder",
+      "website technology checker",
+    ],
+    intro:
+      "Analyze a live website URL and detect likely technologies from HTML, scripts, headers, and platform fingerprints. This tool is useful for quick competitor research, lead qualification, migration planning, and technical due diligence. It reports likely framework, hosting/CDN, analytics providers, and common UI libraries with confidence levels and evidence.",
+    howToUse: [
+      "Paste a full URL (for example, https://example.com).",
+      "Click Analyze Website to fetch and inspect the page safely.",
+      "Review detected technologies grouped by category.",
+      "Check evidence lines and confidence before making decisions.",
+      "Copy the summary or download the JSON report.",
+    ],
+    exampleInput: "https://example.com",
+    exampleOutput:
+      "Likely framework: Next.js\nLikely hosting/CDN: Vercel\nLikely analytics: Google Analytics\n\nEvidence:\n- Found /_next/ asset paths\n- Found x-vercel-id response header\n- Found gtag/js script",
+    whyUseful:
+      "Gives a fast, self-serve way to estimate what technologies a site is using without running heavy scanners or relying on generic AI guesses.",
+    commonMistakes: [
+      "Entering a URL without protocol and assuming non-web protocols are supported.",
+      "Treating low-confidence detections as guaranteed facts.",
+      "Assuming hidden or server-only technologies can always be detected from public HTML/headers.",
+      "Expecting detection to work on blocked pages that require login, bot challenges, or JS execution.",
+    ],
+    faq: [
+      {
+        question: "How does this website tech stack detector work?",
+        answer: "It inspects HTML, script URLs, response headers, meta tags, and common platform fingerprints to infer likely technologies.",
+      },
+      {
+        question: "Is detection always 100% accurate?",
+        answer: "No. This is heuristic detection. High-confidence matches are strong signals, while medium/low confidence should be treated as likely or possible.",
+      },
+      {
+        question: "Can this detect server-side technologies that are hidden?",
+        answer: "Only if public signals expose them. Fully hidden backend stacks may not be detectable from a single page fetch.",
+      },
+      {
+        question: "What if nothing is detected?",
+        answer: "The report still returns best-effort findings and marks detection as inconclusive when strong signals are missing.",
+      },
+      {
+        question: "Does this execute third-party scripts?",
+        answer: "No. It only inspects fetched HTML and headers for safety and speed.",
+      },
+      {
+        question: "Can I use this as a website built with checker?",
+        answer: "Yes. It is designed for that use case and shows confidence plus evidence for each detected technology.",
+      },
+    ],
+    related: ["json-validator", "url-parser", "query-string-parser", "regex-tester", "timestamp-converter"],
+    kind: "standard",
+    categories: ["developer-tools"],
+    createdAt: "2026-05-10",
+    outputFileName: "tech-stack-report.json",
+    outputMimeType: "application/json",
+  },
+  {
     slug: "word-counter",
     title: "Word Counter",
     shortDescription: "Count words, characters, lines, and paragraphs in text.",

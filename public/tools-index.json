@@ -272,6 +272,20 @@
     "url": "/tools/yaml-validator"
   },
   {
+    "slug": "website-tech-stack-detector",
+    "title": "Website Tech Stack Detector",
+    "description": "Detect website technology stack from a URL. Find likely framework, hosting/CDN, analytics, and libraries with confidence and evidence.",
+    "tags": [
+      "website tech stack detector",
+      "detect website technology",
+      "website built with checker",
+      "what tech stack is this site using",
+      "tech stack finder",
+      "website technology checker"
+    ],
+    "url": "/tools/website-tech-stack-detector"
+  },
+  {
     "slug": "word-counter",
     "title": "Word Counter",
     "description": "Count words, characters, lines, and paragraphs in text.",

@@ -68,6 +68,7 @@ describe("transformations", () => {
       "url-encoder",
       "url-parser",
       "uuid-generator",
+      "website-tech-stack-detector",
       "word-counter",
       "xml-to-json",
       "xml-validator",
@@ -804,6 +805,13 @@ describe("transformations", () => {
       expect(result.output).toBe("5d41402abc4b2a76b9719d911017c592");
       expect(result.downloadFileName).toBe("hash.txt");
       expect(result.downloadMimeType).toBe("text/plain");
+    });
+
+    it("returns helper message for website tech stack detector transformation fallback", () => {
+      const result = transformations["website-tech-stack-detector"]("https://example.com");
+      expect(result.output).toContain("Use the Website Tech Stack Detector interface");
+      expect(result.downloadFileName).toBe("tech-stack-report.json");
+      expect(result.downloadMimeType).toBe("application/json");
     });
 
     it("returns mermaid source for editor transformation", () => {

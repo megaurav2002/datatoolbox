@@ -11,6 +11,7 @@ import HashGeneratorTool from "@/components/tools/HashGeneratorTool";
 import JsonFlattenToCsvTool from "@/components/tools/JsonFlattenToCsvTool";
 import MermaidEditorTool from "@/components/tools/MermaidEditorTool";
 import PasswordGeneratorTool from "@/components/tools/PasswordGeneratorTool";
+import WebsiteTechStackDetectorTool from "@/components/tools/WebsiteTechStackDetectorTool";
 import { transformations } from "@/lib/transformations";
 import type { ToolDefinition } from "@/lib/types";
 
@@ -138,6 +139,10 @@ export default function ToolClient({ tool }: ToolClientProps) {
 
   if (tool.slug === "password-generator") {
     return <PasswordGeneratorTool />;
+  }
+
+  if (tool.slug === "website-tech-stack-detector") {
+    return <WebsiteTechStackDetectorTool />;
   }
 
   return <DefaultToolClient tool={tool} />;

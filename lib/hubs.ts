@@ -137,6 +137,7 @@ export const hubs: HubDefinition[] = [
       "ndjson-formatter",
       "jwt-decoder",
       "hash-generator",
+      "website-tech-stack-detector",
       "base64-encoder",
       "base64-decoder",
       "uuid-generator",
