@@ -10,6 +10,7 @@ import CsvToSqlTool from "@/components/tools/CsvToSqlTool";
 import HashGeneratorTool from "@/components/tools/HashGeneratorTool";
 import JsonFlattenToCsvTool from "@/components/tools/JsonFlattenToCsvTool";
 import MermaidEditorTool from "@/components/tools/MermaidEditorTool";
+import PasswordGeneratorTool from "@/components/tools/PasswordGeneratorTool";
 import { transformations } from "@/lib/transformations";
 import type { ToolDefinition } from "@/lib/types";
 
@@ -133,6 +134,10 @@ export default function ToolClient({ tool }: ToolClientProps) {
 
   if (tool.slug === "cron-expression-builder") {
     return <CronExpressionBuilderTool />;
+  }
+
+  if (tool.slug === "password-generator") {
+    return <PasswordGeneratorTool />;
   }
 
   return <DefaultToolClient tool={tool} />;

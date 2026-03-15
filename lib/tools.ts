@@ -627,28 +627,55 @@ export const tools: ToolDefinition[] = [
   {
     slug: "password-generator",
     title: "Password Generator",
-    shortDescription: "Generate random passwords with configurable length.",
+    shortDescription:
+      "Generate strong passwords with selectable length and character sets (uppercase, lowercase, numbers, symbols).",
     tags: ["password generator", "strong password", "security tools", "developer tools"],
     intro:
-      "Generate random passwords using uppercase, lowercase, digits, and symbols for account setup, test environments, and secret rotation workflows.",
+      "Generate strong passwords by choosing length and exactly which character sets to include: uppercase letters, lowercase letters, numbers, and symbols.",
     howToUse: [
-      "Leave input empty for a default 16-character password, or enter a length from 8 to 128.",
-      "Click Transform to generate a password.",
+      "Choose password length (8 to 128).",
+      "Select which character sets to include: uppercase, lowercase, numbers, and symbols.",
+      "Click Generate Password.",
       "Copy the output and store it in your password manager.",
     ],
-    exampleInput: "24",
+    exampleInput:
+      "Length: 24\nInclude uppercase: Yes\nInclude lowercase: Yes\nInclude numbers: Yes\nInclude symbols: Yes",
     exampleOutput: "A9!fQ2#kLm7@xP4$wR8&nT1?",
     whyUseful:
       "Provides quick password generation without external tools when provisioning accounts or rotating credentials.",
     commonMistakes: [
-      "Using short password lengths that do not meet policy requirements.",
+      "Choosing a password length that is too short for your policy requirements.",
+      "Unchecking too many character sets and reducing password entropy.",
+      "Turning off symbols for accounts that require special characters.",
       "Storing generated passwords in plain text notes.",
-      "Assuming generated output should be reused across multiple accounts.",
+      "Reusing one generated password across multiple accounts.",
     ],
     faq: [
       { question: "What length does Password Generator support?", answer: "You can generate passwords from 8 to 128 characters." },
-      { question: "Does Password Generator include symbols?", answer: "Yes. Output includes letters, digits, and common symbols." },
-      { question: "Can I use this for production credentials?", answer: "Yes, but store generated passwords in a secure password manager." },
+      {
+        question: "Can I choose which character types to include?",
+        answer: "Yes. You can enable or disable uppercase, lowercase, numbers, and symbols.",
+      },
+      {
+        question: "Can I generate a password without symbols?",
+        answer: "Yes. Disable symbols if needed, but include enough length and other character types for strength.",
+      },
+      {
+        question: "What happens if I disable all character sets?",
+        answer: "Generation will fail because at least one character set must be selected.",
+      },
+      {
+        question: "Will the password include every selected character type?",
+        answer: "Yes. If you select uppercase, lowercase, numbers, or symbols, the generated password includes at least one character from each selected set.",
+      },
+      {
+        question: "Are generated passwords random?",
+        answer: "Yes. Each click generates a new random password based on your selected options.",
+      },
+      {
+        question: "Can I use this for production credentials?",
+        answer: "Yes. Generate here, then store credentials in a secure password manager.",
+      },
     ],
     related: ["random-string-generator", "hash-generator", "uuid-generator", "jwt-encoder"],
     kind: "standard",

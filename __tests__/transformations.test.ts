@@ -1003,6 +1003,44 @@ describe("transformations", () => {
       );
     });
 
+    it("generates password from options json", () => {
+      const result = transformations["password-generator"](
+        '{"length":24,"includeUppercase":true,"includeLowercase":true,"includeNumbers":true,"includeSymbols":true}',
+      );
+      expect(result.output).toHaveLength(24);
+      expect(/[A-Z]/.test(result.output)).toBe(true);
+      expect(/[a-z]/.test(result.output)).toBe(true);
+      expect(/[0-9]/.test(result.output)).toBe(true);
+      expect(/[!@#$%^&*()\-_=+\[\]{};:,.?/|]/.test(result.output)).toBe(true);
+    });
+
+    it("defaults to length 16 when options json omits length", () => {
+      const result = transformations["password-generator"](
+        '{"includeUppercase":true,"includeLowercase":true,"includeNumbers":true,"includeSymbols":false}',
+      );
+      expect(result.output).toHaveLength(16);
+      expect(/[A-Z]/.test(result.output)).toBe(true);
+      expect(/[a-z]/.test(result.output)).toBe(true);
+      expect(/[0-9]/.test(result.output)).toBe(true);
+      expect(/[!@#$%^&*()\-_=+\[\]{};:,.?/|]/.test(result.output)).toBe(false);
+    });
+
+    it("throws when no character set is selected for password generation", () => {
+      expect(() =>
+        transformations["password-generator"](
+          '{"length":16,"includeUppercase":false,"includeLowercase":false,"includeNumbers":false,"includeSymbols":false}',
+        ),
+      ).toThrow("Password Generator requires at least one character set.");
+    });
+
+    it("throws when password-generator toggle options are non-boolean", () => {
+      expect(() =>
+        transformations["password-generator"](
+          '{"length":16,"includeUppercase":"yes","includeLowercase":true,"includeNumbers":true,"includeSymbols":true}',
+        ),
+      ).toThrow("Password Generator option `includeUppercase` must be true or false.");
+    });
+
     it("builds query strings from json object", () => {
       const result = transformations["query-string-builder"]('{"a":1,"b":"test","tags":["x","y"]}');
       expect(result.output).toBe("a=1&b=test&tags=x&tags=y");

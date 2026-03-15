@@ -238,7 +238,7 @@
   {
     "slug": "password-generator",
     "title": "Password Generator",
-    "description": "Generate random passwords with configurable length.",
+    "description": "Generate strong passwords with selectable length and character sets (uppercase, lowercase, numbers, symbols).",
     "tags": [
       "password generator",
       "strong password",

@@ -355,6 +355,15 @@ function buildRandomString(length: number, charset: string): string {
   return Array.from({ length }, () => charset[randomInt(charset.length)]).join("");
 }
 
+function shuffleCharacters(value: string): string {
+  const chars = Array.from(value);
+  for (let i = chars.length - 1; i > 0; i -= 1) {
+    const j = randomInt(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  return chars.join("");
+}
+
 function parseLengthInput(
   input: string,
   toolName: string,
@@ -549,9 +558,81 @@ function textDiffChecker(input: string): TransformResult {
 }
 
 function passwordGenerator(input: string): TransformResult {
-  const length = parseLengthInput(input, "Password Generator", 8, 128, 16);
-  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{};:,.?/|";
-  const output = buildRandomString(length, charset);
+  const trimmed = input.trim();
+
+  let length = 16;
+  let includeUppercase = true;
+  let includeLowercase = true;
+  let includeNumbers = true;
+  let includeSymbols = true;
+
+  const parseToggle = (value: unknown, key: string): boolean => {
+    if (value === undefined) {
+      return true;
+    }
+    if (typeof value !== "boolean") {
+      throw new Error(`Password Generator option \`${key}\` must be true or false.`);
+    }
+    return value;
+  };
+
+  if (trimmed) {
+    if (trimmed.startsWith("{")) {
+      const parsed = parseJsonInput(trimmed, "Password Generator options");
+      if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+        throw new Error("Password Generator options must be a JSON object.");
+      }
+
+      const options = parsed as Record<string, unknown>;
+      const rawLength = options.length;
+      if (rawLength !== undefined) {
+        const parsedLength = Number(rawLength);
+        if (!Number.isInteger(parsedLength) || parsedLength < 8 || parsedLength > 128) {
+          throw new Error("Password Generator expects a whole number between 8 and 128.");
+        }
+        length = parsedLength;
+      }
+
+      includeUppercase = parseToggle(options.includeUppercase, "includeUppercase");
+      includeLowercase = parseToggle(options.includeLowercase, "includeLowercase");
+      includeNumbers = parseToggle(options.includeNumbers, "includeNumbers");
+      includeSymbols = parseToggle(options.includeSymbols, "includeSymbols");
+    } else {
+      length = parseLengthInput(input, "Password Generator", 8, 128, 16);
+    }
+  }
+
+  const uppercaseCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercaseCharset = "abcdefghijklmnopqrstuvwxyz";
+  const numbersCharset = "0123456789";
+  const symbolsCharset = "!@#$%^&*()-_=+[]{};:,.?/|";
+
+  const selectedCharsets: string[] = [];
+  if (includeUppercase) {
+    selectedCharsets.push(uppercaseCharset);
+  }
+  if (includeLowercase) {
+    selectedCharsets.push(lowercaseCharset);
+  }
+  if (includeNumbers) {
+    selectedCharsets.push(numbersCharset);
+  }
+  if (includeSymbols) {
+    selectedCharsets.push(symbolsCharset);
+  }
+
+  if (selectedCharsets.length === 0) {
+    throw new Error("Password Generator requires at least one character set.");
+  }
+
+  if (length < selectedCharsets.length) {
+    throw new Error("Password length must be at least the number of selected character sets.");
+  }
+
+  const requiredCharacters = selectedCharsets.map((charset) => buildRandomString(1, charset));
+  const combinedCharset = selectedCharsets.join("");
+  const remainingCharacters = buildRandomString(length - requiredCharacters.length, combinedCharset);
+  const output = shuffleCharacters(`${requiredCharacters.join("")}${remainingCharacters}`);
 
   return toTransformResult(output, "password.txt", "text/plain");
 }
