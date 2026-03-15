@@ -1817,34 +1817,65 @@ export const tools: ToolDefinition[] = [
   {
     slug: "regex-tester",
     title: "Regex Tester",
-    shortDescription: "Test regular expressions against sample text instantly.",
-    tags: ["regex", "tester", "developer", "pattern matching"],
+    shortDescription:
+      "Test regex patterns online and generate regex from plain-English descriptions for real text-matching tasks.",
+    tags: ["regex", "tester", "regex generator", "regex builder", "pattern matching", "developer"],
     intro:
-      "Validate regular expression patterns and quickly inspect matching results using your own input text.",
+      "Use this Regex Tester to validate patterns against sample text, inspect matches, and review capture groups. The built-in Regex Generator helps you convert plain-English requests like 'match email addresses' or 'extract 6 digit order numbers' into practical starter patterns. It is designed for developers, analysts, and QA teams who need fast regex checks before shipping filters, validations, and parsing logic. Paste sample text, run the pattern, and verify exactly what matches before using it in code, ETL rules, or spreadsheet cleanup workflows.",
     howToUse: [
-      "Enter the regex on the first line using /pattern/flags format, or plain pattern text.",
-      "Add the test text on the following lines.",
-      "Click Transform to view match count and matched values.",
+      "Start in Generate Regex, describe what you want to match, and click Generate Regex.",
+      "Use Use in Tester to send the suggested pattern and flags into the tester.",
+      "Paste representative sample text, run Test Regex, and review matches, indexes, and capture groups.",
+      "Adjust the pattern or flags (`g`, `i`, `m`) until the highlighted matches are correct.",
     ],
-    exampleInput: "/\\b\\w{4}\\b/g\nThis line has many word tokens in text.",
+    exampleInput:
+      "Description: Match email addresses\n\nPattern: [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\nFlags: g\nSample text: Contact ana@example.com and team@company.io.",
     exampleOutput:
-      "Pattern: /\\b\\w{4}\\b/g\nTotal matches: 5\nMatches:\n1. This\n2. line\n3. many\n4. word\n5. text",
+      "Generated regex: /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b/g\nMatch count: 2\nMatches:\n1. ana@example.com\n2. team@company.io",
     whyUseful:
-      "Helps developers debug and validate regex patterns before using them in code, filters, or search logic.",
+      "Helps you move from plain-language matching goals to tested regex patterns you can trust in production code and data pipelines.",
     commonMistakes: [
-      "Forgetting regex flags such as `g` or `i` and getting unexpected matches.",
-      "Not escaping backslashes when copying patterns between environments.",
-      "Testing patterns on unrealistic samples that do not match production data.",
+      "Testing with sample text that is too clean and does not represent real production data.",
+      "Forgetting to enable `g` when you expect all matches instead of the first match.",
+      "Using unescaped characters like `.` or `+` when you intended literal text.",
+      "Assuming generated patterns handle nested or highly specific formats without review.",
     ],
     faq: [
-      { question: "Can I use regex flags?", answer: "Yes. Use /pattern/flags syntax such as /test/gi." },
-      { question: "Does it show all matches?", answer: "Yes, it reports total matches and each matched value." },
       {
-        question: "Can I test multiline input?",
-        answer: "Yes. Paste multiline content and include the `m` flag when your pattern requires it.",
+        question: "What is a regex tester?",
+        answer:
+          "A regex tester lets you run a regular expression against sample text and inspect exactly what matches before using the pattern in code.",
+      },
+      {
+        question: "Can I generate regex from plain English?",
+        answer:
+          "Yes. Enter a request like 'extract 6 digit order numbers' and the generator suggests a regex pattern, flags, and explanation.",
+      },
+      {
+        question: "What do regex flags like g, i, and m mean?",
+        answer:
+          "`g` finds all matches, `i` makes matching case-insensitive, and `m` lets `^` and `$` work per line in multiline text.",
+      },
+      {
+        question: "Why is my regex not matching?",
+        answer:
+          "Common causes are missing escapes, wrong flags, anchors in the wrong place, or sample text that differs from your real input format.",
+      },
+      {
+        question: "Can I test capture groups in this tool?",
+        answer: "Yes. Match output includes capture-group values when your pattern contains grouped subexpressions.",
+      },
+      {
+        question: "Is this regex tester and generator free?",
+        answer: "Yes. It is free to use with no signup required.",
+      },
+      {
+        question: "Can I use generated regex directly in JavaScript?",
+        answer:
+          "Generated patterns are JavaScript-compatible starters. You should still validate edge cases before using them in production logic.",
       },
     ],
-    related: ["extract-emails", "extract-numbers", "json-validator", "url-parser"],
+    related: ["extract-emails", "extract-urls", "json-validator", "url-parser", "text-diff-checker"],
     kind: "standard",
     categories: ["developer-tools", "text-tools"],
     createdAt: "2026-03-17",

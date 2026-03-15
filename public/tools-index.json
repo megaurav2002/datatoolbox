@@ -661,12 +661,14 @@
   {
     "slug": "regex-tester",
     "title": "Regex Tester",
-    "description": "Test regular expressions against sample text instantly.",
+    "description": "Test regex patterns online and generate regex from plain-English descriptions for real text-matching tasks.",
     "tags": [
       "regex",
       "tester",
-      "developer",
-      "pattern matching"
+      "regex generator",
+      "regex builder",
+      "pattern matching",
+      "developer"
     ],
     "url": "/tools/regex-tester"
   },

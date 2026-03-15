@@ -52,12 +52,12 @@ const toolFAQTemplates: Partial<Record<string, FAQItem[]>> = {
   ],
   "regex-tester": [
     {
-      question: "Can Regex Tester run patterns with flags?",
-      answer: "Yes. Use `/pattern/flags` format, for example `/error\\d+/gi`.",
+      question: "Can Regex Tester + Generator run patterns with flags?",
+      answer: "Yes. Enter flags like `g`, `i`, or `m` in the flags field to control global, case-insensitive, and multiline matching.",
     },
     {
-      question: "Why do I get zero matches in Regex Tester?",
-      answer: "Check escaping, anchors, and flags. Small syntax differences can change matching behavior.",
+      question: "How accurate is the regex generator?",
+      answer: "It uses deterministic heuristics for common intents. Treat suggestions as a starting point and validate against real sample text.",
     },
   ],
   "sql-formatter": [
@@ -73,6 +73,10 @@ const toolFAQTemplates: Partial<Record<string, FAQItem[]>> = {
 };
 
 function inputExpectation(tool: ToolDefinition): string {
+  if (tool.slug === "regex-tester") {
+    return "Enter a regex pattern, optional flags, and sample text to test matches. You can also start with a plain-English prompt in the generator section.";
+  }
+
   if (tool.categories.includes("csv-tools")) {
     return "Use CSV-like tabular input, typically with a header row first.";
   }
@@ -93,6 +97,10 @@ function inputExpectation(tool: ToolDefinition): string {
 }
 
 function outputExpectation(tool: ToolDefinition): string {
+  if (tool.slug === "regex-tester") {
+    return "It returns match count, matched values, match positions, and capture-group values when groups are present.";
+  }
+
   if (tool.outputFileName) {
     return `It returns transformed output you can copy or download as \`${tool.outputFileName}\`.`;
   }
