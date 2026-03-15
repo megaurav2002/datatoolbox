@@ -9,6 +9,12 @@ describe("RegexTesterTool", () => {
     expect(screen.getByText("Common Regex Patterns")).toBeInTheDocument();
     expect(screen.getByText("When to use flags")).toBeInTheDocument();
     expect(screen.queryByText("Regex learning guides")).not.toBeInTheDocument();
+    expect(screen.getByText("Example prompts")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Tip: Generated regex patterns are starting points. You can refine and test them using the regex tester below.",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("generates a suggestion and applies it to tester", async () => {

@@ -406,20 +406,11 @@ export default function RegexTesterTool() {
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="text-lg font-semibold text-slate-900">Generate Regex from Plain English</h3>
           <p className="mt-2 text-sm text-slate-700">
-            Describe what you want to match, then use the generated regex in the tester below.
+            Describe the pattern you want to match and we'll generate a starter regex. You can immediately test and
+            refine it in the regex tester below.
           </p>
-          <label htmlFor="regex-generator-prompt" className="mt-4 block text-sm font-medium text-slate-800">
-            Description
-          </label>
-          <textarea
-            id="regex-generator-prompt"
-            value={prompt}
-            onChange={(event) => setPrompt(event.target.value)}
-            rows={3}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none focus:border-slate-500"
-            placeholder="Example: Match dates in DD/MM/YYYY format"
-          />
-          <div className="mt-3 flex flex-wrap gap-2">
+          <p className="mt-4 text-sm font-semibold text-slate-900">Example prompts</p>
+          <div className="mt-2 flex flex-wrap gap-2">
             {PROMPT_EXAMPLES.map((example) => (
               <button
                 key={example}
@@ -432,6 +423,21 @@ export default function RegexTesterTool() {
               </button>
             ))}
           </div>
+          <label htmlFor="regex-generator-prompt" className="mt-4 block text-sm font-medium text-slate-800">
+            Description
+          </label>
+          <textarea
+            id="regex-generator-prompt"
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            rows={3}
+            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none focus:border-slate-500"
+            placeholder="Example: Match dates in DD/MM/YYYY format"
+          />
+          <p className="mt-2 text-xs text-slate-600">
+            Tip: Generated regex patterns are starting points. You can refine and test them using the regex tester
+            below.
+          </p>
           <button
             type="button"
             onClick={onGenerate}
