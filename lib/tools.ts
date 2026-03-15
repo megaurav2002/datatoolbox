@@ -1818,8 +1818,8 @@ export const tools: ToolDefinition[] = [
     slug: "regex-tester",
     title: "Regex Tester",
     shortDescription:
-      "Test regex patterns online and generate regex from plain-English descriptions for real text-matching tasks.",
-    tags: ["regex", "tester", "regex generator", "regex builder", "pattern matching", "developer"],
+      "Test regex online and generate starter regex from plain-English descriptions.",
+    tags: ["regex tester", "test regex online", "regex generator", "regex builder", "pattern matching", "developer"],
     intro:
       "Use this Regex Tester to validate patterns against sample text, inspect matches, and review capture groups. The built-in Regex Generator helps you convert plain-English requests like 'match email addresses' or 'extract 6 digit order numbers' into practical starter patterns. It is designed for developers, analysts, and QA teams who need fast regex checks before shipping filters, validations, and parsing logic. Paste sample text, run the pattern, and verify exactly what matches before using it in code, ETL rules, or spreadsheet cleanup workflows.",
     howToUse: [
@@ -1875,7 +1875,7 @@ export const tools: ToolDefinition[] = [
           "Generated patterns are JavaScript-compatible starters. You should still validate edge cases before using them in production logic.",
       },
     ],
-    related: ["extract-emails", "extract-urls", "json-validator", "url-parser", "text-diff-checker"],
+    related: ["extract-emails", "extract-urls", "extract-numbers", "text-diff-checker", "case-converter"],
     kind: "standard",
     categories: ["developer-tools", "text-tools"],
     createdAt: "2026-03-17",
