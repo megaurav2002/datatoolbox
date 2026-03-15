@@ -8,7 +8,7 @@ describe("RegexTesterTool", () => {
 
     expect(screen.getByText("Common Regex Patterns")).toBeInTheDocument();
     expect(screen.getByText("When to use flags")).toBeInTheDocument();
-    expect(screen.getByText("Regex learning guides")).toBeInTheDocument();
+    expect(screen.queryByText("Regex learning guides")).not.toBeInTheDocument();
   });
 
   it("generates a suggestion and applies it to tester", async () => {

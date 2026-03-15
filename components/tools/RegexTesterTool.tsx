@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   applySuggestionToTester,
@@ -662,21 +661,6 @@ export default function RegexTesterTool() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="text-lg font-semibold text-slate-900">Regex learning guides</h3>
-        <p className="mt-2 text-sm text-slate-700">
-          We are building a dedicated regex guide cluster. For now, browse the{" "}
-          <Link href="/guides" className="underline">
-            full guides library
-          </Link>{" "}
-          and use these planned topics as a roadmap:
-        </p>
-        <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-slate-700">
-          <li>How to Test Regex Online</li>
-          <li>Common Regex Patterns for Developers</li>
-          <li>Regex Flags Explained</li>
-        </ul>
-      </section>
     </section>
   );
 }
