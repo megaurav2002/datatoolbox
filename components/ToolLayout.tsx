@@ -83,6 +83,12 @@ function commonUseCasesForTool(tool: ToolDefinition): string[] {
       "Decoding API response fields for debugging.",
       "Verifying whether an integration output is valid Base64.",
     ],
+    "json-diff-checker": [
+      "Comparing API responses between development, staging, and production.",
+      "Reviewing JSON config changes before deployment.",
+      "Verifying webhook payload shape changes after provider updates.",
+      "Inspecting differences between exported JSON snapshots during regressions.",
+    ],
   };
 
   if (specificUseCases[tool.slug]) {

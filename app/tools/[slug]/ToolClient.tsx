@@ -25,6 +25,7 @@ async function parseApiResponse(response: Response): Promise<ApiResponse> {
 
 const CsvToSqlTool = dynamic(() => import("@/components/tools/CsvToSqlTool"));
 const JsonFlattenToCsvTool = dynamic(() => import("@/components/tools/JsonFlattenToCsvTool"));
+const JsonDiffCheckerTool = dynamic(() => import("@/components/tools/JsonDiffCheckerTool"));
 const CsvCleanerTool = dynamic(() => import("@/components/tools/CsvCleanerTool"));
 const MermaidEditorTool = dynamic(() => import("@/components/tools/MermaidEditorTool"));
 const HashGeneratorTool = dynamic(() => import("@/components/tools/HashGeneratorTool"));
@@ -132,6 +133,10 @@ export default function ToolClient({ tool }: ToolClientProps) {
 
   if (tool.slug === "json-flatten-to-csv") {
     return <JsonFlattenToCsvTool tool={tool} />;
+  }
+
+  if (tool.slug === "json-diff-checker") {
+    return <JsonDiffCheckerTool tool={tool} />;
   }
 
   if (tool.slug === "csv-cleaner") {

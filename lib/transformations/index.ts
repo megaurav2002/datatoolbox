@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { sha256 } from "js-sha256";
 import type { TransformResult } from "@/lib/types";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+import { compareJsonDocuments, formatPath } from "@/lib/json-diff";
 import { generateMd5Hash } from "@/lib/transformations/hash";
 import {
   ensureInput,
@@ -1351,70 +1352,27 @@ function jsonDiffChecker(input: string): TransformResult {
   const [leftBlock, rightBlock] = parseTwoInputBlocks(input, "JSON Diff Checker");
   const left = parseJsonInput(leftBlock, "JSON Diff Checker (left)");
   const right = parseJsonInput(rightBlock, "JSON Diff Checker (right)");
+  const { added, removed, changed } = compareJsonDocuments(left, right, { ignoreKeyOrder: true });
 
-  const added: string[] = [];
-  const removed: string[] = [];
-  const changed: string[] = [];
-
-  function compare(path: string, before: unknown, after: unknown) {
-    if (before === after) {
-      return;
-    }
-
-    if (before === undefined) {
-      added.push(path);
-      return;
-    }
-
-    if (after === undefined) {
-      removed.push(path);
-      return;
-    }
-
-    if (
-      typeof before !== "object" ||
-      before === null ||
-      typeof after !== "object" ||
-      after === null
-    ) {
-      changed.push(path);
-      return;
-    }
-
-    const beforeIsArray = Array.isArray(before);
-    const afterIsArray = Array.isArray(after);
-    if (beforeIsArray !== afterIsArray) {
-      changed.push(path);
-      return;
-    }
-
-    if (beforeIsArray && afterIsArray) {
-      const max = Math.max((before as unknown[]).length, (after as unknown[]).length);
-      for (let i = 0; i < max; i += 1) {
-        compare(`${path}[${i}]`, (before as unknown[])[i], (after as unknown[])[i]);
-      }
-      return;
-    }
-
-    const keys = new Set([
-      ...Object.keys(before as Record<string, unknown>),
-      ...Object.keys(after as Record<string, unknown>),
-    ]);
-    keys.forEach((key) => {
-      const nextPath = path ? `${path}.${key}` : key;
-      compare(nextPath, (before as Record<string, unknown>)[key], (after as Record<string, unknown>)[key]);
-    });
-  }
-
-  compare("", left, right);
-  const serialize = (title: string, items: string[]) =>
-    `${title}\n${items.length > 0 ? items.map((item) => `- ${item || "(root)"}`).join("\n") : "(none)"}`;
+  const serialize = (title: string, items: string[]) => `${title}\n${items.length > 0 ? items.join("\n") : "(none)"}`;
 
   return toTransformResult(
     [
-      serialize("Added paths:", added),
-      serialize("Removed paths:", removed),
-      serialize("Changed paths:", changed),
+      serialize(
+        "Added paths:",
+        added.map((entry) => `- ${formatPath(entry.path)}: ${JSON.stringify(entry.value)}`),
+      ),
+      serialize(
+        "Removed paths:",
+        removed.map((entry) => `- ${formatPath(entry.path)}: ${JSON.stringify(entry.value)}`),
+      ),
+      serialize(
+        "Changed paths:",
+        changed.map(
+          (entry) =>
+            `- ${formatPath(entry.path)}: ${JSON.stringify(entry.before)} -> ${JSON.stringify(entry.after)}`,
+        ),
+      ),
     ].join("\n\n"),
   );
 }

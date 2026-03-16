@@ -505,12 +505,13 @@
   {
     "slug": "json-diff-checker",
     "title": "JSON Diff Checker",
-    "description": "Compare two JSON documents and list changed paths.",
+    "description": "Compare two JSON documents online and highlight added, removed, and changed paths instantly.",
     "tags": [
       "json diff checker",
-      "compare json",
       "json compare",
-      "developer tools"
+      "json diff",
+      "compare json online",
+      "compare two json files"
     ],
     "url": "/tools/json-diff-checker"
   },

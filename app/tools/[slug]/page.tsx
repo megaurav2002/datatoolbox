@@ -44,6 +44,11 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       description:
         "Test regex patterns online and generate regex from plain-English prompts. Free regex tester and regex builder with match count, flags, and capture groups.",
     },
+    "json-diff-checker": {
+      title: "JSON Diff Checker - Compare Two JSON Files Online",
+      description:
+        "Compare two JSON documents online and highlight added, removed, and changed values instantly. Free browser-based JSON diff checker for APIs, configs, and payload debugging.",
+    },
   };
   const metadataTitle = metadataOverrides[tool.slug]?.title ?? `${tool.title} - Free Online Tool`;
   const metadataDescription = metadataOverrides[tool.slug]?.description ?? tool.shortDescription;

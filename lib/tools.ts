@@ -1388,31 +1388,71 @@ export const tools: ToolDefinition[] = [
   {
     slug: "json-diff-checker",
     title: "JSON Diff Checker",
-    shortDescription: "Compare two JSON documents and list changed paths.",
-    tags: ["json diff checker", "compare json", "json compare", "developer tools"],
+    shortDescription: "Compare two JSON documents online and highlight added, removed, and changed paths instantly.",
+    tags: ["json diff checker", "json compare", "json diff", "compare json online", "compare two json files"],
     intro:
-      "Compare two JSON payloads and identify added, removed, and changed paths for debugging API regressions and config changes.",
+      "Compare two JSON documents and instantly see changed values, added keys, removed fields, and nested path differences. This is useful for API response debugging, config reviews, payload verification, and regression checks across environments. The comparison runs in your browser, so you can inspect sensitive JSON safely without uploading files.",
     howToUse: [
-      "Paste the first JSON document.",
-      "Leave a blank line, then paste the second JSON document.",
-      "Click Transform to see added, removed, and changed paths.",
+      "Paste the first JSON document in the left panel.",
+      "Paste the second JSON document in the right panel.",
+      "Optionally keep Ignore key order enabled for logical comparisons.",
+      "Click Compare JSON to format input and run the diff.",
+      "Review Added, Removed, and Changed path groups.",
+      "Copy the results or inspect specific paths directly in the output.",
     ],
     exampleInput:
-      '{"user":{"name":"Ana","role":"admin"}}\n\n{"user":{"name":"Ana","role":"editor","active":true}}',
-    exampleOutput: "Added paths:\n- user.active\n\nRemoved paths:\n(none)\n\nChanged paths:\n- user.role",
+      '{\n  "name": "Alice",\n  "age": 30,\n  "tags": ["admin", "editor"],\n  "profile": {\n    "city": "Melbourne"\n  }\n}\n\n{\n  "name": "Alice",\n  "age": 31,\n  "tags": ["admin", "owner"],\n  "profile": {\n    "city": "Sydney"\n  },\n  "active": true\n}',
+    exampleOutput:
+      'Changed:\n- age: 30 -> 31\n- tags[1]: "editor" -> "owner"\n- profile.city: "Melbourne" -> "Sydney"\n\nAdded:\n- active: true\n\nRemoved:\n(none)',
     whyUseful:
-      "Useful for quickly auditing payload differences without opening external diff tools or writing ad hoc scripts.",
+      "Helps engineers and analysts compare JSON quickly without manual scanning, especially when payloads are deeply nested.",
     commonMistakes: [
-      "Forgetting the blank line separator between JSON blocks.",
-      "Comparing invalid JSON and expecting diff output.",
-      "Expecting value-by-value rendering instead of path-level summaries.",
+      "Comparing invalid JSON syntax and expecting a valid diff output.",
+      "Assuming key order differences matter when logical content is otherwise identical.",
+      "Confusing formatting changes (minified vs pretty) with actual data changes.",
+      "Expecting reordered array values to be treated as unchanged.",
     ],
     faq: [
-      { question: "Does JSON Diff Checker show added and removed keys?", answer: "Yes. It reports added, removed, and changed paths separately." },
-      { question: "Can JSON Diff Checker compare arrays?", answer: "Yes. Array differences are reported using index-based paths." },
-      { question: "Does JSON Diff Checker validate syntax first?", answer: "Yes. Both documents must be valid JSON before diffing." },
+      {
+        question: "How do I compare two JSON files?",
+        answer:
+          "Paste one JSON document on the left and the second on the right, then run Compare JSON to review added, removed, and changed paths.",
+      },
+      {
+        question: "Does key order affect the comparison?",
+        answer:
+          "By default this tool ignores object key order for logical comparisons. You can toggle this behavior when strict ordering matters.",
+      },
+      {
+        question: "Can this compare nested JSON objects?",
+        answer:
+          "Yes. Nested objects and arrays are compared recursively, and differences are reported with dot and bracket paths.",
+      },
+      {
+        question: "How are arrays compared?",
+        answer:
+          "Arrays are compared by index. If values move to different indexes, the tool reports those index paths as changed.",
+      },
+      {
+        question: "What happens if one JSON document is invalid?",
+        answer:
+          "The tool stops and shows a side-specific syntax error so you can fix invalid JSON before running the diff.",
+      },
+      {
+        question: "Can I compare minified and formatted JSON?",
+        answer:
+          "Yes. Whitespace differences are ignored because JSON is parsed before comparison, not compared as raw text.",
+      },
+      {
+        question: "Is this JSON diff checker free?",
+        answer: "Yes. It is free to use with no account required.",
+      },
+      {
+        question: "Does the comparison happen in the browser?",
+        answer: "Yes. JSON comparison runs in your browser.",
+      },
     ],
-    related: ["json-validator", "json-formatter", "json-minifier", "json-path-extractor"],
+    related: ["json-formatter", "json-validator", "json-minifier", "json-path-extractor", "json-schema-generator", "json-flatten-to-csv"],
     kind: "standard",
     categories: ["json-tools", "developer-tools"],
     createdAt: "2026-04-16",
