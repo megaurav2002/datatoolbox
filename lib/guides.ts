@@ -7,7 +7,8 @@ export type GuideSlug =
   | "how-to-convert-json-to-csv"
   | "how-to-clean-csv-data"
   | "how-to-import-csv-into-sql"
-  | "how-to-flatten-json";
+  | "how-to-flatten-json"
+  | "how-to-compare-json";
 
 export type GuideDefinition = {
   slug: GuideSlug;
@@ -112,6 +113,30 @@ export const guides: GuideDefinition[] = [
     primaryToolSlug: "json-flatten-to-csv",
     relatedToolSlugs: ["json-to-csv", "json-formatter", "json-validator", "csv-cleaner"],
     relatedGuideSlugs: ["how-to-convert-json-to-csv"],
+    relatedHubSlugs: ["json-tools", "developer-data-tools"],
+  },
+  {
+    slug: "how-to-compare-json",
+    title: "How to Compare JSON",
+    description: "Compare two JSON documents online and quickly spot added, removed, and changed paths.",
+    introduction:
+      "When two payloads look similar, it is easy to miss important differences. This guide shows a fast way to compare JSON side by side and identify what changed.",
+    whyItMatters:
+      "JSON comparison helps with API debugging, config reviews, and regression checks, especially when nested fields or array values change.",
+    exampleInput:
+      '{\n  "name": "Alice",\n  "age": 30,\n  "tags": ["admin", "editor"],\n  "profile": {\n    "city": "Melbourne"\n  }\n}\n\n{\n  "name": "Alice",\n  "age": 31,\n  "tags": ["admin", "owner"],\n  "profile": {\n    "city": "Sydney"\n  },\n  "active": true\n}',
+    solutionSummary:
+      "Use JSON Diff Checker to compare both documents and review grouped Added, Removed, and Changed paths with nested field details.",
+    steps: [
+      "Paste the first JSON document in the left input.",
+      "Paste the second JSON document in the right input.",
+      "Optionally keep Ignore key order enabled for logical comparisons.",
+      "Run comparison and review Added, Removed, and Changed groups.",
+      "Use the reported paths to validate payload changes or troubleshoot regressions.",
+    ],
+    primaryToolSlug: "json-diff-checker",
+    relatedToolSlugs: ["json-formatter", "json-validator", "json-minifier", "json-path-extractor", "json-to-csv"],
+    relatedGuideSlugs: ["how-to-convert-json-to-csv", "how-to-flatten-json"],
     relatedHubSlugs: ["json-tools", "developer-data-tools"],
   },
 ];

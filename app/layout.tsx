@@ -93,6 +93,7 @@ export default function RootLayout({
                 <li><Link className="underline" href="/guides/how-to-clean-csv-data">How to Clean CSV Data</Link></li>
                 <li><Link className="underline" href="/guides/how-to-import-csv-into-sql">How to Import CSV into SQL</Link></li>
                 <li><Link className="underline" href="/guides/how-to-flatten-json">How to Flatten JSON</Link></li>
+                <li><Link className="underline" href="/guides/how-to-compare-json">How to Compare JSON</Link></li>
               </ul>
             </div>
             <div>
