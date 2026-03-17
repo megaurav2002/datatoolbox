@@ -24,7 +24,7 @@ let toolIndexPromise: Promise<ToolIndexItem[]> | null = null;
 
 async function loadToolIndex(): Promise<ToolIndexItem[]> {
   if (!toolIndexPromise) {
-    toolIndexPromise = fetch("/tools-index.json", { cache: "force-cache" })
+    toolIndexPromise = fetch("/tools-index.json", { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) {
           toolIndexPromise = null;
