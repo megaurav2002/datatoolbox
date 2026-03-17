@@ -1509,7 +1509,7 @@ export const tools: ToolDefinition[] = [
     exampleOutput:
       "Valid result:\nValid XML. No syntax errors found.\n\nInvalid result:\nXML validation failed\nMismatched closing tag near line 5 (exact parser message may vary).",
     whyUseful:
-      "Useful for catching XML syntax issues early so API integrations, feed imports, and config parsing do not fail in production.",
+      "Catch XML syntax issues early so API integrations, feed imports, and config parsing do not fail in production.",
     commonMistakes: [
       "Missing closing tags. Invalid: `<user><name>Ana</name>` Fix: `<user><name>Ana</name></user>`.",
       "Closing tags out of order (invalid nesting). Invalid: `<a><b></a></b>` Fix: `<a><b></b></a>`.",
