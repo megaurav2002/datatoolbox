@@ -155,6 +155,13 @@ export default function XmlValidatorTool({ tool }: XmlValidatorToolProps) {
         <p className="mt-2 text-sm text-slate-700">
           Check XML syntax, identify parse errors quickly, and optionally format valid XML before downstream use.
         </p>
+        <p className="mt-2 text-sm text-slate-700">
+          If your XML is valid, continue with the{" "}
+          <Link href="/tools/xml-to-json" className="underline">
+            XML to JSON Converter
+          </Link>{" "}
+          for downstream mapping or exports.
+        </p>
 
         <textarea
           value={input}
@@ -187,7 +194,7 @@ export default function XmlValidatorTool({ tool }: XmlValidatorToolProps) {
             href="/tools/xml-to-json"
             className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
           >
-            Open XML to JSON
+            Open XML to JSON Converter
           </Link>
         </div>
 
@@ -215,19 +222,6 @@ export default function XmlValidatorTool({ tool }: XmlValidatorToolProps) {
         ) : null}
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="text-base font-semibold text-slate-900">Common XML errors explained</h3>
-        <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-slate-700">
-          <li>
-            Missing closing tags: every opening tag like <code>&lt;item&gt;</code> must end with a matching{" "}
-            <code>&lt;/item&gt;</code>.
-          </li>
-          <li>Invalid nesting: tags must close in order. You cannot close a parent before its child.</li>
-          <li>
-            Attribute errors: attribute values must be quoted, and duplicated attributes on the same element are not valid.
-          </li>
-        </ul>
-      </section>
     </section>
   );
 }

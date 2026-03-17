@@ -60,9 +60,9 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
         "Parse URLs into protocol, host, subdomain, port, path, query string, fragment, and query parameter rows. Free browser-based URL parser.",
     },
     "xml-validator": {
-      title: "XML Validator - Validate XML and Fix Syntax Errors Online",
+      title: "XML Validator - Validate XML and Fix Syntax Errors (With Examples)",
       description:
-        "Validate XML syntax instantly and detect errors with line-level feedback. Free browser-based XML validator for APIs, feeds, and config files.",
+        "Validate XML syntax online, detect malformed tags and nesting errors, and catch parser issues fast. Free browser-based XML validator with practical examples.",
     },
   };
   const metadataTitle = metadataOverrides[tool.slug]?.title ?? `${tool.title} - Free Online Tool`;

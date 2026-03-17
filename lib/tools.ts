@@ -1493,10 +1493,10 @@ export const tools: ToolDefinition[] = [
     slug: "xml-validator",
     title: "XML Validator",
     shortDescription:
-      "Validate XML syntax online, detect parser errors, and fix malformed tags before using XML in APIs, feeds, or config workflows.",
+      "Validate XML and instantly detect syntax errors with line-level hints before using XML in APIs, feeds, or config workflows.",
     tags: ["xml validator", "validate xml online", "xml syntax validator", "xml checker", "developer tools"],
     intro:
-      "Validate XML syntax and catch structural errors before XML reaches downstream systems. This XML checker helps you detect malformed tags, invalid nesting, and broken attributes in API payloads, configuration files, and XML feed documents. You can also format valid XML during validation to make debugging easier.",
+      "This tool validates XML syntax so you can catch malformed tags, invalid nesting, and broken attributes before XML reaches downstream systems. It is useful for API payloads, RSS/Atom feeds, and configuration files where parse failures can break processing. You can optionally format valid XML during validation to improve readability while debugging. It checks syntax and structure, not XSD schema rules.",
     howToUse: [
       "Paste XML into the input field or upload an XML file.",
       "Optionally enable format before validate if you want normalized indentation.",
@@ -1511,11 +1511,11 @@ export const tools: ToolDefinition[] = [
     whyUseful:
       "Useful for catching XML syntax issues early so API integrations, feed imports, and config parsing do not fail in production.",
     commonMistakes: [
-      "Missing closing tags after editing nested XML blocks quickly.",
-      "Closing tags out of order, which creates invalid nesting.",
-      "Leaving attributes unquoted or duplicating attribute names.",
+      "Missing closing tags. Invalid: `<user><name>Ana</name>` Fix: `<user><name>Ana</name></user>`.",
+      "Closing tags out of order (invalid nesting). Invalid: `<a><b></a></b>` Fix: `<a><b></b></a>`.",
+      "Leaving attributes unquoted. Invalid: `<user id=1>` Fix: `<user id=\"1\">`.",
       "Expecting this syntax check to validate XSD schema rules.",
-      "Copying partial XML fragments without a single root element.",
+      "Pasting fragments with multiple roots. Invalid: `<a></a><b></b>` Fix: wrap under one root element.",
     ],
     faq: [
       {
@@ -1556,7 +1556,7 @@ export const tools: ToolDefinition[] = [
         answer: "Yes. Paste raw XML from API payloads, RSS/Atom feeds, or config files to check syntax quickly.",
       },
     ],
-    related: ["xml-to-json", "json-to-xml", "json-validator", "yaml-validator", "json-to-csv"],
+    related: ["xml-to-json", "json-to-xml", "json-validator", "yaml-validator", "json-to-csv", "json-diff-checker"],
     kind: "standard",
     categories: ["developer-tools", "json-tools"],
     createdAt: "2026-04-17",
