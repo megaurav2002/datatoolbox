@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ToolDefinition } from "@/lib/types";
 
 type XmlValidatorToolProps = {
@@ -89,6 +89,7 @@ function validateXmlInput(source: string): { error: XmlValidationError | null; f
 }
 
 export default function XmlValidatorTool({ tool }: XmlValidatorToolProps) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [input, setInput] = useState(() => {
     const validExampleMatch = tool.exampleInput.match(
       /Valid XML example:\n([\s\S]*?)\n\nInvalid XML example:/,
@@ -126,7 +127,31 @@ export default function XmlValidatorTool({ tool }: XmlValidatorToolProps) {
   return (
     <section className="space-y-6">
       <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">Validate XML input</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-slate-900">Validate XML input</h2>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Upload .xml file
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xml,text/xml,application/xml"
+            onChange={async (event) => {
+              const file = event.target.files?.[0];
+              if (!file) {
+                return;
+              }
+              const text = await file.text();
+              setInput(text);
+              event.currentTarget.value = "";
+            }}
+            className="hidden"
+          />
+        </div>
         <p className="mt-2 text-sm text-slate-700">
           Check XML syntax, identify parse errors quickly, and optionally format valid XML before downstream use.
         </p>
@@ -147,22 +172,6 @@ export default function XmlValidatorTool({ tool }: XmlValidatorToolProps) {
               onChange={(event) => setFormatBeforeValidate(event.target.checked)}
             />
             Format before validate
-          </label>
-          <label className="inline-flex items-center gap-2">
-            <span>Upload .xml file:</span>
-            <input
-              type="file"
-              accept=".xml,text/xml,application/xml"
-              onChange={async (event) => {
-                const file = event.target.files?.[0];
-                if (!file) {
-                  return;
-                }
-                const text = await file.text();
-                setInput(text);
-              }}
-              className="text-xs"
-            />
           </label>
         </div>
 
