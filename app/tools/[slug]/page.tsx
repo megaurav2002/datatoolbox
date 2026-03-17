@@ -49,6 +49,16 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       description:
         "Compare two JSON documents online and highlight added, removed, and changed values instantly. Free browser-based JSON diff checker for APIs, configs, and payload debugging.",
     },
+    "yaml-validator": {
+      title: "YAML Validator - Validate YAML and Catch Indentation Errors",
+      description:
+        "Validate YAML syntax online, catch indentation and tabs-vs-spaces issues, and troubleshoot line-aware parsing errors in browser.",
+    },
+    "url-parser": {
+      title: "URL Parser - Parse URL Components and Query Parameters Online",
+      description:
+        "Parse URLs into protocol, host, subdomain, port, path, query string, fragment, and query parameter rows. Free browser-based URL parser.",
+    },
   };
   const metadataTitle = metadataOverrides[tool.slug]?.title ?? `${tool.title} - Free Online Tool`;
   const metadataDescription = metadataOverrides[tool.slug]?.description ?? tool.shortDescription;

@@ -8,7 +8,10 @@ export type GuideSlug =
   | "how-to-clean-csv-data"
   | "how-to-import-csv-into-sql"
   | "how-to-flatten-json"
-  | "how-to-compare-json";
+  | "how-to-compare-json"
+  | "how-to-validate-yaml"
+  | "how-to-parse-a-url"
+  | "how-to-open-csv-files-online";
 
 export type GuideDefinition = {
   slug: GuideSlug;
@@ -135,9 +138,81 @@ export const guides: GuideDefinition[] = [
       "Use the reported paths to validate payload changes or troubleshoot regressions.",
     ],
     primaryToolSlug: "json-diff-checker",
-    relatedToolSlugs: ["json-formatter", "json-validator", "json-minifier", "json-path-extractor", "json-to-csv"],
+    relatedToolSlugs: ["json-formatter", "json-validator", "json-minifier", "json-path-extractor"],
     relatedGuideSlugs: ["how-to-convert-json-to-csv", "how-to-flatten-json"],
     relatedHubSlugs: ["json-tools", "developer-data-tools"],
+  },
+  {
+    slug: "how-to-validate-yaml",
+    title: "How to Validate YAML",
+    description: "Validate YAML syntax online and catch indentation errors before deployment.",
+    introduction:
+      "YAML mistakes are easy to miss, especially when indentation is inconsistent. This guide shows a quick way to validate YAML and fix parser errors before deploy.",
+    whyItMatters:
+      "Broken YAML can fail CI pipelines, Kubernetes applies, and configuration loading. Fast validation reduces rollout risk.",
+    exampleInput:
+      "services:\n  api:\n\timage: node:20\n    ports:\n      - 3000:3000",
+    solutionSummary:
+      "Use YAML Validator to check syntax, identify line-level errors, and optionally format valid YAML before final validation.",
+    steps: [
+      "Paste YAML content or upload a `.yaml` / `.yml` file.",
+      "Run validation and read the error message details.",
+      "Fix indentation and tabs-vs-spaces issues.",
+      "Optionally format valid YAML, then validate again.",
+      "Use YAML Formatter for final cleanup before committing config changes.",
+    ],
+    primaryToolSlug: "yaml-validator",
+    relatedToolSlugs: ["yaml-formatter", "json-formatter", "json-validator"],
+    relatedGuideSlugs: ["how-to-compare-json"],
+    relatedHubSlugs: ["developer-data-tools", "json-tools"],
+  },
+  {
+    slug: "how-to-parse-a-url",
+    title: "How to Parse a URL",
+    description: "Parse URL components and query parameters online for API and redirect debugging.",
+    introduction:
+      "Complex URLs often hide important details in query parameters, fragments, and ports. This guide shows how to break a URL into structured parts quickly.",
+    whyItMatters:
+      "URL parsing helps troubleshoot callbacks, redirects, tracking links, and integration issues where a single parameter can change behavior.",
+    exampleInput:
+      "https://api.example.com:8443/v1/orders/42?expand=items&include=payments&env=staging#response",
+    solutionSummary:
+      "Use URL Parser to extract protocol, host, subdomain, port, path, query string, and query rows for faster debugging.",
+    steps: [
+      "Paste a full absolute URL including protocol.",
+      "Run parser and review each extracted component.",
+      "Inspect query parameters in key/value rows.",
+      "Copy parsed output for tickets, logs, or handoff notes.",
+      "Use URL Encoder/Decoder and Query String tools for follow-up edits.",
+    ],
+    primaryToolSlug: "url-parser",
+    relatedToolSlugs: ["query-string-parser", "query-string-builder", "url-encoder", "url-decoder"],
+    relatedGuideSlugs: ["how-to-compare-json"],
+    relatedHubSlugs: ["developer-data-tools"],
+  },
+  {
+    slug: "how-to-open-csv-files-online",
+    title: "How to Open CSV Files Online",
+    description: "Open CSV files online, preview rows cleanly, and spot delimiter or structure issues fast.",
+    introduction:
+      "When spreadsheet apps mangle delimiters or large files are hard to inspect, an online CSV viewer helps you preview data quickly.",
+    whyItMatters:
+      "A quick CSV preview step catches malformed rows, wrong delimiters, and header issues before data import.",
+    exampleInput:
+      "delimiter=comma\n\nid,name,email\n1,Ana,ana@example.com\n2,Bob,bob@example.com",
+    solutionSummary:
+      "Use CSV Viewer to preview tabular output in-browser, then clean, split, merge, or validate your CSV as needed.",
+    steps: [
+      "Paste CSV content into CSV Viewer.",
+      "Set delimiter mode (comma, semicolon, tab, or pipe).",
+      "Run preview and inspect headers and row alignment.",
+      "Use CSV Cleaner if values need normalization.",
+      "Validate the final CSV before import.",
+    ],
+    primaryToolSlug: "csv-viewer",
+    relatedToolSlugs: ["csv-cleaner", "csv-splitter", "csv-merge-tool", "csv-validator"],
+    relatedGuideSlugs: ["how-to-clean-csv-data", "how-to-import-csv-into-sql"],
+    relatedHubSlugs: ["csv-tools", "data-cleaning-tools"],
   },
 ];
 

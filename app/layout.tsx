@@ -94,6 +94,9 @@ export default function RootLayout({
                 <li><Link className="underline" href="/guides/how-to-import-csv-into-sql">How to Import CSV into SQL</Link></li>
                 <li><Link className="underline" href="/guides/how-to-flatten-json">How to Flatten JSON</Link></li>
                 <li><Link className="underline" href="/guides/how-to-compare-json">How to Compare JSON</Link></li>
+                <li><Link className="underline" href="/guides/how-to-validate-yaml">How to Validate YAML</Link></li>
+                <li><Link className="underline" href="/guides/how-to-parse-a-url">How to Parse a URL</Link></li>
+                <li><Link className="underline" href="/guides/how-to-open-csv-files-online">How to Open CSV Files Online</Link></li>
               </ul>
             </div>
             <div>

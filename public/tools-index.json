@@ -262,10 +262,11 @@
   {
     "slug": "yaml-validator",
     "title": "YAML Validator",
-    "description": "Validate YAML syntax and catch indentation issues quickly.",
+    "description": "Validate YAML syntax, catch indentation errors, and troubleshoot line-level issues quickly.",
     "tags": [
       "yaml validator",
       "validate yaml",
+      "yaml linter",
       "kubernetes yaml",
       "config validation"
     ],
@@ -820,9 +821,10 @@
   {
     "slug": "url-parser",
     "title": "URL Parser",
-    "description": "Parse URLs into protocol, host, path, hash, and query parameters.",
+    "description": "Parse URL components and query parameters online for debugging and API troubleshooting.",
     "tags": [
       "url parser",
+      "parse url",
       "parse query string",
       "url analyzer",
       "developer tools"

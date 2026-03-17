@@ -89,6 +89,12 @@ function commonUseCasesForTool(tool: ToolDefinition): string[] {
       "Verifying webhook payload shape changes after provider updates.",
       "Inspecting differences between exported JSON snapshots during regressions.",
     ],
+    "yaml-validator": [
+      "Validating Kubernetes manifests before apply operations.",
+      "Checking CI/CD YAML files for indentation and syntax errors.",
+      "Reviewing app config YAML before deployment rollouts.",
+      "Troubleshooting parser failures caused by tabs vs spaces.",
+    ],
   };
 
   if (specificUseCases[tool.slug]) {

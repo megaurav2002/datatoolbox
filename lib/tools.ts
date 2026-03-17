@@ -718,30 +718,62 @@ export const tools: ToolDefinition[] = [
   {
     slug: "yaml-validator",
     title: "YAML Validator",
-    shortDescription: "Validate YAML syntax and catch indentation issues quickly.",
-    tags: ["yaml validator", "validate yaml", "kubernetes yaml", "config validation"],
+    shortDescription: "Validate YAML syntax, catch indentation errors, and troubleshoot line-level issues quickly.",
+    tags: ["yaml validator", "validate yaml", "yaml linter", "kubernetes yaml", "config validation"],
     intro:
-      "Validate YAML syntax for configuration files and deployment manifests, including indentation-sensitive structures used in CI and infrastructure tooling.",
+      "Validate YAML files and catch syntax problems before they break deployments or config loading. This tool flags indentation and parsing issues, helps you identify line-level failures faster, and supports formatter-assisted validation when you need clean, consistent YAML output.",
     howToUse: [
-      "Paste YAML content into the input area.",
-      "Click Transform to validate syntax.",
-      "Review the result and fix any line/indentation errors.",
+      "Paste YAML input or upload a `.yaml` / `.yml` file.",
+      "Optionally enable Format before validate for normalized output.",
+      "Run validation and review syntax errors with line-aware hints.",
+      "Fix indentation and tabs/spaces issues, then validate again.",
+      "Open YAML Formatter for additional cleanup if needed.",
     ],
     exampleInput: "version: 1\nservices:\n  api:\n    image: node:20\n    ports:\n      - 3000:3000",
-    exampleOutput: "Valid YAML.",
+    exampleOutput: "Valid YAML. No syntax or indentation issues found.",
     whyUseful:
-      "Catches syntax mistakes before YAML files break deployments, pipelines, or application startup.",
+      "Prevents runtime failures caused by malformed YAML in CI pipelines, infrastructure-as-code manifests, and app config files.",
     commonMistakes: [
       "Mixing tabs and spaces in indentation.",
       "Forgetting list item markers (`-`) for sequence values.",
       "Using invalid key-value formatting in nested blocks.",
+      "Assuming valid YAML syntax also guarantees schema correctness.",
     ],
     faq: [
-      { question: "Does YAML Validator check schema rules?", answer: "No. It validates YAML syntax only, not domain-specific schemas." },
-      { question: "Can YAML Validator catch indentation errors?", answer: "Yes. Invalid indentation is reported as a parse error." },
-      { question: "Can I validate Kubernetes manifests?", answer: "Yes. It validates YAML structure used in Kubernetes files." },
+      {
+        question: "How do I validate YAML online?",
+        answer: "Paste YAML or upload a file, run validation, then fix reported syntax and indentation errors.",
+      },
+      {
+        question: "Can this tool catch indentation problems?",
+        answer: "Yes. Indentation and nested-block structure errors are surfaced as parse failures.",
+      },
+      {
+        question: "Does this report line-aware YAML errors?",
+        answer: "Yes. When parser details are available, line and column hints are shown to speed up fixes.",
+      },
+      {
+        question: "Can I format YAML before validating?",
+        answer: "Yes. Enable Format before validate to normalize valid YAML before final checks.",
+      },
+      {
+        question: "What about tabs vs spaces?",
+        answer: "YAML is space-sensitive. Tabs frequently cause parse issues, so this tool highlights indentation mistakes.",
+      },
+      {
+        question: "Can I validate Kubernetes YAML manifests?",
+        answer: "Yes. It validates YAML syntax used by Kubernetes and other deployment manifests.",
+      },
+      {
+        question: "Does this YAML Validator check schemas?",
+        answer: "No. It validates YAML syntax only. Use schema-specific tooling for semantic validation.",
+      },
+      {
+        question: "Does validation run in the browser?",
+        answer: "Yes. Validation runs in-browser.",
+      },
     ],
-    related: ["yaml-to-json", "json-to-yaml", "json-validator", "json-formatter"],
+    related: ["yaml-formatter", "yaml-to-json", "json-to-yaml", "json-validator", "json-formatter"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-04-12",
@@ -2292,26 +2324,54 @@ export const tools: ToolDefinition[] = [
   {
     slug: "url-parser",
     title: "URL Parser",
-    shortDescription: "Parse URLs into protocol, host, path, hash, and query parameters.",
-    tags: ["url parser", "parse query string", "url analyzer", "developer tools"],
+    shortDescription: "Parse URL components and query parameters online for debugging and API troubleshooting.",
+    tags: ["url parser", "parse url", "parse query string", "url analyzer", "developer tools"],
     intro:
-      "Break a full URL into structured components and decoded query parameters for debugging.",
+      "Parse a full URL into protocol, host, subdomain, port, path, query string, fragment, and query parameter rows. This is useful for callback URL debugging, request tracing, integration troubleshooting, and analytics link verification.",
     howToUse: [
-      "Paste a full absolute URL including protocol.",
-      "Click Transform to parse URL components.",
-      "Inspect and copy/download the parsed JSON output.",
+      "Paste an absolute URL with protocol (for example `https://...`).",
+      "Run URL parsing to extract structured components.",
+      "Review query parameters in key/value rows.",
+      "Copy parsed JSON output when you need to share or log analysis.",
+      "Use URL encoder/decoder tools for follow-up cleanup if needed.",
     ],
     exampleInput:
-      "https://example.com:8080/path/to/page?utm_source=newsletter&id=42#section",
+      "https://api.example.com:8443/v1/orders/42?expand=items&include=payments&env=staging#response",
     exampleOutput:
-      '{\n  "protocol": "https:",\n  "host": "example.com:8080",\n  "pathname": "/path/to/page",\n  "queryParams": {\n    "utm_source": "newsletter",\n    "id": "42"\n  }\n}',
+      '{\n  "protocol": "https:",\n  "host": "api.example.com:8443",\n  "subdomain": "api",\n  "port": "8443",\n  "path": "/v1/orders/42",\n  "queryString": "?expand=items&include=payments&env=staging",\n  "fragment": "#response"\n}',
     whyUseful:
-      "Useful for debugging redirects, query params, tracking links, and API callback URLs.",
+      "Makes complex URLs easier to inspect when debugging redirects, OAuth callbacks, webhooks, and tracked API requests.",
     faq: [
-      { question: "Does this support relative URLs?", answer: "No. Input must be an absolute URL with protocol." },
-      { question: "How are duplicate query params shown?", answer: "Duplicate keys are returned as arrays." },
+      {
+        question: "How do I parse a URL online?",
+        answer: "Paste a full URL, run parser, then inspect protocol, host, path, query, and fragment fields.",
+      },
+      {
+        question: "Can this parse query parameters into rows?",
+        answer: "Yes. Query params are shown in key/value rows for quick inspection.",
+      },
+      {
+        question: "Does this include subdomain and port parsing?",
+        answer: "Yes. Subdomain and port are extracted into separate fields.",
+      },
+      {
+        question: "Are relative URLs supported?",
+        answer: "No. Use a full absolute URL including protocol.",
+      },
+      {
+        question: "How are repeated query keys handled?",
+        answer: "Repeated keys are listed as separate key/value rows so duplicates remain visible.",
+      },
+      {
+        question: "Can I copy parsed output?",
+        answer: "Yes. You can copy parsed JSON output for logs, tickets, or debugging notes.",
+      },
+      {
+        question: "Does URL Parser run in the browser?",
+        answer: "Yes. Parsing runs in-browser.",
+      },
     ],
-    related: ["url-encoder", "url-decoder", "jwt-decoder", "regex-tester"],
+    related: ["query-string-parser", "query-string-builder", "url-encoder", "url-decoder", "regex-tester"],
     kind: "standard",
     categories: ["developer-tools"],
     createdAt: "2026-04-05",

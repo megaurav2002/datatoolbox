@@ -52,6 +52,7 @@ export const toolsCategoryContent: Record<ToolsCategorySeoSlug, ToolsCategorySeo
       "how-to-clean-csv-data",
       "how-to-import-csv-into-sql",
       "how-to-convert-json-to-csv",
+      "how-to-open-csv-files-online",
     ],
     faq: [
       {
@@ -100,6 +101,7 @@ export const toolsCategoryContent: Record<ToolsCategorySeoSlug, ToolsCategorySeo
     relatedGuideSlugs: [
       "how-to-convert-json-to-csv",
       "how-to-flatten-json",
+      "how-to-compare-json",
     ],
     faq: [
       {
@@ -206,7 +208,7 @@ export const toolsCategoryContent: Record<ToolsCategorySeoSlug, ToolsCategorySeo
       { href: "/tools/csv-tools", label: "CSV Tools" },
       { href: "/tools/data-cleaning-tools", label: "Data Cleaning Tools" },
     ],
-    relatedGuideSlugs: ["how-to-import-csv-into-sql", "how-to-flatten-json"],
+    relatedGuideSlugs: ["how-to-import-csv-into-sql", "how-to-flatten-json", "how-to-validate-yaml", "how-to-parse-a-url", "how-to-compare-json"],
     faq: [
       {
         question: "Are these tools safe for quick production debugging?",
