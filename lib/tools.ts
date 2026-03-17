@@ -1492,32 +1492,73 @@ export const tools: ToolDefinition[] = [
   {
     slug: "xml-validator",
     title: "XML Validator",
-    shortDescription: "Validate XML syntax and catch malformed tags fast.",
-    tags: ["xml validator", "validate xml", "xml parser", "developer tools"],
+    shortDescription:
+      "Validate XML syntax online, detect parser errors, and fix malformed tags before using XML in APIs, feeds, or config workflows.",
+    tags: ["xml validator", "validate xml online", "xml syntax validator", "xml checker", "developer tools"],
     intro:
-      "Validate XML input and detect malformed structure before using XML in integration workflows, feeds, or legacy system imports.",
+      "Validate XML syntax and catch structural errors before XML reaches downstream systems. This XML checker helps you detect malformed tags, invalid nesting, and broken attributes in API payloads, configuration files, and XML feed documents. You can also format valid XML during validation to make debugging easier.",
     howToUse: [
-      "Paste XML content into the input area.",
-      "Click Transform to validate XML syntax.",
-      "Review whether the document is valid before downstream processing.",
+      "Paste XML into the input field or upload an XML file.",
+      "Optionally enable format before validate if you want normalized indentation.",
+      "Click Validate XML to run syntax checks.",
+      "If invalid, review the highlighted parser error and line hint.",
+      "Fix the issue and run validation again until the document is valid.",
     ],
-    exampleInput: "<users><user id=\"1\"><name>Ana</name></user></users>",
-    exampleOutput: "Valid XML.",
+    exampleInput:
+      "Valid XML example:\n<users>\n  <user id=\"1\">\n    <name>Ana</name>\n  </user>\n</users>\n\nInvalid XML example:\n<users>\n  <user id=\"1\">\n    <name>Ana</name>\n</users>",
+    exampleOutput:
+      "Valid result:\nValid XML. No syntax errors found.\n\nInvalid result:\nXML validation failed\nMismatched closing tag near line 5 (exact parser message may vary).",
     whyUseful:
-      "Prevents integration failures caused by malformed XML tags, nesting issues, or invalid structure.",
+      "Useful for catching XML syntax issues early so API integrations, feed imports, and config parsing do not fail in production.",
     commonMistakes: [
-      "Mismatching opening and closing tags.",
-      "Forgetting to quote attribute values.",
-      "Assuming XML validation includes XSD schema checks.",
+      "Missing closing tags after editing nested XML blocks quickly.",
+      "Closing tags out of order, which creates invalid nesting.",
+      "Leaving attributes unquoted or duplicating attribute names.",
+      "Expecting this syntax check to validate XSD schema rules.",
+      "Copying partial XML fragments without a single root element.",
     ],
     faq: [
-      { question: "Does XML Validator check XSD schemas?", answer: "No. It validates XML syntax and structure only." },
-      { question: "Can XML Validator detect malformed closing tags?", answer: "Yes. Invalid tag structure is reported as a parse error." },
-      { question: "Can I validate API/XML feed responses?", answer: "Yes. Paste raw XML from feeds or responses to validate quickly." },
+      {
+        question: "How do I validate XML online with this tool?",
+        answer:
+          "Paste XML or upload a file, then click Validate XML. The tool parses the document and reports syntax errors immediately.",
+      },
+      {
+        question: "What makes XML invalid?",
+        answer:
+          "Common causes are missing closing tags, invalid nesting order, unquoted attributes, duplicate attributes, and malformed entities.",
+      },
+      {
+        question: "Can this XML validator show the error line number?",
+        answer:
+          "Yes. When parser line information is available, the tool displays line and column hints with the error message.",
+      },
+      {
+        question: "Does this validator check XML schemas (XSD)?",
+        answer: "No. It validates XML syntax and structure, not XSD schema constraints.",
+      },
+      {
+        question: "Can I validate large XML files?",
+        answer:
+          "Yes for typical browser-sized files. Very large files may be slower depending on your device and browser memory limits.",
+      },
+      {
+        question: "Can I format XML before validation?",
+        answer:
+          "Yes. Enable format before validate to normalize indentation when the XML parses successfully.",
+      },
+      {
+        question: "Does this tool store my XML data?",
+        answer: "No. Validation runs in your browser.",
+      },
+      {
+        question: "Can I validate XML from API responses and feeds?",
+        answer: "Yes. Paste raw XML from API payloads, RSS/Atom feeds, or config files to check syntax quickly.",
+      },
     ],
-    related: ["xml-to-json", "json-to-xml", "yaml-validator", "json-validator"],
+    related: ["xml-to-json", "json-to-xml", "json-validator", "yaml-validator", "json-to-csv"],
     kind: "standard",
-    categories: ["developer-tools"],
+    categories: ["developer-tools", "json-tools"],
     createdAt: "2026-04-17",
   },
   {

@@ -95,6 +95,12 @@ function commonUseCasesForTool(tool: ToolDefinition): string[] {
       "Reviewing app config YAML before deployment rollouts.",
       "Troubleshooting parser failures caused by tabs vs spaces.",
     ],
+    "xml-validator": [
+      "Validating XML API responses before mapping fields in integration code.",
+      "Checking RSS, Atom, or product feed XML before publishing updates.",
+      "Debugging XML configuration files used by legacy systems.",
+      "Catching malformed XML payloads during QA and regression testing.",
+    ],
   };
 
   if (specificUseCases[tool.slug]) {

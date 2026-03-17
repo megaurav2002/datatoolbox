@@ -36,6 +36,7 @@ const RegexTesterTool = dynamic(() => import("@/components/tools/RegexTesterTool
 const UrlParserTool = dynamic(() => import("@/components/tools/UrlParserTool"));
 const WebsiteTechStackDetectorTool = dynamic(() => import("@/components/tools/WebsiteTechStackDetectorTool"));
 const YamlValidatorTool = dynamic(() => import("@/components/tools/YamlValidatorTool"));
+const XmlValidatorTool = dynamic(() => import("@/components/tools/XmlValidatorTool"));
 
 let transformationsPromise: Promise<typeof import("@/lib/transformations")> | null = null;
 
@@ -175,6 +176,10 @@ export default function ToolClient({ tool }: ToolClientProps) {
 
   if (tool.slug === "yaml-validator") {
     return <YamlValidatorTool tool={tool} />;
+  }
+
+  if (tool.slug === "xml-validator") {
+    return <XmlValidatorTool tool={tool} />;
   }
 
   if (tool.slug === "website-tech-stack-detector") {

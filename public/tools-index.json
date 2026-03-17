@@ -519,11 +519,12 @@
   {
     "slug": "xml-validator",
     "title": "XML Validator",
-    "description": "Validate XML syntax and catch malformed tags fast.",
+    "description": "Validate XML syntax online, detect parser errors, and fix malformed tags before using XML in APIs, feeds, or config workflows.",
     "tags": [
       "xml validator",
-      "validate xml",
-      "xml parser",
+      "validate xml online",
+      "xml syntax validator",
+      "xml checker",
       "developer tools"
     ],
     "url": "/tools/xml-validator"
