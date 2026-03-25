@@ -163,6 +163,15 @@ describe("transformations", () => {
       expect(result.output).toBe("name,email\nAna,ana@example.com\nBob,");
     });
 
+    it("flattens nested object keys into dot-notation columns", () => {
+      const result = transformations["json-to-csv"](
+        '[{"user":{"name":"Ana","email":"ana@example.com"},"age":28},{"user":{"name":"Bob","email":"bob@example.com"},"age":34}]',
+      );
+      expect(result.output).toBe(
+        "user.name,user.email,age\nAna,ana@example.com,28\nBob,bob@example.com,34",
+      );
+    });
+
     it("throws when no object keys are available", () => {
       expect(() => transformations["json-to-csv"]("[{}]")).toThrow(
         "JSON to CSV could not find object keys to build columns.",

@@ -62,16 +62,46 @@ function csvToJson(input: string): TransformResult {
 }
 
 function jsonToCsv(input: string): TransformResult {
+  const flattenForCsv = (
+    value: Record<string, unknown>,
+    prefix = "",
+    output: Record<string, unknown> = {},
+  ): Record<string, unknown> => {
+    Object.entries(value).forEach(([key, nestedValue]) => {
+      const path = prefix ? `${prefix}.${key}` : key;
+
+      if (Array.isArray(nestedValue)) {
+        output[path] = JSON.stringify(nestedValue);
+        return;
+      }
+
+      if (typeof nestedValue === "object" && nestedValue !== null) {
+        flattenForCsv(nestedValue as Record<string, unknown>, path, output);
+        return;
+      }
+
+      output[path] = nestedValue;
+    });
+
+    return output;
+  };
+
   const parsed = parseJsonInput(input, "JSON to CSV");
   if (!Array.isArray(parsed) || parsed.length === 0) {
     throw new Error("JSON to CSV requires a non-empty array of objects.");
   }
 
+  const flattenedRows = parsed.map((item) => {
+    if (typeof item !== "object" || item === null || Array.isArray(item)) {
+      throw new Error("JSON to CSV requires every array item to be an object.");
+    }
+
+    return flattenForCsv(item as Record<string, unknown>);
+  });
+
   const headers = Array.from(
-    parsed.reduce((acc: Set<string>, item: unknown) => {
-      if (typeof item === "object" && item !== null && !Array.isArray(item)) {
-        Object.keys(item).forEach((key) => acc.add(key));
-      }
+    flattenedRows.reduce((acc: Set<string>, row) => {
+      Object.keys(row).forEach((key) => acc.add(key));
       return acc;
     }, new Set<string>()),
   );
@@ -82,12 +112,8 @@ function jsonToCsv(input: string): TransformResult {
 
   const rows = [
     headers,
-    ...parsed.map((item) => {
-      if (typeof item !== "object" || item === null || Array.isArray(item)) {
-        throw new Error("JSON to CSV requires every array item to be an object.");
-      }
-
-      return headers.map((header) => String((item as Record<string, unknown>)[header] ?? ""));
+    ...flattenedRows.map((row) => {
+      return headers.map((header) => String(row[header] ?? ""));
     }),
   ];
 

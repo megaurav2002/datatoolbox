@@ -115,7 +115,7 @@ function DefaultToolClient({ tool }: ToolClientProps) {
     <section className="space-y-4">
       {tool.slug === "json-to-csv" ? (
         <p className="text-sm text-slate-700">
-          If your payload contains nested objects or arrays, use{" "}
+          Nested objects are flattened automatically. For deeper nested arrays or custom flattening, use{" "}
           <Link href="/tools/json-flatten-to-csv" className="underline">
             JSON Flatten / JSON to CSV
           </Link>{" "}

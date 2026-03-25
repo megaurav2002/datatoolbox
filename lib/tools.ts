@@ -51,11 +51,11 @@ export const tools: ToolDefinition[] = [
       "spreadsheet export",
     ],
     intro:
-      "Convert a JSON array of objects into clean CSV columns and rows for spreadsheet workflows. This is useful for API responses, exports, and quick analysis in Excel or Google Sheets. If your JSON contains nested objects or arrays, flatten it first so each value maps to a usable column. When records use different keys, missing values appear as empty cells.",
+      "Convert a JSON array of objects into clean CSV columns and rows for spreadsheet workflows. This is useful for API responses, exports, and quick analysis in Excel or Google Sheets. Nested object fields are flattened into dot-notation columns automatically, while nested arrays are serialized as JSON strings. When records use different keys, missing values appear as empty cells.",
     howToUse: [
       "Paste a valid JSON array of objects.",
       "Check that records contain the fields you want as CSV columns.",
-      "If the JSON is nested, flatten it first before converting.",
+      "If nested arrays or complex nested structures are present, flatten first for cleaner CSV columns.",
       "Run the conversion.",
       "Review the generated header row and values.",
       "Copy or download the CSV for Excel, Google Sheets, or other imports.",
@@ -63,12 +63,12 @@ export const tools: ToolDefinition[] = [
     exampleInput:
       '[\n  { "user": { "name": "Ana", "email": "ana@example.com" }, "age": 28 },\n  { "user": { "name": "Bob", "email": "bob@example.com" }, "age": 34 }\n]',
     exampleOutput:
-      "user,age\n[object Object],28\n[object Object],34",
+      "user.name,user.email,age\nAna,ana@example.com,28\nBob,bob@example.com,34",
     exampleNotes: [
       "Keys become column headers and each object becomes one CSV row.",
       "Missing keys become empty cells.",
-      "Nested objects should be flattened before conversion if you want clean spreadsheet columns such as `user.name` and `user.email`.",
-      "Flattened output example: `user.name,user.email,age` with rows like `Ana,ana@example.com,28` and `Bob,bob@example.com,34`.",
+      "Nested objects are flattened into dot-notation columns such as `user.name` and `user.email`.",
+      "For deeper control over nested arrays and structures, use JSON Flatten / JSON to CSV first.",
     ],
     whyUseful:
       "Use this to quickly turn JSON payloads into tabular CSV you can review before loading into downstream systems.",
@@ -77,7 +77,7 @@ export const tools: ToolDefinition[] = [
       "Using invalid JSON syntax (missing quotes, commas, or brackets).",
       "Using inconsistent keys across records and misreading empty cells as conversion errors.",
       "Pasting NDJSON (one object per line) instead of a JSON array.",
-      "Expecting deeply nested arrays (for example `items:[...]`) to turn into clean CSV columns without flattening or preprocessing.",
+      "Expecting deeply nested arrays (for example `items:[...]`) to become separate CSV columns automatically.",
     ],
     faq: [
       {
@@ -97,17 +97,17 @@ export const tools: ToolDefinition[] = [
       {
         question: "Can this convert nested JSON?",
         answer:
-          "Not directly into separate flat columns. Use JSON Flatten / JSON to CSV first, then convert the flattened result.",
+          "Yes for nested objects. They are flattened into dot-notation columns. Nested arrays are kept as JSON strings unless you preprocess them.",
       },
       {
         question: "Why did my JSON to CSV conversion fail?",
         answer:
-          "Common causes are invalid JSON syntax, input that is not an array of objects, nested structures not flattened first, or NDJSON pasted instead of a standard JSON array.",
+          "Common causes are invalid JSON syntax, input that is not an array of objects, or NDJSON pasted instead of a standard JSON array.",
       },
       {
         question: "Why does my CSV have empty cells?",
         answer:
-          "Empty cells usually happen when some objects are missing keys that appear in other records, or when nested fields were not flattened before conversion.",
+          "Empty cells usually happen when some objects are missing keys that appear in other records.",
       },
       {
         question: "Is this JSON to CSV converter free?",
