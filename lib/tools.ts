@@ -51,19 +51,25 @@ export const tools: ToolDefinition[] = [
       "spreadsheet export",
     ],
     intro:
-      "Convert a JSON array of objects into CSV rows and columns for spreadsheet workflows. This is useful for API responses, exports, spreadsheet review, and quick tabular analysis. Nested objects are flattened into dot-notation columns automatically, while nested arrays often need preprocessing for cleaner spreadsheet columns. If records use inconsistent keys, missing values appear as empty cells.",
+      "Convert a JSON array of objects into CSV rows and columns for spreadsheet workflows. Each JSON object becomes one CSV row, and each key becomes a column header. This is useful for API responses, exports, spreadsheet review, and quick tabular analysis. Nested objects are flattened into dot-notation columns such as `user.name` and `user.email`, so nested values can map to spreadsheet columns. If records use inconsistent keys, missing values appear as empty cells.",
+    introChecklist: [
+      "Each object becomes one row",
+      "Keys become column headers",
+      "Missing keys result in empty cells",
+    ],
     howToUse: [
-      "Paste a valid JSON array of objects or upload a JSON file.",
+      "Paste a valid JSON array of objects.",
       "Check that each object contains the fields you want as CSV columns.",
+      "If your data is not an array of objects, fix the structure before converting.",
       "If the JSON includes nested arrays or complex nested data, flatten it first so values map to usable columns.",
       "Run the conversion.",
       "Review the generated header row and values.",
       "Copy or download the CSV for Excel, Google Sheets, or imports.",
     ],
     exampleInput:
-      'Primary example:\n[\n  { "name": "Ana", "email": "ana@example.com", "age": 28 },\n  { "name": "Bob", "email": "bob@example.com", "age": 34 }\n]\n\nNested example:\n[\n  { "user": { "name": "Ana", "email": "ana@example.com" }, "age": 28 },\n  { "user": { "name": "Bob", "email": "bob@example.com" }, "age": 34 }\n]\n\nMissing keys example:\n[\n  { "name": "Ana", "age": 28 },\n  { "name": "Bob" }\n]',
+      'Primary example (flat JSON):\n[\n  { "name": "Ana", "email": "ana@example.com", "age": 28 },\n  { "name": "Bob", "email": "bob@example.com", "age": 34 }\n]\n\nNested JSON example (flattened output):\n[\n  { "user": { "name": "Ana", "email": "ana@example.com" }, "age": 28 },\n  { "user": { "name": "Bob", "email": "bob@example.com" }, "age": 34 }\n]\n\nMissing keys example (empty cells):\n[\n  { "name": "Ana", "age": 28 },\n  { "name": "Bob" }\n]',
     exampleOutput:
-      "Primary output:\nname,email,age\nAna,ana@example.com,28\nBob,bob@example.com,34\n\nNested output (objects flattened):\nuser.name,user.email,age\nAna,ana@example.com,28\nBob,bob@example.com,34\n\nMissing keys output:\nname,age\nAna,28\nBob,",
+      "Primary example (flat JSON):\nname,email,age\nAna,ana@example.com,28\nBob,bob@example.com,34\n\nNested JSON example (flattened output):\nuser.name,user.email,age\nAna,ana@example.com,28\nBob,bob@example.com,34\n\nMissing keys example (empty cells):\nname,age\nAna,28\nBob,",
     exampleNotes: [
       "Keys become column headers and each object becomes one CSV row.",
       "Nested object keys are flattened into dot-notation columns such as `user.name` and `user.email`.",

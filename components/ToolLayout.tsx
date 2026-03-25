@@ -304,6 +304,13 @@ export default function ToolLayout({ tool, children }: ToolLayoutProps) {
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">What this tool does</h2>
           <p className="mt-2 text-slate-700">{tool.intro}</p>
+          {tool.introChecklist && tool.introChecklist.length > 0 ? (
+            <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-slate-700">
+              {tool.introChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">

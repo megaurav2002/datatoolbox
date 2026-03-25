@@ -12,6 +12,7 @@ export type ToolDefinition = {
   shortDescription: string;
   tags: string[];
   intro: string;
+  introChecklist?: string[];
   howToUse: string[];
   exampleInput: string;
   exampleOutput: string;

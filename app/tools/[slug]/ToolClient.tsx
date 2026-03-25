@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import ToolInput from "@/components/ToolInput";
 import ToolOutput from "@/components/ToolOutput";
 import type { ToolDefinition } from "@/lib/types";
@@ -54,8 +54,7 @@ async function loadTransformations() {
 }
 
 function DefaultToolClient({ tool }: ToolClientProps) {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [input, setInput] = useState(tool.exampleInput);
+  const [input, setInput] = useState(tool.slug === "json-to-csv" ? "" : tool.exampleInput);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -115,39 +114,14 @@ function DefaultToolClient({ tool }: ToolClientProps) {
   return (
     <section className="space-y-4">
       {tool.slug === "json-to-csv" ? (
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm text-slate-700">
-            If your payload includes nested arrays or complex nesting, use{" "}
-            <Link href="/tools/json-flatten-to-csv" className="underline">
-              JSON Flatten / JSON to CSV
-            </Link>{" "}
-            first.
-          </p>
-          <div>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-            >
-              Upload JSON file
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json,application/json,text/plain"
-              onChange={async (event) => {
-                const file = event.target.files?.[0];
-                if (!file) {
-                  return;
-                }
-                const text = await file.text();
-                setInput(text);
-                event.currentTarget.value = "";
-              }}
-              className="hidden"
-            />
-          </div>
-        </div>
+        <p className="text-sm text-slate-700">
+          Paste a JSON array of objects below. Each object becomes a row, and each key becomes a column. If your data
+          is nested,{" "}
+          <Link href="/tools/json-flatten-to-csv" className="underline">
+            flatten it first
+          </Link>{" "}
+          for cleaner output.
+        </p>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-2">
