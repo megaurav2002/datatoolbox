@@ -51,14 +51,14 @@ export const tools: ToolDefinition[] = [
       "spreadsheet export",
     ],
     intro:
-      "Convert a JSON array of objects into clean CSV columns and rows for spreadsheet workflows. This is useful for API responses, exports, and quick analysis in Excel or Google Sheets. Nested object fields are flattened into dot-notation columns automatically, while nested arrays are serialized as JSON strings. When records use different keys, missing values appear as empty cells.",
+      "Convert a JSON array of objects into clean CSV columns and rows for spreadsheet workflows.",
     howToUse: [
-      "Paste a valid JSON array of objects.",
-      "Check that records contain the fields you want as CSV columns.",
-      "If nested arrays or complex nested structures are present, flatten first for cleaner CSV columns.",
+      "Paste a valid JSON array of objects or upload a JSON file.",
+      "Check that each object contains the fields you want as CSV columns.",
+      "If the JSON is nested, flatten it first so values map to usable columns.",
       "Run the conversion.",
       "Review the generated header row and values.",
-      "Copy or download the CSV for Excel, Google Sheets, or other imports.",
+      "Copy or download the CSV for Excel, Google Sheets, or imports.",
     ],
     exampleInput:
       '[\n  { "user": { "name": "Ana", "email": "ana@example.com" }, "age": 28 },\n  { "user": { "name": "Bob", "email": "bob@example.com" }, "age": 34 }\n]',
@@ -73,11 +73,11 @@ export const tools: ToolDefinition[] = [
     whyUseful:
       "Use this to quickly turn JSON payloads into tabular CSV you can review before loading into downstream systems.",
     commonMistakes: [
-      "Pasting a single JSON object instead of an array of objects.",
-      "Using invalid JSON syntax (missing quotes, commas, or brackets).",
-      "Using inconsistent keys across records and misreading empty cells as conversion errors.",
-      "Pasting NDJSON (one object per line) instead of a JSON array.",
-      "Expecting deeply nested arrays (for example `items:[...]`) to become separate CSV columns automatically.",
+      "Pasting a single JSON object instead of an array. The converter expects an array of records.",
+      "Using invalid JSON syntax (missing commas, quotes, or brackets).",
+      "Expecting nested objects or arrays to automatically flatten into columns.",
+      "Using inconsistent keys across records, which leads to empty cells in output.",
+      "Pasting NDJSON (newline-delimited JSON) instead of a standard JSON array.",
     ],
     faq: [
       {
@@ -105,17 +105,17 @@ export const tools: ToolDefinition[] = [
           "Common causes are invalid JSON syntax, input that is not an array of objects, or NDJSON pasted instead of a standard JSON array.",
       },
       {
-        question: "Why does my CSV have empty cells?",
-        answer:
-          "Empty cells usually happen when some objects are missing keys that appear in other records.",
-      },
-      {
         question: "Is this JSON to CSV converter free?",
         answer: "Yes, it is free to use.",
       },
       {
         question: "Can I open the output in Excel or Google Sheets?",
         answer: "Yes. The generated CSV is compatible with Excel, Google Sheets, and most CSV import workflows.",
+      },
+      {
+        question: "Why does my CSV have empty cells?",
+        answer:
+          "Empty cells usually happen when some objects are missing keys that appear in other records, or when nested fields were not flattened before conversion.",
       },
     ],
     related: ["json-flatten-to-csv", "csv-to-json", "json-validator", "json-formatter", "ndjson-to-csv", "csv-cleaner"],
