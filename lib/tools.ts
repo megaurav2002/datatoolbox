@@ -41,7 +41,7 @@ export const tools: ToolDefinition[] = [
     slug: "json-to-csv",
     title: "JSON to CSV Converter",
     shortDescription:
-      "Convert JSON arrays of objects into clean CSV rows you can copy, download, and open in Excel or Google Sheets.",
+      "Convert JSON arrays of objects into spreadsheet-ready CSV instantly for Excel, Google Sheets, and CSV imports.",
     tags: [
       "json to csv converter",
       "json to csv",
@@ -51,33 +51,33 @@ export const tools: ToolDefinition[] = [
       "spreadsheet export",
     ],
     intro:
-      "Convert a JSON array of objects into clean CSV columns and rows for spreadsheet workflows.",
+      "Convert a JSON array of objects into CSV rows and columns for spreadsheet workflows. This is useful for API responses, exports, spreadsheet review, and quick tabular analysis. Nested objects are flattened into dot-notation columns automatically, while nested arrays often need preprocessing for cleaner spreadsheet columns. If records use inconsistent keys, missing values appear as empty cells.",
     howToUse: [
       "Paste a valid JSON array of objects or upload a JSON file.",
       "Check that each object contains the fields you want as CSV columns.",
-      "If the JSON is nested, flatten it first so values map to usable columns.",
+      "If the JSON includes nested arrays or complex nested data, flatten it first so values map to usable columns.",
       "Run the conversion.",
       "Review the generated header row and values.",
       "Copy or download the CSV for Excel, Google Sheets, or imports.",
     ],
     exampleInput:
-      '[\n  { "user": { "name": "Ana", "email": "ana@example.com" }, "age": 28 },\n  { "user": { "name": "Bob", "email": "bob@example.com" }, "age": 34 }\n]',
+      'Primary example:\n[\n  { "name": "Ana", "email": "ana@example.com", "age": 28 },\n  { "name": "Bob", "email": "bob@example.com", "age": 34 }\n]\n\nNested example:\n[\n  { "user": { "name": "Ana", "email": "ana@example.com" }, "age": 28 },\n  { "user": { "name": "Bob", "email": "bob@example.com" }, "age": 34 }\n]\n\nMissing keys example:\n[\n  { "name": "Ana", "age": 28 },\n  { "name": "Bob" }\n]',
     exampleOutput:
-      "user.name,user.email,age\nAna,ana@example.com,28\nBob,bob@example.com,34",
+      "Primary output:\nname,email,age\nAna,ana@example.com,28\nBob,bob@example.com,34\n\nNested output (objects flattened):\nuser.name,user.email,age\nAna,ana@example.com,28\nBob,bob@example.com,34\n\nMissing keys output:\nname,age\nAna,28\nBob,",
     exampleNotes: [
       "Keys become column headers and each object becomes one CSV row.",
-      "Missing keys become empty cells.",
-      "Nested objects are flattened into dot-notation columns such as `user.name` and `user.email`.",
-      "For deeper control over nested arrays and structures, use JSON Flatten / JSON to CSV first.",
+      "Nested object keys are flattened into dot-notation columns such as `user.name` and `user.email`.",
+      "If some objects do not contain every key, the converter leaves those CSV cells empty.",
     ],
     whyUseful:
-      "Use this to quickly turn JSON payloads into tabular CSV you can review before loading into downstream systems.",
+      "Use this converter to quickly validate tabular output before loading data into reporting tools, spreadsheets, or downstream imports.",
     commonMistakes: [
       "Pasting a single JSON object instead of an array. The converter expects an array of records.",
       "Using invalid JSON syntax (missing commas, quotes, or brackets).",
-      "Expecting nested objects or arrays to automatically flatten into columns.",
+      "Expecting nested arrays to automatically flatten into clean spreadsheet columns.",
       "Using inconsistent keys across records, which leads to empty cells in output.",
       "Pasting NDJSON (newline-delimited JSON) instead of a standard JSON array.",
+      "Expecting deeply nested arrays to become clean spreadsheet columns without preprocessing.",
     ],
     faq: [
       {
@@ -97,7 +97,7 @@ export const tools: ToolDefinition[] = [
       {
         question: "Can this convert nested JSON?",
         answer:
-          "Yes for nested objects. They are flattened into dot-notation columns. Nested arrays are kept as JSON strings unless you preprocess them.",
+          "Yes. Nested objects are flattened into dot-notation columns. Nested arrays usually need preprocessing or flattening first for cleaner CSV columns.",
       },
       {
         question: "Why did my JSON to CSV conversion fail?",
@@ -113,9 +113,18 @@ export const tools: ToolDefinition[] = [
         answer: "Yes. The generated CSV is compatible with Excel, Google Sheets, and most CSV import workflows.",
       },
       {
+        question: "Does this run in the browser?",
+        answer: "Yes. Conversion runs in your browser.",
+      },
+      {
         question: "Why does my CSV have empty cells?",
         answer:
-          "Empty cells usually happen when some objects are missing keys that appear in other records, or when nested fields were not flattened before conversion.",
+          "Empty cells usually happen when some objects are missing keys that appear in other records, or when nested arrays were not preprocessed before conversion.",
+      },
+      {
+        question: "Can I convert arrays inside nested JSON?",
+        answer:
+          "Nested arrays usually need preprocessing or flattening before they produce useful spreadsheet columns.",
       },
     ],
     related: ["json-flatten-to-csv", "csv-to-json", "json-validator", "json-formatter", "ndjson-to-csv", "csv-cleaner"],

@@ -20,8 +20,9 @@ function commonUseCasesForTool(tool: ToolDefinition): string[] {
     ],
     "json-to-csv": [
       "Exporting API response data into spreadsheets.",
-      "Preparing JSON datasets for CSV-based reporting.",
+      "Preparing JSON datasets for reporting or CSV imports.",
       "Sharing tabular data with non-technical teams.",
+      "Checking records before loading data into downstream systems.",
     ],
     "csv-cleaner": [
       "Removing duplicate rows before CRM imports.",

@@ -158,5 +158,6 @@ export function generateToolFAQs(tool: ToolDefinition): FAQItem[] {
     unique.push(item);
   }
 
-  return unique.slice(0, 8);
+  const maxFaqs = tool.slug === "json-to-csv" ? 10 : 8;
+  return unique.slice(0, maxFaqs);
 }

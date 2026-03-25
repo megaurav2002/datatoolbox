@@ -15,7 +15,7 @@
   {
     "slug": "json-to-csv",
     "title": "JSON to CSV Converter",
-    "description": "Convert JSON arrays of objects into clean CSV rows you can copy, download, and open in Excel or Google Sheets.",
+    "description": "Convert JSON arrays of objects into spreadsheet-ready CSV instantly for Excel, Google Sheets, and CSV imports.",
     "tags": [
       "json to csv converter",
       "json to csv",

@@ -2,11 +2,12 @@ import { generateToolFAQs } from "@/lib/generateToolFAQs";
 import { tools } from "@/lib/tools";
 
 describe("tool FAQ quality", () => {
-  it("returns between 5 and 8 FAQs for every tool", () => {
+  it("returns between 5 and 8 FAQs for most tools, allowing 10 for JSON to CSV", () => {
     tools.forEach((tool) => {
       const faqs = generateToolFAQs(tool);
       expect(faqs.length).toBeGreaterThanOrEqual(5);
-      expect(faqs.length).toBeLessThanOrEqual(8);
+      const maxFaqs = tool.slug === "json-to-csv" ? 10 : 8;
+      expect(faqs.length).toBeLessThanOrEqual(maxFaqs);
     });
   });
 
