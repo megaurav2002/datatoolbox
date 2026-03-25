@@ -61,7 +61,7 @@ export const tools: ToolDefinition[] = [
       "Copy or download the CSV for Excel, Google Sheets, or other imports.",
     ],
     exampleInput:
-      '[\n  { "name": "Ana", "email": "ana@example.com", "age": 28 },\n  { "name": "Bob", "email": "bob@example.com", "age": 34 }\n]\n\nNested JSON input:\n[\n  { "user": { "name": "Ana" }, "age": 30 },\n  { "user": { "name": "Bob" }, "age": 34 }\n]',
+      '[\n  { "name": "Ana", "email": "ana@example.com", "age": 28 },\n  { "name": "Bob", "email": "bob@example.com", "age": 34 }\n]\n\n[\n  { "user": { "name": "Ana" }, "age": 30 },\n  { "user": { "name": "Bob" }, "age": 34 }\n]',
     exampleOutput: "name,email,age\nAna,ana@example.com,28\nBob,bob@example.com,34",
     exampleNotes: [
       "Keys become column headers.",
