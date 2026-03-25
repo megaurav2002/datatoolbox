@@ -61,14 +61,14 @@ export const tools: ToolDefinition[] = [
       "Copy or download the CSV for Excel, Google Sheets, or other imports.",
     ],
     exampleInput:
-      '[\n  { "name": "Ana", "email": "ana@example.com", "age": 28 },\n  { "name": "Bob", "email": "bob@example.com", "age": 34 }\n]\n\n[\n  { "user": { "name": "Ana" }, "age": 30 },\n  { "user": { "name": "Bob" }, "age": 34 }\n]',
-    exampleOutput: "name,email,age\nAna,ana@example.com,28\nBob,bob@example.com,34",
+      '[\n  { "user": { "name": "Ana", "email": "ana@example.com" }, "age": 28 },\n  { "user": { "name": "Bob", "email": "bob@example.com" }, "age": 34 }\n]',
+    exampleOutput:
+      "user,age\n[object Object],28\n[object Object],34",
     exampleNotes: [
-      "Keys become column headers.",
-      "Each object becomes one CSV row.",
+      "Keys become column headers and each object becomes one CSV row.",
       "Missing keys become empty cells.",
-      "Nested JSON should be flattened before conversion if you want columns like `user.name` and `age`.",
-      "Flattened example output: `user.name,age` then rows `Ana,30` and `Bob,34`.",
+      "Nested objects should be flattened before conversion if you want clean spreadsheet columns such as `user.name` and `user.email`.",
+      "Flattened output example: `user.name,user.email,age` with rows like `Ana,ana@example.com,28` and `Bob,bob@example.com,34`.",
     ],
     whyUseful:
       "Use this to quickly turn JSON payloads into tabular CSV you can review before loading into downstream systems.",
