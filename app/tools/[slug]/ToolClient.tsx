@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import ToolInput from "@/components/ToolInput";
 import ToolOutput from "@/components/ToolOutput";
@@ -111,20 +112,32 @@ function DefaultToolClient({ tool }: ToolClientProps) {
   };
 
   return (
-    <section className="grid gap-6 lg:grid-cols-2">
-      <ToolInput
-        value={input}
-        onChange={setInput}
-        placeholder={placeholder}
-        onTransform={() => void onTransform()}
-        loading={loading}
-      />
-      <ToolOutput
-        value={output}
-        error={error}
-        downloadFileName={downloadFileName}
-        downloadMimeType={downloadMimeType}
-      />
+    <section className="space-y-4">
+      {tool.slug === "json-to-csv" ? (
+        <p className="text-sm text-slate-700">
+          If your payload contains nested objects or arrays, use{" "}
+          <Link href="/tools/json-flatten-to-csv" className="underline">
+            JSON Flatten / JSON to CSV
+          </Link>{" "}
+          first.
+        </p>
+      ) : null}
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ToolInput
+          value={input}
+          onChange={setInput}
+          placeholder={placeholder}
+          onTransform={() => void onTransform()}
+          loading={loading}
+        />
+        <ToolOutput
+          value={output}
+          error={error}
+          downloadFileName={downloadFileName}
+          downloadMimeType={downloadMimeType}
+        />
+      </div>
     </section>
   );
 }

@@ -35,9 +35,9 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
   const categoryKeywords = tool.categories.map((category) => category.replace(/-/g, " "));
   const metadataOverrides: Partial<Record<string, { title: string; description: string }>> = {
     "json-to-csv": {
-      title: "JSON to CSV Converter - Free Online Tool",
+      title: "JSON to CSV Converter - Convert JSON Arrays to CSV (With Examples)",
       description:
-        "Convert a JSON array of objects into spreadsheet-ready CSV instantly. Free online JSON to CSV converter for Excel, Google Sheets, and data exports.",
+        "Convert JSON arrays of objects into spreadsheet-ready CSV instantly. Free browser-based JSON to CSV converter for Excel, Google Sheets, and data exports, with practical examples.",
     },
     "regex-tester": {
       title: "Regex Tester + Generator - Free Online Tool",
